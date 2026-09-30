@@ -1,0 +1,11 @@
+{
+ "zone": "HU", "days": 361, "note": "1 MW; per-MW € over the period; DST-change days excluded; computed with the in-browser mirror of this package (parity test: tests/test_parity_hu.py)",
+ "per_mw_eur": {
+  "1h": {"perfect": 78747, "naive": 58775, "blend": 63171, "ridge": 59909, "ridge_hurdle10": 59875},
+  "2h": {"perfect": 136995, "naive": 109410, "blend": 116175, "ridge": 112541, "ridge_hurdle10": 111823},
+  "4h": {"perfect": 218243, "naive": 188759, "blend": 196521, "ridge": 192548, "ridge_hurdle10": 190377}
+ },
+ "forecast_mae_eur_mwh": {"naive": 30.45, "blend": 27.01, "ridge": 26.29},
+ "loss_days": {"1h": {"naive": 5, "blend": 3, "ridge": 3, "ridge_hurdle10": 0}, "2h": {"naive": 4, "blend": 3, "ridge": 4, "ridge_hurdle10": 0}, "4h": {"naive": 0, "blend": 2, "ridge": 1, "ridge_hurdle10": 0}},
+ "monthly_4h": {"2025-10": {"pf": 20577, "blend": 18884, "ridge": 18752, "naive": 17737}, "2025-11": {"pf": 11461, "blend": 9899, "ridge": 8756, "naive": 9240}, "2025-12": {"pf": 6897, "blend": 5691, "ridge": 5475, "naive": 5332}, "2026-01": {"pf": 14119, "blend": 11238, "ridge": 11146, "naive": 10700}, "2026-02": {"pf": 7197, "blend": 5893, "ridge": 5591, "naive": 5350}, "2026-03": {"pf": 21872, "blend": 20295, "ridge": 20182, "naive": 19378}, "2026-04": {"pf": 24017, "blend": 22399, "ridge": 21460, "naive": 21870}, "2026-05": {"pf": 23989, "blend": 22237, "ridge": 21887, "naive": 21787}, "2026-06": {"pf": 26651, "blend": 24788, "ridge": 24106, "naive": 24179}, "2026-07": {"pf": 19016, "blend": 17663, "ridge": 17134, "naive": 17227}, "2026-08": {"pf": 19215, "blend": 17425, "ridge": 17536, "naive": 16762}, "2026-09": {"pf": 23231, "blend": 20107, "ridge": 20523, "naive": 19197}}
+}

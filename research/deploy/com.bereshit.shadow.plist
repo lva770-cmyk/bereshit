@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Copy to ~/Library/LaunchAgents/ and run: launchctl load ~/Library/LaunchAgents/com.bereshit.shadow.plist
+     Replace BERESHIT_DIR with the absolute path of this folder. Times are the Mac's local time (Israel = CET+1),
+     so 12:00 Israel = 11:00 CET, before gate closure. -->
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.bereshit.shadow</string>
+  <key>ProgramArguments</key><array><string>/bin/bash</string><string>-c</string>
+    <string>H=$(date +%H); if [ "$H" -lt 14 ]; then BERESHIT_DIR/deploy/run_daily.sh plan; else BERESHIT_DIR/deploy/run_daily.sh settle; fi</string></array>
+  <key>StartCalendarInterval</key><array>
+    <dict><key>Hour</key><integer>12</integer><key>Minute</key><integer>0</integer></dict>
+    <dict><key>Hour</key><integer>15</integer><key>Minute</key><integer>30</integer></dict>
+  </array>
+</dict></plist>
