@@ -1,0 +1,29 @@
+name: בראשית – איסוף נתוני מחקר (מזג אוויר)
+# Manual / on-change only: fetches a year of HUPX prices + archived weather forecasts for the
+# forecasting study and commits them under research/data. Does not touch the live screen.
+on:
+  workflow_dispatch: {}
+  push:
+    paths: ["research/fetch_weather_data.py"]
+permissions:
+  contents: write
+concurrency:
+  group: bereshit-update
+  cancel-in-progress: false
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python research/fetch_weather_data.py
+      - name: commit data
+        run: |
+          git config user.name "bereshit-bot"
+          git config user.email "bereshit-bot@users.noreply.github.com"
+          git add research/data
+          git commit -m "research data: $(date -u +%Y-%m-%dT%H:%MZ)" || exit 0
+          for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
