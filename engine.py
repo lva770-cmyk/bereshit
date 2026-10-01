@@ -16,6 +16,18 @@ from scipy.optimize import linprog
 from scipy.sparse import lil_matrix, csr_matrix
 
 STATE = "data.json"
+# Bidding zones on the same SDAC auction (gate 12:00 CET for all). Each zone has its own state file.
+ZONES = {"HU": ("data.json", "HUPX day-ahead (SDAC), 15-min"),
+         "RO": ("data-RO.json", "OPCOM day-ahead (SDAC), 15-min"),
+         "GR": ("data-GR.json", "HEnEx day-ahead (SDAC), 15-min")}
+ZONE = "HU"
+def use_zone(z):
+    global STATE, ZONE
+    ZONE = z; STATE = ZONES[z][0]
+    import os
+    if not os.path.exists(STATE):
+        json.dump({"zone": z, "market": ZONES[z][1], "battery": {"power_mw": 100, "energy_mwh": 400, "rte": 0.88},
+                   "mode": "paper", "days": {}}, open(STATE, "w"), separators=(",", ":"))
 P_MW, E_MWH, RTE, CYC, WEAR = 100.0, 400.0, 0.88, 2.0, 3.0   # full 100 MW / 400 MWh plant
 
 def load(): return json.load(open(STATE))
@@ -61,6 +73,7 @@ def ingest(day, prices, prices2=None, fetched_at=None, method="2 direct API read
     a = [float(x) for x in prices]
     # clock-change days: 100 slots (autumn, 02:00-03:00 twice) -> drop the repeated hour; 92 (spring) -> repeat 01:00-02:00.
     # Keeps every day on the same 96-slot grid; the approximation affects one hour on two days a year.
+    if len(a) in (23, 24, 25): a = [x for x in a for _ in range(4)]   # hourly market day -> 15-min grid
     if len(a) == 100: a = a[:12] + a[16:]
     elif len(a) == 92: a = a[:8] + a[4:8] + a[8:]
     if len(a) != 96: raise SystemExit(f"expected 96 quarter-hour prices, got {len(prices)}")
@@ -97,23 +110,57 @@ def plan(day):
                       "forecast": [round(x, 2) for x in f], "net": [round(x, 1) for x in net]}
     save(s); print(f"planned {day}: buy {np.clip(-net,0,None).sum()*.25:.0f} MWh, sell {np.clip(net,0,None).sum()*.25:.0f} MWh")
 
-API = "https://api.energy-charts.info/price?bzn=HU&start={d}&end={d}"
+API = "https://api.energy-charts.info/price?bzn={z}&start={d}&end={d}"
 
 def fetch_day(day):
     """Real prices for one delivery day, straight from the API. Returns None if not published yet."""
-    import urllib.request, urllib.error
-    try:
-        with urllib.request.urlopen(urllib.request.Request(API.format(d=day), headers={"User-Agent": "bereshit/1.0"}), timeout=60) as r:
-            j = json.load(r)
-    except urllib.error.HTTPError as err:
-        if err.code in (404, 204): return None
-        raise
+    import urllib.request, urllib.error, time
+    for k in range(5):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(API.format(z=ZONE, d=day), headers={"User-Agent": "bereshit/1.0"}), timeout=60) as r:
+                j = json.load(r)
+            break
+        except urllib.error.HTTPError as err:
+            if err.code in (404, 204): return None
+            if err.code == 429 and k < 4: time.sleep(10 * (k + 1)); continue
+            raise
     tz = ZoneInfo("Europe/Budapest")
     vals = [p for t, p in zip(j.get("unix_seconds", []), j.get("price", []))
             if dt.datetime.fromtimestamp(t, tz).date().isoformat() == day and p is not None]
-    return vals if len(vals) in (92, 96, 100) else None
+    return vals if len(vals) in (23, 24, 25, 92, 96, 100) else None
 
 def update():
+    """All zones; a failure in one zone never blocks the others."""
+    for z in ZONES:
+        use_zone(z); print(f"== {z}")
+        try: update_zone()
+        except (Exception, SystemExit) as err: print(f"{z}: error {err!r}")
+
+def backfill(days):
+    """Seed a new zone: ingest the last `days`+7 days of real prices (2 reads each), then build walk-forward
+    'backtest' plans for every past day that has 7 prior days (forecast uses only earlier prices). Live plans
+    start with the next gate. Backtest days are labelled as such on the screen."""
+    tz = ZoneInfo("Europe/Budapest"); today = dt.datetime.now(tz).date()
+    for k in range(days + 7, -1, -1):
+        day = (today - dt.timedelta(days=k)).isoformat()
+        s = load()
+        if s["days"].get(day, {}).get("actual"): continue
+        a = fetch_day(day)
+        if a is None: print(f"{day}: not available"); continue
+        ingest(day, a, fetch_day(day), method="2 direct API reads (GitHub Actions)")
+    s = load()
+    for k in range(days, -1, -1):
+        day = (today - dt.timedelta(days=k)); key = day.isoformat(); d = s["days"].get(key)
+        if not d or not d.get("actual") or d.get("net"): continue
+        hist = [s["days"].get((day - dt.timedelta(days=j)).isoformat(), {}).get("actual") for j in range(7, 0, -1)]
+        if not all(hist): continue
+        f = blend(hist); net = schedule(f)
+        d.update({"source": "backtest", "forecast": [round(x, 2) for x in f], "net": [round(x, 1) for x in net]})
+        d["realized"] = round(settle(d["net"], d["actual"])); d["perfect"] = round(settle(schedule(d["actual"]), d["actual"]))
+        print(f"backtest {key}: realized {d['realized']} / perfect {d['perfect']}")
+    save(s)
+
+def update_zone():
     tz = ZoneInfo("Europe/Budapest"); today = dt.datetime.now(tz).date()
     s = load(); changed = False
     for k in range(-7, 2):                      # D-7 .. D+1
@@ -130,9 +177,12 @@ def update():
     print("changed" if changed else "no change")
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(); ap.add_argument("cmd", choices=["update", "ingest", "plan", "check"])
+    ap = argparse.ArgumentParser(); ap.add_argument("cmd", choices=["update", "ingest", "plan", "check", "backfill"])
+    ap.add_argument("--zone", default="HU", choices=list(ZONES)); ap.add_argument("--days", type=int, default=9)
     ap.add_argument("--date"); ap.add_argument("--prices"); ap.add_argument("--prices2"); a = ap.parse_args()
+    use_zone(a.zone)
     if a.cmd == "update": update()
+    elif a.cmd == "backfill": backfill(a.days)
     elif a.cmd == "ingest":
         if not a.prices2: raise SystemExit("give two independent reads: --prices a.json --prices2 b.json")
         ingest(a.date, json.load(open(a.prices)), json.load(open(a.prices2)))

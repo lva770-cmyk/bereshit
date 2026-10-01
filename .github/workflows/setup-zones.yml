@@ -1,0 +1,38 @@
+name: בראשית – הקמת מדינות (רומניה, יוון)
+# One-time seeding of new zones: real prices for the last weeks, walk-forward backtest days, live plan for
+# tomorrow (if before the gate), and the year-long backtest per zone. Re-runnable; never overwrites real prices.
+on:
+  workflow_dispatch: {}
+  push:
+    paths: [".github/workflows/setup-zones.yml", "yearly.py"]
+permissions:
+  contents: write
+concurrency:
+  group: bereshit-update
+  cancel-in-progress: false
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install numpy scipy
+      - run: python engine.py backfill --zone RO --days 9 || true
+      - run: python engine.py backfill --zone GR --days 9 || true
+      - run: python engine.py update
+      - name: commit seeded zones
+        run: |
+          git config user.name "bereshit-bot"
+          git config user.email "bereshit-bot@users.noreply.github.com"
+          git add data*.json
+          git commit -m "zones: seed RO, GR $(date -u +%Y-%m-%dT%H:%MZ)" || true
+          for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
+      - run: python yearly.py HU RO GR
+      - name: commit yearly
+        run: |
+          git add yearly-*.json
+          git commit -m "yearly backtest per zone $(date -u +%Y-%m-%dT%H:%MZ)" || exit 0
+          for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
