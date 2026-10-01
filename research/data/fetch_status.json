@@ -1,0 +1,180 @@
+{
+ "started": "2026-10-01T07:15:02.860681Z",
+ "start": "2025-06-15",
+ "end": "2026-09-30",
+ "steps": {
+  "prices": {
+   "ok": true,
+   "rows": 37632
+  },
+  "hu_budapest": {
+   "ok": true,
+   "hours": 11352,
+   "non_null": {
+    "temperature_2m_previous_day1": 11352,
+    "temperature_2m_previous_day2": 11352,
+    "shortwave_radiation_previous_day1": 11352,
+    "shortwave_radiation_previous_day2": 11352,
+    "wind_speed_100m_previous_day1": 11352,
+    "wind_speed_100m_previous_day2": 11352,
+    "cloud_cover_previous_day1": 11352,
+    "cloud_cover_previous_day2": 11352
+   }
+  },
+  "hu_debrecen": {
+   "ok": true,
+   "hours": 11352,
+   "non_null": {
+    "temperature_2m_previous_day1": 11352,
+    "temperature_2m_previous_day2": 11352,
+    "shortwave_radiation_previous_day1": 11352,
+    "shortwave_radiation_previous_day2": 11352,
+    "wind_speed_100m_previous_day1": 11352,
+    "wind_speed_100m_previous_day2": 11352,
+    "cloud_cover_previous_day1": 11352,
+    "cloud_cover_previous_day2": 11352
+   }
+  },
+  "hu_szeged": {
+   "ok": true,
+   "hours": 11352,
+   "non_null": {
+    "temperature_2m_previous_day1": 11352,
+    "temperature_2m_previous_day2": 11352,
+    "shortwave_radiation_previous_day1": 11352,
+    "shortwave_radiation_previous_day2": 11352,
+    "wind_speed_100m_previous_day1": 11352,
+    "wind_speed_100m_previous_day2": 11352,
+    "cloud_cover_previous_day1": 11352,
+    "cloud_cover_previous_day2": 11352
+   }
+  },
+  "hu_pecs": {
+   "ok": true,
+   "hours": 11352,
+   "non_null": {
+    "temperature_2m_previous_day1": 11352,
+    "temperature_2m_previous_day2": 11352,
+    "shortwave_radiation_previous_day1": 11352,
+    "shortwave_radiation_previous_day2": 11352,
+    "wind_speed_100m_previous_day1": 11352,
+    "wind_speed_100m_previous_day2": 11352,
+    "cloud_cover_previous_day1": 11352,
+    "cloud_cover_previous_day2": 11352
+   }
+  },
+  "hu_gyor": {
+   "ok": true,
+   "hours": 11352,
+   "non_null": {
+    "temperature_2m_previous_day1": 11352,
+    "temperature_2m_previous_day2": 11352,
+    "shortwave_radiation_previous_day1": 11352,
+    "shortwave_radiation_previous_day2": 11352,
+    "wind_speed_100m_previous_day1": 11352,
+    "wind_speed_100m_previous_day2": 11352,
+    "cloud_cover_previous_day1": 11352,
+    "cloud_cover_previous_day2": 11352
+   }
+  },
+  "at_vienna": {
+   "ok": true,
+   "hours": 11352,
+   "non_null": {
+    "temperature_2m_previous_day1": 11352,
+    "temperature_2m_previous_day2": 11352,
+    "shortwave_radiation_previous_day1": 11352,
+    "shortwave_radiation_previous_day2": 11352,
+    "wind_speed_100m_previous_day1": 11352,
+    "wind_speed_100m_previous_day2": 11352,
+    "cloud_cover_previous_day1": 11352,
+    "cloud_cover_previous_day2": 11352
+   }
+  },
+  "ro_dobrogea": {
+   "ok": true,
+   "hours": 11352,
+   "non_null": {
+    "temperature_2m_previous_day1": 11352,
+    "temperature_2m_previous_day2": 11352,
+    "shortwave_radiation_previous_day1": 11352,
+    "shortwave_radiation_previous_day2": 11352,
+    "wind_speed_100m_previous_day1": 11352,
+    "wind_speed_100m_previous_day2": 11352,
+    "cloud_cover_previous_day1": 11352,
+    "cloud_cover_previous_day2": 11352
+   }
+  },
+  "ro_bucharest": {
+   "ok": true,
+   "hours": 11352,
+   "non_null": {
+    "temperature_2m_previous_day1": 11352,
+    "temperature_2m_previous_day2": 11352,
+    "shortwave_radiation_previous_day1": 11352,
+    "shortwave_radiation_previous_day2": 11352,
+    "wind_speed_100m_previous_day1": 11352,
+    "wind_speed_100m_previous_day2": 11352,
+    "cloud_cover_previous_day1": 11352,
+    "cloud_cover_previous_day2": 11352
+   }
+  },
+  "de_north": {
+   "ok": true,
+   "hours": 11352,
+   "non_null": {
+    "temperature_2m_previous_day1": 11352,
+    "temperature_2m_previous_day2": 11352,
+    "shortwave_radiation_previous_day1": 11352,
+    "shortwave_radiation_previous_day2": 11352,
+    "wind_speed_100m_previous_day1": 11352,
+    "wind_speed_100m_previous_day2": 11352,
+    "cloud_cover_previous_day1": 11352,
+    "cloud_cover_previous_day2": 11352
+   }
+  },
+  "de_south": {
+   "ok": true,
+   "hours": 11352,
+   "non_null": {
+    "temperature_2m_previous_day1": 11352,
+    "temperature_2m_previous_day2": 11352,
+    "shortwave_radiation_previous_day1": 11352,
+    "shortwave_radiation_previous_day2": 11352,
+    "wind_speed_100m_previous_day1": 11352,
+    "wind_speed_100m_previous_day2": 11352,
+    "cloud_cover_previous_day1": 11352,
+    "cloud_cover_previous_day2": 11352
+   }
+  },
+  "pl_center": {
+   "ok": true,
+   "hours": 11352,
+   "non_null": {
+    "temperature_2m_previous_day1": 11352,
+    "temperature_2m_previous_day2": 11352,
+    "shortwave_radiation_previous_day1": 11352,
+    "shortwave_radiation_previous_day2": 11352,
+    "wind_speed_100m_previous_day1": 11352,
+    "wind_speed_100m_previous_day2": 11352,
+    "cloud_cover_previous_day1": 11352,
+    "cloud_cover_previous_day2": 11352
+   }
+  },
+  "sk_kosice": {
+   "ok": true,
+   "hours": 11352,
+   "non_null": {
+    "temperature_2m_previous_day1": 11352,
+    "temperature_2m_previous_day2": 11352,
+    "shortwave_radiation_previous_day1": 11352,
+    "shortwave_radiation_previous_day2": 11352,
+    "wind_speed_100m_previous_day1": 11352,
+    "wind_speed_100m_previous_day2": 11352,
+    "cloud_cover_previous_day1": 11352,
+    "cloud_cover_previous_day2": 11352
+   }
+  }
+ },
+ "finished": "2026-10-01T07:23:12.972557Z"
+}
