@@ -7,29 +7,17 @@ import numpy as np
 import engine
 
 def fetch(zone, start, end):
-    out, d = {}, start
-    tz = ZoneInfo("Europe/Budapest")
+    """Same strict fetch as the live engine: CET delivery days, exact quarter-hour count, DST days mapped to 96."""
+    engine.use_zone(zone)
+    days, d = {}, start
     while d <= end:
         e = min(d + dt.timedelta(days=30), end)
-        url = f"https://api.energy-charts.info/price?bzn={zone}&start={d}&end={e}"
-        for k in range(5):
-            try:
-                with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "bereshit/1.0"}), timeout=120) as r:
-                    j = json.load(r); break
-            except Exception:
-                if k == 4: raise
-                time.sleep(15 * (k + 1))
-        for t, p in zip(j["unix_seconds"], j["price"]):
-            if p is None: continue
-            out.setdefault(dt.datetime.fromtimestamp(t, tz).date(), {})[t] = p
+        for day, a in engine.fetch_range(d.isoformat(), e.isoformat()).items():
+            if len(a) * 4 == engine._dst_len(day): a = [x for x in a for _ in range(4)]
+            if len(a) == 100: a = a[:12] + a[16:]
+            elif len(a) == 92: a = a[:8] + a[4:8] + a[8:]
+            if len(a) == 96: days[dt.date.fromisoformat(day)] = a
         d = e + dt.timedelta(days=1); time.sleep(2)
-    days = {}
-    for day, m in out.items():
-        a = [m[t] for t in sorted(m)]
-        if len(a) in (23, 24, 25): a = [x for x in a for _ in range(4)]
-        if len(a) == 100: a = a[:12] + a[16:]
-        elif len(a) == 92: a = a[:8] + a[4:8] + a[8:]
-        if len(a) == 96: days[day] = a
     return days
 
 def run(zone):
