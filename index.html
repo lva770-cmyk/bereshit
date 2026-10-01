@@ -387,7 +387,7 @@ function vtxt(v,short){if(!v)return short?'<span class="vf no">לא מאומת</
  return short?`<span class="vf ok" title="#${v.sha256}">✓ ${how}</span>${warn}`:`<span class="vf ok">✓ מאומת</span> ${how} · ${bd(v.n+'/96')} · טווח תקין · <span class="hash">${bd('#'+v.sha256)}</span>${warn}`}
 /* ---------- per-day math ---------- */
 function calc(d){const n=d.net,a=d.actual||d.forecast;const cash=n.map((v,t)=>a[t]*v*.25),wear=n.map(v=>v>0?WEAR*v*.25:0);let e=0;const soc=n.map(v=>{e+=v<0?-v*.25*EC:-v*.25/EC;return Math.max(0,Math.min(EMAX,e))});return {n,a,cash,wear,soc}}
-function upTo(c,s0,frac){let out=0,inn=0,w=0,buy=0,sell=0;for(let t=0;t<96;t++){const k=t<s0?1:t===s0?frac:0;if(!k)continue;const cv=c.cash[t]*k;if(cv<0){out+=-cv;buy+=-c.n[t]*.25*k}else{inn+=cv;sell+=c.n[t]*.25*k}w+=c.wear[t]*k}return {out,inn,w,buy,sell,net:inn-out-w}}
+function upTo(c,s0,frac){let out=0,inn=0,w=0,buy=0,sell=0;for(let t=0;t<96;t++){const k=t<s0?1:t===s0?frac:0;if(!k)continue;const cv=c.cash[t]*k;if(c.n[t]<0){out+=-cv;buy+=-c.n[t]*.25*k}else if(c.n[t]>0){inn+=cv;sell+=c.n[t]*.25*k}w+=c.wear[t]*k}return {out,inn,w,buy,sell,net:inn-out-w}}
 function runs(c){const R=[];let cur=null;c.n.forEach((v,t)=>{const side=Math.abs(v)<2?0:v>0?1:-1;if(!side){cur=null;return}if(cur&&cur.side===side&&cur.e===t){cur.e=t+1;cur.t.push(t)}else{cur={side,b:t,e:t+1,t:[t]};R.push(cur)}});
  R.forEach(r=>{r.mwh=r.t.reduce((s,t)=>s+Math.abs(c.n[t])*.25,0);r.cash=r.t.reduce((s,t)=>s+c.cash[t],0);r.wear=r.t.reduce((s,t)=>s+c.wear[t],0);r.mw=Math.max(...r.t.map(t=>Math.abs(c.n[t])));r.px=r.t.reduce((s,t)=>s+c.a[t]*Math.abs(c.n[t]),0)/r.t.reduce((s,t)=>s+Math.abs(c.n[t]),0)});return R}
 
