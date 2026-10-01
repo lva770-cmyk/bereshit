@@ -73,7 +73,9 @@ def ingest(day, prices, prices2=None, fetched_at=None, method="2 direct API read
     a = [float(x) for x in prices]
     # clock-change days: 100 slots (autumn, 02:00-03:00 twice) -> drop the repeated hour; 92 (spring) -> repeat 01:00-02:00.
     # Keeps every day on the same 96-slot grid; the approximation affects one hour on two days a year.
-    if len(a) in (23, 24, 25): a = [x for x in a for _ in range(4)]   # hourly market day -> 15-min grid
+    want = _dst_len(day)
+    if len(a) * 4 == want: a = [x for x in a for _ in range(4)]   # hourly market day -> 15-min grid
+    if len(a) != want: raise SystemExit(f"{day}: expected {want} quarter-hours, got {raw_n} – not ingesting")
     if len(a) == 100: a = a[:12] + a[16:]
     elif len(a) == 92: a = a[:8] + a[4:8] + a[8:]
     if len(a) != 96: raise SystemExit(f"expected 96 quarter-hour prices, got {len(prices)}")
@@ -112,22 +114,44 @@ def plan(day):
 
 API = "https://api.energy-charts.info/price?bzn={z}&start={d}&end={d}"
 
-def fetch_day(day):
-    """Real prices for one delivery day, straight from the API. Returns None if not published yet."""
+def _dst_len(day):
+    """Number of quarter-hours in a CET delivery day: 92 on the spring clock change, 100 in autumn, else 96."""
+    tz = ZoneInfo("Europe/Budapest"); d = dt.date.fromisoformat(day)
+    a = dt.datetime(d.year, d.month, d.day, tzinfo=tz); b = a + dt.timedelta(days=1)
+    return int((b.astimezone(dt.timezone.utc) - a.astimezone(dt.timezone.utc)).total_seconds() // 900)
+
+def fetch_range(start, end):
+    """Real prices straight from the API, split into CET/CEST delivery days (the SDAC day for every zone).
+    The request is padded by a day on each side because the API cuts days in the zone's own local time
+    (Romania and Greece are one hour ahead). Only complete days are returned: {day: [prices]}."""
     import urllib.request, urllib.error, time
-    for k in range(5):
+    s0 = (dt.date.fromisoformat(start) - dt.timedelta(days=1)).isoformat()
+    e0 = (dt.date.fromisoformat(end) + dt.timedelta(days=1)).isoformat()
+    url = f"https://api.energy-charts.info/price?bzn={ZONE}&start={s0}&end={e0}"
+    for k in range(6):
         try:
-            with urllib.request.urlopen(urllib.request.Request(API.format(z=ZONE, d=day), headers={"User-Agent": "bereshit/1.0"}), timeout=60) as r:
+            with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "bereshit/1.0"}), timeout=90) as r:
                 j = json.load(r)
             break
         except urllib.error.HTTPError as err:
-            if err.code in (404, 204): return None
-            if err.code == 429 and k < 4: time.sleep(10 * (k + 1)); continue
+            if err.code in (404, 204): return {}
+            if err.code == 429 and k < 5: time.sleep(15 * (k + 1)); continue
             raise
-    tz = ZoneInfo("Europe/Budapest")
-    vals = [p for t, p in zip(j.get("unix_seconds", []), j.get("price", []))
-            if dt.datetime.fromtimestamp(t, tz).date().isoformat() == day and p is not None]
-    return vals if len(vals) in (23, 24, 25, 92, 96, 100) else None
+    tz = ZoneInfo("Europe/Budapest"); by = {}
+    for t, p in zip(j.get("unix_seconds", []), j.get("price", [])):
+        if p is None: continue
+        by.setdefault(dt.datetime.fromtimestamp(t, tz).date().isoformat(), {})[t] = p
+    out = {}
+    for day, m in by.items():
+        if not (start <= day <= end): continue
+        vals = [m[t] for t in sorted(m)]
+        if len(vals) == _dst_len(day) or len(vals) * 4 == _dst_len(day):   # 15-min, or hourly
+            out[day] = vals
+    return out
+
+def fetch_day(day):
+    """Real prices for one delivery day. None if not (fully) published yet."""
+    return fetch_range(day, day).get(day)
 
 def update():
     """All zones; a failure in one zone never blocks the others."""
@@ -141,13 +165,14 @@ def backfill(days):
     'backtest' plans for every past day that has 7 prior days (forecast uses only earlier prices). Live plans
     start with the next gate. Backtest days are labelled as such on the screen."""
     tz = ZoneInfo("Europe/Budapest"); today = dt.datetime.now(tz).date()
+    lo, hi = (today - dt.timedelta(days=days + 7)).isoformat(), today.isoformat()
+    A = fetch_range(lo, hi); import time; time.sleep(3); B = fetch_range(lo, hi)   # two independent reads
     for k in range(days + 7, -1, -1):
         day = (today - dt.timedelta(days=k)).isoformat()
         s = load()
         if s["days"].get(day, {}).get("actual"): continue
-        a = fetch_day(day)
-        if a is None: print(f"{day}: not available"); continue
-        ingest(day, a, fetch_day(day), method="2 direct API reads (GitHub Actions)")
+        if day not in A or day not in B: print(f"{day}: not available"); continue
+        ingest(day, A[day], B[day], method="2 direct API reads (GitHub Actions)")
     s = load()
     for k in range(days, -1, -1):
         day = (today - dt.timedelta(days=k)); key = day.isoformat(); d = s["days"].get(key)

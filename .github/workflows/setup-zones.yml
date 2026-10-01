@@ -1,5 +1,5 @@
 name: בראשית – הקמת מדינות (רומניה, יוון)
-# One-time seeding of new zones: real prices for the last weeks, walk-forward backtest days, live plan for
+# Seeding of new zones (v2, CET-day alignment fix): real prices for the last weeks, walk-forward backtest days, live plan for
 # tomorrow (if before the gate), and the year-long backtest per zone. Re-runnable; never overwrites real prices.
 on:
   workflow_dispatch: {}
