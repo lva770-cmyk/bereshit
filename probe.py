@@ -1,17 +1,22 @@
-"""Diagnostics: what the price API returns for a zone code (written to probe.json)."""
-import json, sys, urllib.request, urllib.error, datetime as dt
-out = {}
-for bzn in sys.argv[1:]:
-    url = f"https://api.energy-charts.info/price?bzn={bzn}&start=2026-10-01&end=2026-10-03"
+"""Diagnostics: is each price source reachable from GitHub Actions right now? Writes probe.json."""
+import json, urllib.request, urllib.error, datetime as dt, time
+T = (dt.date.today()).isoformat()
+URLS = {
+ "energy-charts HU": f"https://api.energy-charts.info/price?bzn=HU&start={T}&end={T}",
+ "energy-charts DE-LU": f"https://api.energy-charts.info/price?bzn=DE-LU&start={T}&end={T}",
+ "energy-charts RO": f"https://api.energy-charts.info/price?bzn=RO&start={T}&end={T}",
+ "energy-charts root": "https://api.energy-charts.info/",
+ "smard DE-LU index": "https://www.smard.de/app/chart_data/4169/DE-LU/index_quarterhour.json",
+ "entsoe web": "https://web-api.tp.entsoe.eu/api",
+}
+out = {"at": dt.datetime.utcnow().isoformat() + "Z"}
+for k, u in URLS.items():
+    t0 = time.time()
     try:
-        with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "bereshit/1.0"}), timeout=90) as r:
-            j = json.load(r)
-        ts = j.get("unix_seconds", []); pr = j.get("price", [])
-        out[bzn] = {"ok": True, "n": len(ts), "nonnull": sum(p is not None for p in pr), "keys": list(j)[:8],
-                    "first": [dt.datetime.utcfromtimestamp(t).isoformat() for t in ts[:3]], "step_s": (ts[1] - ts[0]) if len(ts) > 1 else None,
-                    "sample": pr[:6], "unit": j.get("unit")}
+        with urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "bereshit/1.0"}), timeout=60) as r:
+            b = r.read(); out[k] = {"http": r.status, "bytes": len(b), "head": b[:160].decode("utf8", "replace"), "s": round(time.time() - t0, 1)}
     except urllib.error.HTTPError as e:
-        out[bzn] = {"ok": False, "http": e.code, "body": e.read()[:300].decode("utf8", "replace")}
+        out[k] = {"http": e.code, "body": e.read()[:160].decode("utf8", "replace"), "s": round(time.time() - t0, 1)}
     except Exception as e:
-        out[bzn] = {"ok": False, "error": repr(e)}
+        out[k] = {"error": repr(e)[:200], "s": round(time.time() - t0, 1)}
 json.dump(out, open("probe.json", "w"), indent=1); print(json.dumps(out, indent=1))
