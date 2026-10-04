@@ -14,7 +14,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -22,12 +22,14 @@ jobs:
           python-version: "3.12"
       - run: pip install numpy scipy
       - run: python engine.py update
+      - name: year-long backtest for any zone that lacks one
+        run: for z in HU RO DE; do [ -f yearly-$z.json ] || python yearly.py $z || true; done
       - name: commit if changed
         run: |
-          if [ -n "$(git status --porcelain data*.json)" ]; then
+          if [ -n "$(git status --porcelain data*.json yearly-*.json)" ]; then
             git config user.name "bereshit-bot"
             git config user.email "bereshit-bot@users.noreply.github.com"
-            git add data*.json
+            git add data*.json yearly-*.json
             git commit -m "data: $(date -u +%Y-%m-%dT%H:%MZ)"
             git push
           fi

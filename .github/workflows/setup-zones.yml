@@ -20,7 +20,6 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install numpy scipy
-      - run: python probe.py DE-LU DE HU || true
       - run: python engine.py backfill --zone RO --days 9 || true
       - run: python engine.py backfill --zone DE --days 9 || true
       - run: python engine.py update
@@ -28,7 +27,7 @@ jobs:
         run: |
           git config user.name "bereshit-bot"
           git config user.email "bereshit-bot@users.noreply.github.com"
-          git add data*.json probe.json
+          git add data*.json
           git commit -m "zones: seed RO, DE $(date -u +%Y-%m-%dT%H:%MZ)" || true
           for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
       - run: python yearly.py HU RO DE

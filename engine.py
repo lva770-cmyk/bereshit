@@ -137,6 +137,10 @@ def fetch_range(start, end):
         except urllib.error.HTTPError as err:
             if err.code in (404, 204): return {}
             if err.code == 429 and k < 5: time.sleep(15 * (k + 1)); continue
+            if err.code in (500, 502, 503, 504) and k < 2: time.sleep(10 * (k + 1)); continue
+            raise
+        except (urllib.error.URLError, TimeoutError):
+            if k < 2: time.sleep(10 * (k + 1)); continue
             raise
     tz = ZoneInfo("Europe/Budapest"); by = {}
     for t, p in zip(j.get("unix_seconds", []), j.get("price", [])):
@@ -189,13 +193,19 @@ def backfill(days):
 def update_zone():
     tz = ZoneInfo("Europe/Budapest"); today = dt.datetime.now(tz).date()
     s = load(); changed = False
+    if sum(1 for d in s["days"].values() if d.get("actual")) < 10:   # new zone: seed it (self-healing after outages)
+        try: backfill(9); changed = True; s = load()
+        except (Exception, SystemExit) as err: print("backfill failed (will retry next run):", repr(err))
     for k in range(-7, 2):                      # D-7 .. D+1
         day = (today + dt.timedelta(days=k)).isoformat()
         if s["days"].get(day, {}).get("actual"): continue
-        a = fetch_day(day)
-        if a is None: print(f"{day}: not published yet"); continue
-        b = fetch_day(day)                      # second independent HTTP read
-        ingest(day, a, b, method="2 direct API reads (GitHub Actions)"); changed = True
+        try:
+            a = fetch_day(day)
+            if a is None: print(f"{day}: not published yet"); continue
+            b = fetch_day(day)                  # second independent HTTP read
+        except Exception as err:                # price server down: keep going, planning only needs stored data
+            print(f"{day}: fetch failed ({err!r}) – will retry next run"); break
+        ingest(day, a, b, method="2 direct API reads (GitHub Actions)"); changed = True; s = load()
     tomorrow = (today + dt.timedelta(days=1)).isoformat()
     if not s["days"].get(tomorrow, {}).get("net") and dt.datetime.now(tz).hour < 12:
         try: plan(tomorrow); changed = True
