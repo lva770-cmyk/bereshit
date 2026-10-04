@@ -1,0 +1,17 @@
+{
+ "DE-LU": {
+  "ok": false,
+  "http": 503,
+  "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n"
+ },
+ "DE": {
+  "ok": false,
+  "http": 503,
+  "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n"
+ },
+ "HU": {
+  "ok": false,
+  "http": 503,
+  "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n"
+ }
+}
