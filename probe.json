@@ -1,17 +1,34 @@
 {
- "DE-LU": {
-  "ok": false,
+ "at": "2026-10-04T13:32:16.915134Z",
+ "energy-charts HU": {
   "http": 503,
-  "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n"
+  "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+  "s": 1.1
  },
- "DE": {
-  "ok": false,
+ "energy-charts DE-LU": {
   "http": 503,
-  "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n"
+  "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+  "s": 0.4
  },
- "HU": {
-  "ok": false,
+ "energy-charts RO": {
   "http": 503,
-  "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n"
+  "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+  "s": 0.4
+ },
+ "energy-charts root": {
+  "http": 503,
+  "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
+  "s": 0.4
+ },
+ "smard DE-LU index": {
+  "http": 200,
+  "bytes": 5882,
+  "head": "{\"timestamps\":[1538344800000,1538949600000,1539554400000,1540159200000,1540767600000,1541372400000,1541977200000,1542582000000,1543186800000,1543791600000,15443",
+  "s": 0.9
+ },
+ "entsoe web": {
+  "http": 401,
+  "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Acknowledgement_MarketDocument\n\txmlns=\"urn:iec62325.351:tc57wg16:451-1:acknowledgementdocument:7:0\">\n\t<mRID>f0dc8f74-814",
+  "s": 0.7
  }
 }
