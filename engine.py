@@ -19,7 +19,8 @@ STATE = "data.json"
 # Bidding zones on the same SDAC auction (gate 12:00 CET for all). Each zone has its own state file.
 ZONES = {"HU": ("data.json", "HUPX day-ahead (SDAC), 15-min"),
          "RO": ("data-RO.json", "OPCOM day-ahead (SDAC), 15-min"),
-         "GR": ("data-GR.json", "HEnEx day-ahead (SDAC), 15-min")}
+         "DE": ("data-DE.json", "EPEX SPOT DE-LU day-ahead (SDAC), 15-min")}
+BZN = {"DE": "DE-LU"}   # Energy-Charts bidding-zone code where it differs from ours
 ZONE = "HU"
 def use_zone(z):
     global STATE, ZONE
@@ -127,7 +128,7 @@ def fetch_range(start, end):
     import urllib.request, urllib.error, time
     s0 = (dt.date.fromisoformat(start) - dt.timedelta(days=1)).isoformat()
     e0 = (dt.date.fromisoformat(end) + dt.timedelta(days=1)).isoformat()
-    url = f"https://api.energy-charts.info/price?bzn={ZONE}&start={s0}&end={e0}"
+    url = f"https://api.energy-charts.info/price?bzn={BZN.get(ZONE, ZONE)}&start={s0}&end={e0}"
     for k in range(6):
         try:
             with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "bereshit/1.0"}), timeout=90) as r:
