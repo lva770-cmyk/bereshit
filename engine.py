@@ -121,35 +121,90 @@ def _dst_len(day):
     a = dt.datetime(d.year, d.month, d.day, tzinfo=tz); b = a + dt.timedelta(days=1)
     return int((b.astimezone(dt.timezone.utc) - a.astimezone(dt.timezone.utc)).total_seconds() // 900)
 
-def fetch_range(start, end):
-    """Real prices straight from the API, split into CET/CEST delivery days (the SDAC day for every zone).
-    The request is padded by a day on each side because the API cuts days in the zone's own local time
-    (Romania and Greece are one hour ahead). Only complete days are returned: {day: [prices]}."""
+SOURCE = None        # which source served the last successful fetch (shown in the verification stamp)
+ENTSOE_EIC = {"HU": "10YHU-MAVIR----U", "RO": "10YRO-TEL------P", "DE": "10Y1001A1001A82H"}
+
+def _get(url, kind="json", tries=3):
     import urllib.request, urllib.error, time
-    s0 = (dt.date.fromisoformat(start) - dt.timedelta(days=1)).isoformat()
-    e0 = (dt.date.fromisoformat(end) + dt.timedelta(days=1)).isoformat()
-    url = f"https://api.energy-charts.info/price?bzn={BZN.get(ZONE, ZONE)}&start={s0}&end={e0}"
-    for k in range(6):
+    for k in range(tries):
         try:
             with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "bereshit/1.0"}), timeout=90) as r:
-                j = json.load(r)
-            break
+                body = r.read()
+            return json.loads(body) if kind == "json" else body
         except urllib.error.HTTPError as err:
-            if err.code in (404, 204): return {}
-            if err.code == 429 and k < 5: time.sleep(15 * (k + 1)); continue
-            if err.code in (500, 502, 503, 504) and k < 2: time.sleep(10 * (k + 1)); continue
+            if err.code in (404, 204): return None
+            if err.code in (429, 500, 502, 503, 504) and k < tries - 1: time.sleep(10 * (k + 1)); continue
             raise
         except (urllib.error.URLError, TimeoutError):
-            if k < 2: time.sleep(10 * (k + 1)); continue
+            if k < tries - 1: time.sleep(10 * (k + 1)); continue
             raise
+
+def _src_energy_charts(s0, e0):
+    j = _get(f"https://api.energy-charts.info/price?bzn={BZN.get(ZONE, ZONE)}&start={s0}&end={e0}")
+    if j is None: return {}
+    return {t: p for t, p in zip(j.get("unix_seconds", []), j.get("price", [])) if p is not None}
+
+def _src_entsoe(s0, e0):
+    """ENTSO-E Transparency Platform (official TSO data). Needs a free token in the ENTSOE_TOKEN secret."""
+    import os, xml.etree.ElementTree as ET
+    tok = os.environ.get("ENTSOE_TOKEN")
+    if not tok or ZONE not in ENTSOE_EIC: raise RuntimeError("no ENTSO-E token")
+    f = lambda d: dt.datetime.combine(dt.date.fromisoformat(d), dt.time()).strftime("%Y%m%d0000")
+    eic = ENTSOE_EIC[ZONE]
+    x = _get(f"https://web-api.tp.entsoe.eu/api?securityToken={tok}&documentType=A44&in_Domain={eic}&out_Domain={eic}"
+             f"&periodStart={f(s0)}&periodEnd={f(e0)}", kind="raw")
+    if x is None: return {}
+    root = ET.fromstring(x); ns = {"n": root.tag.split("}")[0].strip("{")}
+    out = {}
+    for ts in root.findall("n:TimeSeries", ns):
+        for per in ts.findall("n:Period", ns):
+            start = dt.datetime.strptime(per.find("n:timeInterval/n:start", ns).text, "%Y-%m-%dT%H:%MZ").replace(tzinfo=dt.timezone.utc)
+            end = dt.datetime.strptime(per.find("n:timeInterval/n:end", ns).text, "%Y-%m-%dT%H:%MZ").replace(tzinfo=dt.timezone.utc)
+            step = {"PT15M": 900, "PT30M": 1800, "PT60M": 3600}[per.find("n:resolution", ns).text]
+            pts = {int(p.find("n:position", ns).text): float(p.find("n:price.amount", ns).text) for p in per.findall("n:Point", ns)}
+            n = int((end - start).total_seconds() // step); last = None
+            for i in range(1, n + 1):                       # curve type A03: a missing position repeats the previous price
+                last = pts.get(i, last)
+                if last is None: continue
+                t0 = int(start.timestamp()) + (i - 1) * step
+                for q in range(0, step, 900): out.setdefault(t0 + q, last)   # first series wins on duplicates
+    return out
+
+def _src_smard(s0, e0):
+    """SMARD (Bundesnetzagentur) – official German day-ahead price DE-LU, quarter-hourly. Germany only."""
+    if ZONE != "DE": raise RuntimeError("SMARD covers Germany only")
+    idx = _get("https://www.smard.de/app/chart_data/4169/DE-LU/index_quarterhour.json") or {}
+    lo = dt.datetime.fromisoformat(s0).replace(tzinfo=dt.timezone.utc).timestamp() * 1000
+    hi = dt.datetime.fromisoformat(e0).replace(tzinfo=dt.timezone.utc).timestamp() * 1000 + 86400000
+    out = {}
+    for w in idx.get("timestamps", []):
+        if w > hi or w + 8 * 86400000 < lo: continue
+        j = _get(f"https://www.smard.de/app/chart_data/4169/DE-LU/4169_DE-LU_quarterhour_{w}.json") or {}
+        for ms, v in j.get("series", []):
+            if v is not None: out[int(ms // 1000)] = float(v)
+    return out
+
+def fetch_range(start, end):
+    """Real prices split into CET/CEST delivery days (the SDAC day for every zone). Sources in order:
+    Energy-Charts, then ENTSO-E (if a token is configured), then SMARD (Germany). The request is padded by a
+    day on each side because sources cut days in the zone's own local time. Only complete days are returned."""
+    global SOURCE
+    s0 = (dt.date.fromisoformat(start) - dt.timedelta(days=1)).isoformat()
+    e0 = (dt.date.fromisoformat(end) + dt.timedelta(days=1)).isoformat()
+    m, errs = None, []
+    for name, fn in (("Energy-Charts", _src_energy_charts), ("ENTSO-E", _src_entsoe), ("SMARD", _src_smard)):
+        try:
+            m = fn(s0, e0); SOURCE = name; break
+        except Exception as err:
+            errs.append(f"{name}: {err!r}"[:160])
+    if m is None: raise RuntimeError("all price sources failed – " + " | ".join(errs))
     tz = ZoneInfo("Europe/Budapest"); by = {}
-    for t, p in zip(j.get("unix_seconds", []), j.get("price", [])):
-        if p is None: continue
+    for t, p in m.items():
         by.setdefault(dt.datetime.fromtimestamp(t, tz).date().isoformat(), {})[t] = p
     out = {}
-    for day, m in by.items():
+    for day, mm in by.items():
         if not (start <= day <= end): continue
-        vals = [m[t] for t in sorted(m)]
+        vals = [mm[t] for t in sorted(mm)]
         if len(vals) == _dst_len(day) or len(vals) * 4 == _dst_len(day):   # 15-min, or hourly
             out[day] = vals
     return out
@@ -177,7 +232,7 @@ def backfill(days):
         s = load()
         if s["days"].get(day, {}).get("actual"): continue
         if day not in A or day not in B: print(f"{day}: not available"); continue
-        ingest(day, A[day], B[day], method="2 direct API reads (GitHub Actions)")
+        ingest(day, A[day], B[day], method=f"2 direct API reads (GitHub Actions) · {SOURCE}")
     s = load()
     for k in range(days, -1, -1):
         day = (today - dt.timedelta(days=k)); key = day.isoformat(); d = s["days"].get(key)
@@ -205,11 +260,14 @@ def update_zone():
             b = fetch_day(day)                  # second independent HTTP read
         except Exception as err:                # price server down: keep going, planning only needs stored data
             print(f"{day}: fetch failed ({err!r}) – will retry next run"); break
-        ingest(day, a, b, method="2 direct API reads (GitHub Actions)"); changed = True; s = load()
-    tomorrow = (today + dt.timedelta(days=1)).isoformat()
-    if not s["days"].get(tomorrow, {}).get("net") and dt.datetime.now(tz).hour < 12:
-        try: plan(tomorrow); changed = True
-        except SystemExit as err: print("plan skipped:", err)
+        ingest(day, a, b, method=f"2 direct API reads (GitHub Actions) · {SOURCE}"); changed = True; s = load()
+    # Lock the next plan as early as the data allows: D+1 until today's gate, and D+2 as soon as D+1 prices are
+    # published (still before D+2's gate). This survives long gaps between scheduled runs.
+    for k in (1, 2):
+        day = (today + dt.timedelta(days=k)).isoformat()
+        if load()["days"].get(day, {}).get("net"): continue
+        try: plan(day); changed = True
+        except SystemExit as err: print(f"plan {day} skipped:", err)
     print("changed" if changed else "no change")
 
 if __name__ == "__main__":

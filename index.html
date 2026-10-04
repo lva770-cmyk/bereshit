@@ -243,7 +243,7 @@ main.wrap.dim{opacity:.35;pointer-events:none;transition:opacity .15s}
       <li><i style="background:var(--live)"></i><span><b>אדום</b> = הרגע הנוכחי.</span></li>
       <li><i style="background:var(--ink3)"></i><span>השרשרת בראש המסך מראה את הדרך מהמחיר, דרך התחזית וההחלטה, עד הכסף.</span></li>
     </ul>
-    <p class="fine">המערכת מתעדכנת לבד: כל 30 דקות היא פונה ישירות לשרת המחירים, בלי תיווך. אם הרשת נופלת, המסך ממשיך לרוץ על מחירי היום, שכבר ידועים מראש. כשהחיבור חוזר, הוא מסתנכרן מיד. מה לא נכלל: השפעה של הסוללה על מחיר השוק, מסחר תוך-יומי, שירותי איזון ועמלות.</p>
+    <p class="fine">המערכת מתעדכנת לבד: כל כמה דקות היא פונה ישירות לשרתי המחירים (Energy-Charts, ובגיבוי ENTSO-E ו-SMARD), בלי תיווך. אם הרשת נופלת, המסך ממשיך לרוץ על מחירי היום, שכבר ידועים מראש. כשהחיבור חוזר, הוא מסתנכרן מיד. מה לא נכלל: השפעה של הסוללה על מחיר השוק, מסחר תוך-יומי, שירותי איזון ועמלות.</p>
     <div class="intro-act"><button type="button" class="go" id="introGo">כניסה למערכת</button><button type="button" class="later" id="introClose">סגירה</button></div>
   </div>
 </div>
@@ -337,7 +337,7 @@ main.wrap.dim{opacity:.35;pointer-events:none;transition:opacity .15s}
   </section>
 
   <section class="p s7">
-    <div class="ph"><div><h2>המחזור היומי</h2><p>GitHub מריץ את המנוע כל 30 דקות, בלי מחשב ובלי אדם. השלב הנוכחי מסומן לפי השעה.</p></div></div>
+    <div class="ph"><div><h2>המחזור היומי</h2><p>GitHub מריץ את המנוע כל 10 דקות, בלי מחשב ובלי אדם. הלוח למחר ננעל ברגע שיש מספיק נתונים, הרבה לפני סגירת השער. השלב הנוכחי מסומן לפי השעה.</p></div></div>
     <ol class="cycle" id="cycle">
       <li data-h="12"><span class="tm">עד 13:00 <small>· <bdi dir="ltr">12:00 CET</bdi></small></span><b>תכנון</b><span class="d">קולטת את מחירי היום, ונועלת לוח למחר.</span><code>engine update</code></li>
       <li data-h="12.01"><span class="tm">13:00 <small>· <bdi dir="ltr">12:00 CET</bdi></small></span><b>סגירת שער</b><span class="d">הבורסה סוגרת את ההצעות למחר.</span><code>SDAC / <span class="zex">HUPX</span></code></li>
@@ -383,8 +383,8 @@ const slotIL=(ds,s)=>ilTime(budMidnight(ds)+s*900000);
 
 /* ---------- verification stamp ---------- */
 function vtxt(v,short){if(!v)return short?'<span class="vf no">לא מאומת</span>':'<span class="vf no">לא מאומת</span>';
- const how=v.reads>=2&&v.match?(v.method&&v.method.indexOf('direct')>=0?'2 קריאות ישירות זהות':'2 קריאות זהות'):'קריאה ישירה מה-API';const warn=v.unusual?' <span class="vf warn">שונה מאוד מאתמול</span>':'';
- return short?`<span class="vf ok" title="#${v.sha256}">✓ ${how}</span>${warn}`:`<span class="vf ok">✓ מאומת</span> ${how} · ${bd(v.n+'/96')} · טווח תקין · <span class="hash">${bd('#'+v.sha256)}</span>${warn}`}
+ const how=v.reads>=2&&v.match?(v.method&&v.method.indexOf('direct')>=0?'2 קריאות ישירות זהות':'2 קריאות זהות'):'קריאה ישירה מה-API';const src=(v.method||'').split(' · ')[1];const how2=src?how+' · '+src:how;const warn=v.unusual?' <span class="vf warn">שונה מאוד מאתמול</span>':'';
+ return short?`<span class="vf ok" title="#${v.sha256}">✓ ${how2}</span>${warn}`:`<span class="vf ok">✓ מאומת</span> ${how2} · ${bd(v.n+'/96')} · טווח תקין · <span class="hash">${bd('#'+v.sha256)}</span>${warn}`}
 /* ---------- per-day math ---------- */
 function calc(d){const n=d.net,a=d.actual||d.forecast;const cash=n.map((v,t)=>a[t]*v*.25),wear=n.map(v=>v>0?WEAR*v*.25:0);let e=0;const soc=n.map(v=>{e+=v<0?-v*.25*EC:-v*.25/EC;return Math.max(0,Math.min(EMAX,e))});return {n,a,cash,wear,soc}}
 function upTo(c,s0,frac){let out=0,inn=0,w=0,buy=0,sell=0;for(let t=0;t<96;t++){const k=t<s0?1:t===s0?frac:0;if(!k)continue;const cv=c.cash[t]*k;if(c.n[t]<0){out+=-cv;buy+=-c.n[t]*.25*k}else if(c.n[t]>0){inn+=cv;sell+=c.n[t]*.25*k}w+=c.wear[t]*k}return {out,inn,w,buy,sell,net:inn-out-w}}

@@ -1,10 +1,10 @@
 name: בראשית – עדכון נתונים
-# Every 30 minutes: fetch real HUPX day-ahead prices directly from the Energy-Charts API,
+# Every 10 minutes (GitHub may skip some): fetch real HUPX day-ahead prices directly from the Energy-Charts API,
 # ingest any missing day (two identical reads required), lock tomorrow's plan before 12:00 CET,
 # and commit data.json. GitHub Pages then serves the updated screen. No AI, no personal computer.
 on:
   schedule:
-    - cron: "7,37 * * * *"
+    - cron: "3,13,23,33,43,53 * * * *"   # GitHub drops many scheduled runs; more slots = more chances
   workflow_dispatch: {}
 permissions:
   contents: write
@@ -22,8 +22,12 @@ jobs:
           python-version: "3.12"
       - run: pip install numpy scipy
       - run: python engine.py update
+        env:
+          ENTSOE_TOKEN: ${{ secrets.ENTSOE_TOKEN }}
       - name: year-long backtest for any zone that lacks one
         run: for z in HU RO DE; do [ -f yearly-$z.json ] || python yearly.py $z || true; done
+        env:
+          ENTSOE_TOKEN: ${{ secrets.ENTSOE_TOKEN }}
       - name: commit if changed
         run: |
           if [ -n "$(git status --porcelain data*.json yearly-*.json)" ]; then
