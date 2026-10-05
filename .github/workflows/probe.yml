@@ -11,7 +11,10 @@ jobs:
     timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
+      - run: pip install numpy scipy
       - run: python3 probe.py
+        env:
+          ENTSOE_TOKEN: ${{ secrets.ENTSOE_TOKEN }}
       - run: |
           git config user.name "bereshit-bot"; git config user.email "bereshit-bot@users.noreply.github.com"
           git add probe.json; git commit -m "probe $(date -u +%H:%MZ)" || exit 0
