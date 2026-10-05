@@ -2,7 +2,7 @@ name: בראשית – בדיקת מקורות מחיר
 on:
   workflow_dispatch: {}
   push:
-    paths: ["probe.py", ".github/workflows/probe.yml"]
+    paths: ["probe.py", "probe2.py", ".github/workflows/probe.yml"]
 permissions:
   contents: write
 jobs:
@@ -12,10 +12,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: pip install numpy scipy
+      - run: python3 probe2.py || true
+        env:
+          ENTSOE_TOKEN: ${{ secrets.ENTSOE_TOKEN }}
       - run: python3 probe.py
         env:
           ENTSOE_TOKEN: ${{ secrets.ENTSOE_TOKEN }}
       - run: |
           git config user.name "bereshit-bot"; git config user.email "bereshit-bot@users.noreply.github.com"
-          git add probe.json; git commit -m "probe $(date -u +%H:%MZ)" || exit 0
+          git add probe.json probe2.json; git commit -m "probe $(date -u +%H:%MZ)" || exit 0
           for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
