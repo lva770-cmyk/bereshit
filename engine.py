@@ -27,9 +27,9 @@ def use_zone(z):
     ZONE = z; STATE = ZONES[z][0]
     import os
     if not os.path.exists(STATE):
-        json.dump({"zone": z, "market": ZONES[z][1], "battery": {"power_mw": 100, "energy_mwh": 400, "rte": 0.88},
+        json.dump({"zone": z, "market": ZONES[z][1], "battery": {"power_mw": 40, "energy_mwh": 160, "rte": 0.88},
                    "mode": "paper", "days": {}}, open(STATE, "w"), separators=(",", ":"))
-P_MW, E_MWH, RTE, CYC, WEAR = 100.0, 400.0, 0.88, 2.0, 3.0   # full 100 MW / 400 MWh plant
+P_MW, E_MWH, RTE, CYC, WEAR = 40.0, 160.0, 0.88, 2.0, 3.0   # 40 MW / 160 MWh plant (4 h)
 
 def load(): return json.load(open(STATE))
 def save(s):
