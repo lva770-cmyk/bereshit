@@ -156,7 +156,10 @@ def _src_entsoe(s0, e0):
     if x is None: return {}
     root = ET.fromstring(x); ns = {"n": root.tag.split("}")[0].strip("{")}
     out = {}
-    for ts in root.findall("n:TimeSeries", ns):
+    def seq(ts):   # several series per zone (e.g. DE-LU): classificationSequence position 1 is the SDAC result
+        e = ts.find("n:classificationSequence_AttributeInstanceComponent.position", ns)
+        return int(e.text) if e is not None and e.text else 1
+    for ts in sorted(root.findall("n:TimeSeries", ns), key=seq):
         for per in ts.findall("n:Period", ns):
             start = dt.datetime.strptime(per.find("n:timeInterval/n:start", ns).text, "%Y-%m-%dT%H:%MZ").replace(tzinfo=dt.timezone.utc)
             end = dt.datetime.strptime(per.find("n:timeInterval/n:end", ns).text, "%Y-%m-%dT%H:%MZ").replace(tzinfo=dt.timezone.utc)
