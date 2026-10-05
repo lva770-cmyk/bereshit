@@ -1,34 +1,65 @@
 {
- "at": "2026-10-05T10:59:36.448084Z",
+ "at": "2026-10-05T15:48:43.443267Z",
  "energy-charts HU": {
-  "http": 503,
-  "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
-  "s": 1.7
+  "http": 200,
+  "bytes": 1869,
+  "head": "{\"license_info\":\"CC BY 4.0 (creativecommons.org/licenses/by/4.0) from Bundesnetzagentur | SMARD.de\",\"unix_seconds\":[1791151200,1791152100,1791153000,1791153900,",
+  "s": 1.1
  },
  "energy-charts DE-LU": {
-  "http": 503,
-  "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
-  "s": 0.6
+  "http": 200,
+  "bytes": 1857,
+  "head": "{\"license_info\":\"CC BY 4.0 (creativecommons.org/licenses/by/4.0) from Bundesnetzagentur | SMARD.de\",\"unix_seconds\":[1791151200,1791152100,1791153000,1791153900,",
+  "s": 0.8
  },
  "energy-charts RO": {
-  "http": 503,
-  "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
-  "s": 0.5
+  "http": 200,
+  "bytes": 2137,
+  "head": "{\"license_info\":\"The data provided herein is for private and internal use only. The utilization of any data, whether in its raw or derived form, for external or",
+  "s": 0.6
  },
  "energy-charts root": {
-  "http": 503,
-  "body": "<html><body><h1>503 Service Unavailable</h1>\nNo server is available to handle this request.\n</body></html>\n",
-  "s": 0.6
+  "http": 200,
+  "bytes": 1280,
+  "head": "\n    <!DOCTYPE html>\n    <html>\n    <head>\n    <link type=\"text/css\" rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css\">\n    ",
+  "s": 0.8
  },
  "smard DE-LU index": {
   "http": 200,
   "bytes": 5882,
   "head": "{\"timestamps\":[1538344800000,1538949600000,1539554400000,1540159200000,1540767600000,1541372400000,1541977200000,1542582000000,1543186800000,1543791600000,15443",
-  "s": 0.7
+  "s": 0.9
  },
  "entsoe web": {
   "http": 401,
-  "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Acknowledgement_MarketDocument\n\txmlns=\"urn:iec62325.351:tc57wg16:451-1:acknowledgementdocument:7:0\">\n\t<mRID>0f132c29-80b",
-  "s": 0.6
+  "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Acknowledgement_MarketDocument\n\txmlns=\"urn:iec62325.351:tc57wg16:451-1:acknowledgementdocument:7:0\">\n\t<mRID>1c7a235c-b5e",
+  "s": 0.5
+ },
+ "entsoe_backup": {
+  "token_present": true,
+  "HU": {
+   "points": 288,
+   "sample": [
+    204.51,
+    200.14,
+    190.08
+   ]
+  },
+  "RO": {
+   "points": 288,
+   "sample": [
+    204.51,
+    200.15,
+    190.09
+   ]
+  },
+  "DE": {
+   "points": 288,
+   "sample": [
+    195.78,
+    191.64,
+    188.01
+   ]
+  }
  }
 }
