@@ -1,28 +1,27 @@
 {
- "at": "2026-10-05T15:48:43.443267Z",
+ "at": "2026-10-05T15:50:12.029382Z",
  "energy-charts HU": {
   "http": 200,
   "bytes": 1869,
   "head": "{\"license_info\":\"CC BY 4.0 (creativecommons.org/licenses/by/4.0) from Bundesnetzagentur | SMARD.de\",\"unix_seconds\":[1791151200,1791152100,1791153000,1791153900,",
-  "s": 1.1
+  "s": 0.6
  },
  "energy-charts DE-LU": {
   "http": 200,
   "bytes": 1857,
   "head": "{\"license_info\":\"CC BY 4.0 (creativecommons.org/licenses/by/4.0) from Bundesnetzagentur | SMARD.de\",\"unix_seconds\":[1791151200,1791152100,1791153000,1791153900,",
-  "s": 0.8
+  "s": 0.6
  },
  "energy-charts RO": {
-  "http": 200,
-  "bytes": 2137,
-  "head": "{\"license_info\":\"The data provided herein is for private and internal use only. The utilization of any data, whether in its raw or derived form, for external or",
+  "http": 429,
+  "body": "Too Many Requests",
   "s": 0.6
  },
  "energy-charts root": {
   "http": 200,
   "bytes": 1280,
   "head": "\n    <!DOCTYPE html>\n    <html>\n    <head>\n    <link type=\"text/css\" rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css\">\n    ",
-  "s": 0.8
+  "s": 0.9
  },
  "smard DE-LU index": {
   "http": 200,
@@ -32,8 +31,8 @@
  },
  "entsoe web": {
   "http": 401,
-  "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Acknowledgement_MarketDocument\n\txmlns=\"urn:iec62325.351:tc57wg16:451-1:acknowledgementdocument:7:0\">\n\t<mRID>1c7a235c-b5e",
-  "s": 0.5
+  "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Acknowledgement_MarketDocument\n\txmlns=\"urn:iec62325.351:tc57wg16:451-1:acknowledgementdocument:7:0\">\n\t<mRID>6235e08b-de5",
+  "s": 2.8
  },
  "entsoe_backup": {
   "token_present": true,

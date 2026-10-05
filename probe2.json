@@ -1,0 +1,61 @@
+{
+ "energy_charts_first": [
+  204.51,
+  200.0,
+  189.89,
+  182.18,
+  187.51,
+  180.3
+ ],
+ "ec_first_ts": "2026-10-02T22:00:00",
+ "entsoe_series": [
+  {
+   "meta": {
+    "mRID": "1",
+    "auction.type": "A01",
+    "businessType": "A62",
+    "in_Domain.mRID": "10Y1001A1001A82H",
+    "out_Domain.mRID": "10Y1001A1001A82H",
+    "contract_MarketAgreement.type": "A01",
+    "currency_Unit.name": "EUR",
+    "price_Measure_Unit.name": "MWH",
+    "classificationSequence_AttributeInstanceComponent.position": "2",
+    "curveType": "A03"
+   },
+   "res": "PT15M",
+   "start": "2026-10-02T22:00Z",
+   "first": [
+    195.78,
+    191.64,
+    188.01,
+    184.1,
+    184.84,
+    180.77
+   ]
+  },
+  {
+   "meta": {
+    "mRID": "2",
+    "auction.type": "A01",
+    "businessType": "A62",
+    "in_Domain.mRID": "10Y1001A1001A82H",
+    "out_Domain.mRID": "10Y1001A1001A82H",
+    "contract_MarketAgreement.type": "A01",
+    "currency_Unit.name": "EUR",
+    "price_Measure_Unit.name": "MWH",
+    "classificationSequence_AttributeInstanceComponent.position": "1",
+    "curveType": "A03"
+   },
+   "res": "PT15M",
+   "start": "2026-10-02T22:00Z",
+   "first": [
+    204.51,
+    200.0,
+    189.89,
+    182.18,
+    187.51,
+    180.3
+   ]
+  }
+ ]
+}
