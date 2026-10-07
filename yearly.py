@@ -29,11 +29,11 @@ def run(zone):
         hist = [P.get(d - dt.timedelta(days=k)) for k in range(7, 0, -1)]
         a = P.get(d)
         if a and all(h is not None for h in hist):
-            pf = engine.settle(engine.schedule(a), a) / 100
+            pf = engine.settle(engine.schedule(a), a) / engine.P_MW
             nb = engine.schedule(engine.blend(hist))
-            bl = engine.settle(nb, a) / 100
-            gr = bl + engine.WEAR * float(np.clip(nb, 0, None).sum()) * .25 / 100   # gross = before the €3/MWh wear charge
-            nv = engine.settle(engine.schedule(hist[-1]), a) / 100
+            bl = engine.settle(nb, a) / engine.P_MW
+            gr = bl + engine.WEAR * float(np.clip(nb, 0, None).sum()) * .25 / engine.P_MW   # gross = before the €3/MWh wear charge
+            nv = engine.settle(engine.schedule(hist[-1]), a) / engine.P_MW
             rows.append(f"{d:%y-%m-%d},{pf:.0f},{bl:.0f},{nv:.0f},{gr:.0f}")
         d += dt.timedelta(days=1)
     json.dump({"zone": zone, "per": "MW", "rows": ";".join(rows),
