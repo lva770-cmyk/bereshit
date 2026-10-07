@@ -2,7 +2,7 @@
 <html lang="he"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>בראשית · מסחר חי</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=IBM+Plex+Sans+Hebrew:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@500;600;700;800&family=IBM+Plex+Sans+Hebrew:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
 /* Identity: a grid-operator's control room at night. Warm charcoal, bone-white ink, cold blue for energy going IN (charge),
    sodium amber for energy going OUT (discharge), a red "on-air" dot for the live moment. Serif Hebrew masthead like a
@@ -13,7 +13,7 @@
   --bg:#11110f; --panel:#181815; --panel2:#1d1d19; --line:#2a2923; --line2:#3a382f;
   --ink:#efe9dc; --ink2:#bdb6a6; --ink3:#8a8577;
   --in:#7fb2ff; --out:#ffb000; --live:#ff5a36; --gain:#8fd18b; --loss:#ff7a59; --perfect:#6f6b60; --alt:#b9a3e3;
-  --f-disp:"Frank Ruhl Libre",Georgia,serif; --f-ui:"IBM Plex Sans Hebrew",system-ui,sans-serif; --f-num:"IBM Plex Mono",ui-monospace,monospace;
+  --f-disp:"Heebo","IBM Plex Sans Hebrew",system-ui,sans-serif; --f-ui:"IBM Plex Sans Hebrew",system-ui,sans-serif; --f-num:"IBM Plex Mono",ui-monospace,monospace;
 }
 *{box-sizing:border-box}
 html,body{background:var(--bg)}
@@ -23,7 +23,7 @@ body{color:var(--ink);font-family:var(--f-ui);font-size:14px;line-height:1.55;ma
 button:focus-visible{outline:2px solid var(--out);outline-offset:2px}
 /* masthead */
 .mast{max-width:1400px;margin:0 auto;padding-inline:16px;padding-block:22px 10px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 28px;border-bottom:1px solid var(--line)}
-.mast h1{font-family:var(--f-disp);font-weight:900;font-size:clamp(40px,6vw,64px);line-height:.9;margin:0;letter-spacing:-.01em}
+.mast h1{font-family:var(--f-disp);font-weight:800;font-size:clamp(38px,5.6vw,60px);line-height:.95;margin:0;letter-spacing:-.02em}
 .mast h1 span{display:block;font-family:var(--f-ui);font-weight:500;font-size:13px;letter-spacing:.08em;color:var(--ink3);margin-top:10px}
 .mast .meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:var(--ink2);padding-bottom:6px}
 .mast .meta b{color:var(--ink);font-weight:500}
@@ -61,7 +61,7 @@ button:focus-visible{outline:2px solid var(--out);outline-offset:2px}
 .flap span::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:#000}
 @media (prefers-reduced-motion:no-preference){.flap span.flip{animation:flip .35s ease}}
 @keyframes flip{0%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
-.action{font-family:var(--f-disp);font-size:30px;font-weight:700;line-height:1.1}
+.action{font-family:var(--f-disp);font-size:28px;font-weight:700;line-height:1.1}
 .action.in{color:var(--in)}.action.out{color:var(--out)}.action.idle{color:var(--ink3)}
 .batt{display:flex;gap:14px;align-items:center}
 .cell{width:54px;height:120px;border:2px solid #4a483f;border-radius:6px;position:relative;padding:3px}
@@ -166,7 +166,7 @@ tr.fut td{opacity:.5}
 @media (prefers-reduced-motion:no-preference){.intro-card{animation:rise .35s ease}}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .intro-top{display:flex;justify-content:space-between;align-items:center}
-.intro-mark{font-family:var(--f-disp);font-weight:900;font-size:30px;line-height:1}
+.intro-mark{font-family:var(--f-disp);font-weight:800;font-size:30px;line-height:1}
 .x{font:inherit;background:none;border:1px solid var(--line2);color:var(--ink2);border-radius:6px;width:32px;height:32px;cursor:pointer}
 .intro h2{font-family:var(--f-disp);font-size:24px;margin:14px 0 6px}
 .intro h3{font-size:14px;margin:16px 0 6px;color:var(--ink)}
@@ -230,7 +230,7 @@ tr.fut td{opacity:.5}
 .zones{display:flex;gap:0;border:1px solid var(--line2);border-radius:6px;overflow:hidden;align-self:flex-end;margin-bottom:6px}
 .zones button{font:inherit;font-size:13px;padding:7px 14px;background:transparent;color:var(--ink2);border:0;border-inline-start:1px solid var(--line2);cursor:pointer;display:flex;flex-direction:column;align-items:center;line-height:1.15;min-width:84px}
 .zones button:first-child{border-inline-start:0}
-.zones button small{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;color:var(--ink3)}
+.zones button small{font-family:var(--f-num);font-size:10px;letter-spacing:.06em;color:var(--ink3)}
 .zones button:hover{color:var(--ink)}
 .zones button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}.zones button[aria-pressed="true"] small{color:var(--bg);opacity:.75}
 .zload{position:fixed;inset:auto 0 0 0;margin:0 auto;bottom:18px;width:max-content;max-width:calc(100% - 32px);background:#232320;border:1px solid var(--line2);color:var(--ink);font-size:13px;padding:9px 16px;border-radius:6px;z-index:40;box-shadow:0 6px 24px rgba(0,0,0,.4)}
@@ -452,7 +452,7 @@ function drawKpis(){const L=LIVE,prev=L?L.s0:null,pk=L?L.key:null;pick();if(LIVE
  $('fbuy').innerHTML=`${bd(Math.round(so.buy)+' MWh')} נקנו`;$('fsell').innerHTML=`${bd(Math.round(so.sell)+' MWh')} נמכרו`;$('fcap').innerHTML=d.perfect?`${bd((d.realized/d.perfect*100).toFixed(1)+'%')} מהתקרה של ${bd(fmtEF(d.perfect))}`:'';
  flap('flapTime',replay?'--:--':slotIL(key,s));flap('flapPrice',replay?'---.--':c.a[s].toFixed(2).padStart(6,' '));
  const cls=v>1?'out':v<-1?'in':'idle';$('action').className='action '+cls;$('action').innerHTML=replay?'היום הסתיים':v>1?`פורקת ${bd(Math.round(v)+' MW')}`:v<-1?`טוענת ${bd(Math.round(-v)+' MW')}`:'ממתינה';
- $('cell').className='cell '+(cls==='in'?'':cls);$('cellfill').style.height=`calc(${Math.max(2,pct)}% - 6px)`;$('socpct').textContent=pct.toFixed(0)+'%';$('socmwh').innerHTML=bd(Math.round(socNow)+' / 400 MWh');
+ $('cell').className='cell '+(cls==='in'?'':cls);$('cellfill').style.height=`calc(${Math.max(2,pct)}% - 6px)`;$('socpct').textContent=pct.toFixed(0)+'%';$('socmwh').innerHTML=bd(Math.round(socNow)+' / '+EMAX+' MWh');
  drawLog();drawPipe(so);drawAcct(so,full)}
 function drawLog(){const {c,s0,key,replay,R}=LIVE;const lim=replay?96:s0+1;const ev=[];
  R.forEach(r=>{if(r.b<lim)ev.push({t:budMidnight(key)+r.b*900000,h:`<b class="${r.side>0?'o':'i'}">${r.side>0?'פריקה':'טעינה'} ${Math.round(r.mw)} MW</b> · ${bd('€'+c.a[r.b].toFixed(2))} · ${r.side>0?'כסף נכנס':'כסף יוצא'}`});if(r.e<lim)ev.push({t:budMidnight(key)+r.e*900000,h:`סיום רצף · ${bd(r.mwh.toFixed(0)+' MWh')} · ${bd(fmtEF(r.cash))}`})});
