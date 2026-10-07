@@ -545,25 +545,30 @@ function econ(rev){const cfs=[-SELLER.capex];for(let t=0;t<15;t++)cfs.push(rev*M
 function vclass(r){return r>=1?'ok':r>=.6?'mid':'bad'}
 function vtext(r){return r>=1?'תואם':r>=.6?'תלוי בשירותי איזון':'לא תואם'}
 function drawDeal(){const sec=$('deal');if(!sec)return;const on=!!ZI().project;sec.hidden=!on;if(!on)return;
- /* daily real results for a 20 MW / 80 MWh battery: live days from the engine, the rest from the year-long backtest */
- const map={},live={};(D||[]).forEach(r=>{map[r.d]=r.bl});Object.keys(S.days||{}).forEach(k=>{const d=S.days[k];if(d.actual&&d.net&&d.realized!=null){map[k]=d.realized;live[k]=d.source==='live'}});
- const ks=Object.keys(map).sort().slice(-365);if(ks.length<30){$('dealbody').innerHTML='<p class="fine">טוען נתונים…</p>';return}
- const sum=a=>a.reduce((x,k)=>x+map[k],0);const yr=sum(ks)*365/ks.length,k30=ks.slice(-30),m30=sum(k30)*365/30;const nLive=ks.filter(k=>live[k]).length;
+ /* Daily results for a 20 MW / 80 MWh battery. The seller quotes GROSS revenue, so we compare gross (before the €3/MWh
+    wear charge); battery ageing is then counted once, as 2%/year capacity fade in the return calculation. */
+ const G={},N={},live={};(D||[]).forEach(r=>{if(r.g!=null){G[r.d]=r.g;N[r.d]=r.bl}});
+ Object.keys(S.days||{}).forEach(k=>{const d=S.days[k];if(d.actual&&d.net&&d.realized!=null){const c=calc(d);G[k]=d.realized+c.wear.reduce((a,b)=>a+b,0);N[k]=d.realized;live[k]=d.source==='live'}});
+ const ks=Object.keys(G).sort().slice(-365);
+ if(ks.length<60){$('dealbody').innerHTML='<p class="fine">טוען את הבדיקה השנתית… (אם זה לא מתעדכן, הנתונים השנתיים לפרויקט עדיין נבנים)</p>';return}
+ const sum=(m,a)=>a.reduce((x,k)=>x+m[k],0),ann=365/ks.length;const yr=sum(G,ks)*ann,yrN=sum(N,ks)*ann,k30=ks.slice(-30),m30=sum(G,k30)*365/30;
+ const nLive=ks.filter(k=>live[k]).length,first=ks[0],last=ks[ks.length-1];
  const base=SELLER.sc[1],r=yr/base.rev,gap=Math.max(0,(base.rev-yr)/20);const me=econ(yr);
- const rows=SELLER.sc.map(sc=>{const q=yr/sc.rev,e=econ(sc.rev);return `<tr><td>${sc.k}</td><td class="n">${bd(fmtE(sc.rev))}</td><td class="n">${bd(fmtE(sc.rev/20))}</td><td class="n">${bd((q*100).toFixed(0)+'%')}</td><td><span class="vd ${vclass(q)}">${vtext(q)}</span></td><td class="n">${bd((e.irr*100).toFixed(1)+'%')}</td><td class="n">${bd(e.pb?e.pb+' שנים':'—')}</td></tr>`}).join('');
- const trend=m30>=yr*1.05?'עולה':m30<=yr*.95?'יורדת':'יציבה';
+ const rows=SELLER.sc.map(sc=>{const q=yr/sc.rev,e=econ(sc.rev);return `<tr><td>${sc.k}</td><td class="n">${bd(fmtE(sc.rev))}</td><td class="n">${bd(fmtE(sc.rev/20))}</td><td class="n">${bd((q*100).toFixed(0)+'%')}</td><td><span class="vd ${vclass(q)}">${vtext(q)}</span></td><td class="n">${bd((e.irr*100).toFixed(1)+'%')}</td><td class="n">${bd(e.pb?e.pb+' שנים':'מעל 15')}</td></tr>`}).join('');
+ const trend=m30>=yr*1.05?'גבוה מהממוצע השנתי':m30<=yr*.95?'נמוך מהממוצע השנתי':'דומה לממוצע השנתי';
  $('dealbody').innerHTML=`<div class="verdict ${vclass(r)}"><span class="big">${vtext(r)} לתרחיש הבסיס</span>
-  <p>בשנה האחרונה הסוללה הייתה מרוויחה ממסחר יום-מראש ${bd(fmtE(yr))} בשנה, שזה ${bd((r*100).toFixed(0)+'%')} מתרחיש הבסיס של המוכר (${bd(fmtE(base.rev))}). ${gap>0?`כדי להגיע אליו צריך עוד כ-${bd(fmtE(gap))} למגה-וואט בשנה משירותי איזון (aFRR/mFRR), שהמערכת עדיין לא מודדת.`:'המסחר לבדו כבר מכסה את התרחיש.'}</p></div>
+  <p>ב-365 הימים האחרונים הסוללה הייתה מכניסה ממסחר יום-מראש ${bd(fmtE(yr))} בשנה (ברוטו, כמו שהמוכר מציג), שזה ${bd((r*100).toFixed(0)+'%')} מתרחיש הבסיס של המוכר (${bd(fmtE(base.rev))}). ${gap>0?`כדי להגיע אליו צריך עוד כ-${bd(fmtE(gap))} למגה-וואט בשנה משירותי איזון (aFRR/mFRR), שהמערכת עדיין לא מודדת.`:'המסחר לבדו כבר מכסה את התרחיש.'}</p></div>
  <div class="dgrid">
-  <div class="st"><span class="k">הכנסה בפועל · 365 יום</span><span class="v num up">${bd(fmtE(yr))}</span><span class="h">${bd(fmtE(yr/20))} למגה-וואט · ${nLive} ימים חיים</span></div>
-  <div class="st"><span class="k">קצב 30 הימים האחרונים</span><span class="v num">${bd(fmtE(m30))}</span><span class="h">בשנה · המגמה ${trend}</span></div>
-  <div class="st"><span class="k">תשואה (IRR) לפי הביצועים בפועל</span><span class="v num">${bd((me.irr*100).toFixed(1)+'%')}</span><span class="h">החזר ${bd(me.pb?me.pb+' שנים':'מעל 15 שנה')}</span></div>
+  <div class="st"><span class="k">הכנסה בפועל · 365 יום · ברוטו</span><span class="v num up">${bd(fmtE(yr))}</span><span class="h">${bd(fmtE(yr/20))} למגה-וואט · אחרי בלאי ${bd(fmtE(yrN))}</span></div>
+  <div class="st"><span class="k">30 הימים האחרונים · בקצב שנתי</span><span class="v num">${bd(fmtE(m30))}</span><span class="h">${trend} · חודש אחד בלבד</span></div>
+  <div class="st"><span class="k">תשואה (IRR) לפי הביצועים בפועל</span><span class="v num">${bd((me.irr*100).toFixed(1)+'%')}</span><span class="h">החזר אחרי ${bd(me.pb?me.pb+' שנים':'יותר מ-15 שנה')}</span></div>
   <div class="st"><span class="k">השקעה לפי המוכר</span><span class="v num">${bd(fmtE(SELLER.capex))}</span><span class="h">${bd('€1.24M')} למגה-וואט · תפעול ${bd(fmtE(SELLER.opex))} בשנה</span></div>
  </div>
- <div class="tw"><table><thead><tr><th>תרחיש המוכר</th><th>הכנסה בשנה</th><th>למגה-וואט</th><th>מה שנמדד מכסה</th><th>תואם?</th><th>IRR לפי המוכר</th><th>החזר לפי המוכר</th></tr></thead><tbody>${rows}<tr><td><b>בפועל (נמדד)</b></td><td class="n"><b>${bd(fmtE(yr))}</b></td><td class="n">${bd(fmtE(yr/20))}</td><td class="n">—</td><td>—</td><td class="n"><b>${bd((me.irr*100).toFixed(1)+'%')}</b></td><td class="n">${bd(me.pb?me.pb+' שנים':'—')}</td></tr></tbody></table></div>
- <p class="fine">איך זה נמדד: אותו מנוע של בראשית, אותה נעילת לוח לפני סגירת השער, על 20 MW / 80 MWh ומחירי OPCOM האמיתיים. ${nLive} ימים מתוך ${ks.length} נסחרו חי, והשאר מהבדיקה לאחור. הרווח הוא אחרי בלאי של 3 € ל-MWh. "תואם" = המסחר בפועל מגיע לתרחיש; "תלוי בשירותי איזון" = מכסה 60%–100% והשאר צריך לבוא מאיזון; "לא תואם" = מתחת ל-60%. התשואה: 15 שנה, שחיקה 2% בשנה, תפעול 0.7M€, לפני מחיר הרכישה מהיזם, מסים ומימון. תרחישי המוכר כוללים שירותי איזון ושוק קיבולת שעוד לא קיים, ולפי המוכר עצמו הם השוואות כלליות מנתוני 2024–2025.</p>`}
+ <div class="tw"><table><thead><tr><th>תרחיש המוכר</th><th>הכנסה בשנה</th><th>למגה-וואט</th><th>מה שנמדד מכסה</th><th>תואם?</th><th>IRR לתרחיש*</th><th>החזר לתרחיש*</th></tr></thead><tbody>${rows}<tr><td><b>בפועל (נמדד)</b></td><td class="n"><b>${bd(fmtE(yr))}</b></td><td class="n">${bd(fmtE(yr/20))}</td><td class="n">—</td><td>—</td><td class="n"><b>${bd((me.irr*100).toFixed(1)+'%')}</b></td><td class="n">${bd(me.pb?me.pb+' שנים':'מעל 15')}</td></tr></tbody></table></div>
+ <p class="fine">* ה-IRR וההחזר מחושבים כאן, באותה שיטה לכל השורות: 15 שנה, ירידת קיבולת 2% בשנה, תפעול ${bd('€0.7M')} בשנה, לפני מחיר הרכישה מהיזם, מסים ומימון. המוכר עצמו מציג רק "החזר פשוט 4–5 שנים" לתרחיש הבסיס (השקעה חלקי EBITDA קבוע של ${bd('€5.7M')}, בלי ירידת קיבולת).<br>
+ איך נמדד: אותו מנוע של בראשית ואותה נעילת לוח לפני סגירת השער, על 20 MW / 80 MWh ומחירי OPCOM האמיתיים, ${dlabel(first)}.${first.slice(2,4)}–${dlabel(last)}.${last.slice(2,4)}: ${nLive} ימים נסחרו חי, השאר מהבדיקה לאחור. ההשוואה היא ברוטו (לפני בלאי של 3 € ל-MWh), כמו בהצעת המוכר. "תואם" = המסחר בפועל מגיע לתרחיש; "תלוי בשירותי איזון" = מכסה 60%–100%; "לא תואם" = מתחת ל-60%. תרחישי המוכר כוללים שירותי איזון ושוק קיבולת שעוד לא קיים, ולפי המוכר הם השוואות כלליות מנתוני 2024–2025.</p>`}
 /* ---------- yearly backtest ---------- */
-const parseY=raw=>raw.split(';').filter(Boolean).map(r=>{const [d,pf,bl,nv]=r.split(',');return {d:'20'+d,pf:+pf*MWY,bl:+bl*MWY,nv:+nv*MWY}});
+const parseY=raw=>raw.split(';').filter(Boolean).map(r=>{const [d,pf,bl,nv,g]=r.split(',');return {d:'20'+d,pf:+pf*MWY,bl:+bl*MWY,nv:+nv*MWY,g:g!=null?+g*MWY:null}});
 const YCACHE={};let D=parseY(RAW_DAILY);let RANGE=0;
 async function loadYear(z){if(YCACHE[z])return YCACHE[z];const src=ZINFO[z].src;try{const r=await fetch(`yearly-${src}.json?t=`+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const j=await r.json();if(j.zone!==src||!j.rows)throw 0;if(z!==ZONE)return null;YCACHE[z]=parseY(j.rows)}catch(e){if(z==='HU')YCACHE[z]=parseY(RAW_DAILY)}return YCACHE[z]}
 async function showYear(){const z=ZONE;const y=await loadYear(z);if(z!==ZONE)return;if(y&&y.length){D=y;$('eqn').textContent=D.length;drawEq();drawDeal()}else{$('eq').innerHTML='<p class="hint2" style="padding:24px 4px">הבדיקה השנתית למדינה הזו עדיין נבנית. היא תופיע כאן אוטומטית.</p>';$('stats').innerHTML=''}}

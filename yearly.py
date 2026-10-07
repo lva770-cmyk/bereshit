@@ -1,6 +1,6 @@
 """Year-long walk-forward backtest per zone for the screen's 'last year' chart (runs in GitHub Actions).
 Same engine (LP, blend forecast, 88% RTE, 2 cycles, €3 wear). Output yearly-<ZONE>.json, rows per MW:
-"yy-mm-dd,perfect,blend,naive;..." (the page multiplies by 100 MW)."""
+"yy-mm-dd,perfect,blend,naive,blend_gross;..." (the page multiplies by 100 MW)."""
 import json, sys, time, datetime as dt, urllib.request
 from zoneinfo import ZoneInfo
 import numpy as np
@@ -30,9 +30,11 @@ def run(zone):
         a = P.get(d)
         if a and all(h is not None for h in hist):
             pf = engine.settle(engine.schedule(a), a) / 100
-            bl = engine.settle(engine.schedule(engine.blend(hist)), a) / 100
+            nb = engine.schedule(engine.blend(hist))
+            bl = engine.settle(nb, a) / 100
+            gr = bl + engine.WEAR * float(np.clip(nb, 0, None).sum()) * .25 / 100   # gross = before the €3/MWh wear charge
             nv = engine.settle(engine.schedule(hist[-1]), a) / 100
-            rows.append(f"{d:%y-%m-%d},{pf:.0f},{bl:.0f},{nv:.0f}")
+            rows.append(f"{d:%y-%m-%d},{pf:.0f},{bl:.0f},{nv:.0f},{gr:.0f}")
         d += dt.timedelta(days=1)
     json.dump({"zone": zone, "per": "MW", "rows": ";".join(rows),
                "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")},
