@@ -387,7 +387,7 @@ const ZIP_B64="";
 /* battery size of the zone on screen (stations 40 MW, Project 20 = 20 MW); all 4-hour */
 let PMAX=40, EMAX=160, MWY=40;
 const WEAR=3, EC=Math.sqrt(.88);
-function setSize(mw,h){PMAX=mw;EMAX=mw*(h||4);MWY=mw;document.querySelectorAll('.zsize').forEach(e=>e.textContent=`${PMAX} MW / ${EMAX} MWh`);document.querySelectorAll('.zmw').forEach(e=>e.textContent=PMAX)}
+function setSize(mw,h,em,lab){PMAX=mw;EMAX=em||mw*(h||4);MWY=mw;document.querySelectorAll('.zsize').forEach(e=>e.textContent=lab||`${PMAX} MW / ${EMAX} MWh`);document.querySelectorAll('.zmw').forEach(e=>e.textContent=PMAX)}
 /* older snapshots were 100 MW / 400 MWh: the LP is scale-free, so the 40 MW plan is exactly the scaled one */
 function normState(st,p){p=p||PMAX;if(!st||!st.days||!st.battery||st.battery.power_mw===p)return st;const f=p/st.battery.power_mw;const o=JSON.parse(JSON.stringify(st));Object.values(o.days).forEach(d=>{if(d.net)d.net=d.net.map(v=>v*f);if(d.realized!=null)d.realized*=f;if(d.perfect!=null)d.perfect*=f});o.battery={...o.battery,power_mw:p,energy_mwh:p*(st.battery.energy_mwh/st.battery.power_mw||4)};return o}
 const $=id=>document.getElementById(id);
@@ -422,9 +422,9 @@ function runs(c){const R=[];let cur=null;c.n.forEach((v,t)=>{const side=Math.abs
 /* ---------- zones: one engine, one state file per bidding zone ---------- */
 const ZINFO={HU:{name:'הונגריה',adj:'ההונגרי',inn:'בהונגריה',ex:'HUPX',file:'data.json',src:'HU',mw:40},RO:{name:'רומניה',adj:'הרומני',inn:'ברומניה',ex:'OPCOM',file:'data-RO.json',src:'RO',mw:40},
  P20:{name:'פרויקט 20',adj:'הרומני',inn:'ברומניה',ex:'OPCOM',file:'data-RO.json',src:'RO',mw:20,project:true},
- P50:{name:'פרויקט 50',adj:'הרומני',inn:'ברומניה',ex:'OPCOM',file:'data-RO2.json',src:'RO2',mw:50,h:2,project:true,deal:'p50'}};
+ P50:{name:'פרויקט 50',adj:'הרומני',inn:'ברומניה',ex:'OPCOM',file:'data-RO2.json',src:'RO2',mw:50,h:2,emax:89.3,lab:'50 MW / 100 MWh',project:true,deal:'p50'}};
 let ZONE=(()=>{const h=(location.hash||'').slice(1).toUpperCase();if(ZINFO[h])return h;try{const v=localStorage.getItem('bereshit.zone');if(ZINFO[v])return v}catch(e){}return 'HU'})();
-const ZI=()=>ZINFO[ZONE];const CACHE={HU:normState(SNAP,40)};setSize(ZI().mw,ZI().h);
+const ZI=()=>ZINFO[ZONE];const CACHE={HU:normState(SNAP,40)};setSize(ZI().mw,ZI().h,ZI().emax,ZI().lab);
 function playable(st){return st&&st.days&&Object.keys(st.days).some(k=>st.days[k].net&&st.days[k].actual)}
 function firstLive(){const ks=Object.keys(S.days).filter(k=>S.days[k].source==='live'&&S.days[k].net).sort();return ks.length?dlabel(ks[0])+'.'+ks[0].slice(0,4):'מחר'}
 function applyZoneText(){const z=ZI();document.querySelectorAll('.zadj').forEach(e=>e.textContent=z.adj);document.querySelectorAll('.zex').forEach(e=>e.textContent=z.ex);document.querySelectorAll('.zin').forEach(e=>e.textContent=z.inn);document.querySelectorAll('.zname').forEach(e=>e.textContent=z.name);
@@ -575,8 +575,8 @@ function drawDeal(){const sec=$('deal');if(!sec)return;const on=!!ZI().project;s
 const DHEAD={p20:['פרויקט 20 · האם זה תואם להצעת המוכר?','סוללה של '+bd('20 MW / 80 MWh')+' (4 שעות) ברומניה, מוכנה לבנייה. המערכת מריצה אותה כל יום על מחירי האמת של OPCOM, ומשווה את מה שהיא הייתה מרוויחה בפועל לתרחישי ההכנסה שהמוכר הציג.'],
  p50:['פרויקט 50 · כמה שווה ההצעה?','סוללה של '+bd('50 MW / 100 MWh')+' (שעתיים) ברומניה, בבנייה. המערכת מריצה אותה כל יום על מחירי האמת של OPCOM ומודדת כמה היא הייתה מרוויחה בפועל. במחשבון אפשר להכניס מחיר רכישה ולראות איזו תשואה הוא נותן.']};
 function dealHead(k){const s=$('deal');s.querySelector('h2').textContent=DHEAD[k][0];s.querySelector('.sub').innerHTML=DHEAD[k][1];s.setAttribute('aria-label',DHEAD[k][0])}
-const P50={opex:0.45e6,years:15,fade:.02};let P50PX='';
-function econAt(capex,rev){const cfs=[-capex];for(let t=0;t<P50.years;t++)cfs.push(rev*Math.pow(1-P50.fade,t)-P50.opex);let cum=0,pb=null;cfs.forEach((c,t)=>{cum+=c;if(pb===null&&t>0&&cum>=0)pb=t});return {irr:irrOf(cfs),pb}}
+const P50={opex:0.45e6,wext:175200,soh:[94.60,91.22,88.34,85.73,83.31,81.03,78.86,76.78,74.77,72.83,70.95,69.12,67.33,65.58,63.87,62.19,60.55]};P50.years=P50.soh.length;let P50PX='';
+function econAt(capex,rev){const cfs=[-capex];P50.soh.forEach((h,t)=>cfs.push(rev*h/P50.soh[0]-P50.opex-(t>=5&&t<=9?P50.wext:0)));let cum=0,pb=null;cfs.forEach((c,t)=>{cum+=c;if(pb===null&&t>0&&cum>=0)pb=t});return {irr:irrOf(cfs),pb}}
 function p50calc(yr){const out=$('p50out');if(!out)return;const v=parseFloat(P50PX);if(!(v>0)){out.innerHTML='<p class="fine" style="margin:0">הכניסו מחיר במיליוני אירו כדי לראות את התשואה.</p>';return}
  const capex=v*1e6,rows=[[1,'לפי המדידה'],[.8,'נמוכה ב-20%'],[.6,'נמוכה ב-40%']].map(([f,l])=>{const e=econAt(capex,yr*f);return `<tr><td>${l}</td><td class="n">${bd(fmtE(yr*f))}</td><td class="n"><b>${bd((e.irr*100).toFixed(1)+'%')}</b></td><td class="n">${bd(e.pb?e.pb+' שנים':'מעל '+P50.years)}</td></tr>`}).join('');
  out.innerHTML=`<div class="tw"><table><thead><tr><th>הכנסה</th><th>בשנה</th><th>IRR</th><th>החזר</th></tr></thead><tbody>${rows}</tbody></table></div><p class="fine" style="margin:6px 0 0">מחיר ${bd(fmtE(capex))} = ${bd(fmtE(capex/ZI().mw))} למגה-וואט.</p>`}
@@ -593,13 +593,13 @@ function drawDeal50(){dealHead('p50');const mw=ZI().mw;
  <div class="dgrid">
   <div class="st"><span class="k">הכנסה בפועל · 365 יום · ברוטו</span><span class="v num up">${bd(fmtE(yr))}</span><span class="h">${bd(fmtE(yr/mw))} למגה-וואט · אחרי בלאי ${bd(fmtE(yrN))}</span></div>
   <div class="st"><span class="k">30 הימים האחרונים · בקצב שנתי</span><span class="v num">${bd(fmtE(m30))}</span><span class="h">${trend} · חודש אחד בלבד</span></div>
-  <div class="st"><span class="k">גודל התחנה</span><span class="v num">${bd(mw+' MW / '+(mw*ZI().h)+' MWh')}</span><span class="h">שעתיים · עד 2 מחזורים ביום</span></div>
+  <div class="st"><span class="k">גודל התחנה</span><span class="v num">${bd(ZI().lab)}</span><span class="h">${bd('83.8 MWh')} לרשת בפריקה מלאה · ${bd('1.5')} מחזורים ביום</span></div>
   <div class="st"><span class="k">ימים שנמדדו</span><span class="v num">${bd(String(ks.length))}</span><span class="h">${bd(String(nLive))} מהם במסחר חי</span></div>
  </div>
  <div class="calc50"><label for="p50px">מחיר רכישה (מיליוני אירו)</label><input id="p50px" type="number" inputmode="decimal" min="0" step="0.5" placeholder="למשל 25" dir="ltr" value="${P50PX}"></div>
  <div id="p50out"></div>
- <p class="fine">איך מחושבת התשואה: ${bd(String(P50.years))} שנות הפעלה, ירידת קיבולת של ${bd('2%')} בשנה, תפעול ${bd(fmtE(P50.opex))} בשנה (הנחה שלנו), לפני מסים ומימון, בלי החלפת סוללות. ההכנסה היא רק ממסחר יום-מראש.<br>
- איך נמדד: אותו מנוע של בראשית ואותה נעילת לוח לפני סגירת השער, על ${bd(mw+' MW / '+(mw*ZI().h)+' MWh')} ומחירי OPCOM האמיתיים, ${bd(dlabel(first)+'.'+first.slice(2,4)+'–'+dlabel(last)+'.'+last.slice(2,4))}: ${bd(String(nLive))} ימים נסחרו חי, השאר מהבדיקה לאחור. מסחר מדומה בלבד, שום פקודה לא נשלחת לבורסה.</p>`;
+ <p class="fine">הנתונים של הסוללה לקוחים מנתוני ההצעה: ${bd('50 MW')} לרשת, ${bd('83.8 MWh')} שמגיעים לרשת בפריקה מלאה בשנה הראשונה (מתוך ${bd('100 MWh')} נומינליים), נצילות הלוך-חזור של ${bd('88%')}, ועד ${bd('1.5')} מחזורים ביום, שזה הבסיס של אחריות היצרן.<br>איך מחושבת התשואה: ${bd(String(P50.years))} שנות הפעלה עם עקומת ירידת הקיבולת שבאחריות היצרן (מ-${bd('94.6%')} בשנה הראשונה ל-${bd('60.6%')} בשנה ה-17), תפעול ${bd(fmtE(P50.opex))} בשנה (הנחה שלנו, כי ההצעה לא כוללת נתון תפעול), והארכת אחריות הסוללות בשנים ${bd('6–10')} (${bd(fmtE(P50.wext))} בשנה, לפי חוזה הסוללות). לפני מסים ומימון. ההכנסה היא רק ממסחר יום-מראש.<br>
+ איך נמדד: אותו מנוע של בראשית ואותה נעילת לוח לפני סגירת השער, על התחנה הזו ומחירי OPCOM האמיתיים, ${bd(dlabel(first)+'.'+first.slice(2,4)+'–'+dlabel(last)+'.'+last.slice(2,4))}: ${bd(String(nLive))} ימים נסחרו חי, השאר מהבדיקה לאחור. מסחר מדומה בלבד, שום פקודה לא נשלחת לבורסה.</p>`;
  const inp=$('p50px');inp.oninput=()=>{P50PX=inp.value;p50calc(yr)};p50calc(yr)}
 /* ---------- yearly backtest ---------- */
 const parseY=raw=>raw.split(';').filter(Boolean).map(r=>{const [d,pf,bl,nv,g]=r.split(',');return {d:'20'+d,pf:+pf*MWY,bl:+bl*MWY,nv:+nv*MWY,g:g!=null?+g*MWY:null}});
@@ -642,7 +642,7 @@ async function refresh(force){if(syncing)return;if(!navigator.onLine){netState()
   const cur=CACHE[z];if(!cur||(j.updated_at||'')>=(cur.updated_at||'')){CACHE[z]=j;if(z===ZONE&&(S!==j)){const changed=!cur||j.updated_at!==cur.updated_at||S.zone!==z;S=j;if(changed)renderAll()}}lastOk=Date.now();fails=0}
  catch(e){fails++}finally{clearTimeout(to);syncing=false;netState()}}
 function loop(){tick();const k=budToday().date;if(dayShown!==k){dayShown=k;renderAll()}else if(playable(S))drawKpis();refresh(false);netState()}
-async function setZone(z,first){if(!ZINFO[z])return;const changed=z!==ZONE;ZONE=z;setSize(ZINFO[z].mw,ZINFO[z].h);try{localStorage.setItem('bereshit.zone',z)}catch(e){}
+async function setZone(z,first){if(!ZINFO[z])return;const changed=z!==ZONE;ZONE=z;setSize(ZINFO[z].mw,ZINFO[z].h,ZINFO[z].emax,ZINFO[z].lab);try{localStorage.setItem('bereshit.zone',z)}catch(e){}
  if(location.hash.slice(1).toUpperCase()!==z)history.replaceState(null,'','#'+z);applyZoneText();
  const undim=()=>{document.querySelector('main.wrap').classList.remove('dim');const t=document.querySelector('.zload');if(t)t.hidden=true};
  if(CACHE[z]&&playable(CACHE[z])){S=CACHE[z];LIVE=null;LASTFLAP={};D=YCACHE[z]||[];if(!D.length)$('stats').innerHTML='';undim();renderAll();showYear();if(!first)refresh(true);return}
@@ -653,7 +653,7 @@ async function setZone(z,first){if(!ZINFO[z])return;const changed=z!==ZONE;ZONE=
  else{tip.textContent=navigator.onLine?`הנתונים של ${ZI().name} עדיין לא מוכנים. ננסה שוב אוטומטית.`:'אין רשת. ננסה שוב כשהחיבור יחזור.';setTimeout(()=>{if(ZONE===z)setZone(z,true)},20000)}}
 document.querySelectorAll('#zones button').forEach(b=>b.onclick=()=>setZone(b.dataset.z));
 addEventListener('hashchange',()=>{const h=location.hash.slice(1).toUpperCase();if(ZINFO[h]&&h!==ZONE)setZone(h)});
-if(ZONE!=='HU')S={zone:ZONE,days:{}};setSize(ZI().mw,ZI().h);applyZoneText();if(ZONE==='HU'){renderAll();showYear()}dayShown=budToday().date;setInterval(loop,1000);if(ZONE==='HU'){loop();refresh(true)}else{tick();setZone(ZONE,true)}
+if(ZONE!=='HU')S={zone:ZONE,days:{}};setSize(ZI().mw,ZI().h,ZI().emax,ZI().lab);applyZoneText();if(ZONE==='HU'){renderAll();showYear()}dayShown=budToday().date;setInterval(loop,1000);if(ZONE==='HU'){loop();refresh(true)}else{tick();setZone(ZONE,true)}
 addEventListener('online',()=>refresh(true));
 /* manual sync: pull the newest published data now, then redraw everything from the real clock */
 $('syncBtn').onclick=async()=>{const b=$('syncBtn'),t=b.querySelector('span');if(b.classList.contains('busy'))return;b.className='sync busy';t.textContent='מסתנכרן…';

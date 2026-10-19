@@ -22,12 +22,15 @@ ZONES = {"HU": ("data.json", "HUPX day-ahead (SDAC), 15-min"),
          "RO2": ("data-RO2.json", "OPCOM day-ahead (SDAC), 15-min · 2-hour battery")}
 # Germany (data-DE.json) is kept in the repo but no longer updated; add it back here to resume.
 BZN = {"DE": "DE-LU", "RO2": "RO"}   # Energy-Charts bidding-zone code where it differs from ours
-# Battery per zone (MW, MWh). Default 40 MW / 160 MWh (4 h). RO2 = a 2-hour 50 MW / 100 MWh plant on Romanian prices.
-BATTERY = {"RO2": (50.0, 100.0)}
+# Battery per zone: (MW at the grid point, usable MWh stored, max full cycles/day). Default 40 MW / 160 MWh (4 h), 2 cycles.
+# RO2 = the 50 MW / 100 MWh (nameplate DC) offer, set from the seller's own sizing report (Jun 2026): 83.8 MWh delivered at
+# the grid per full discharge in year 1 (= 89.3 MWh stored x sqrt(0.88)), and 1.5 full cycles/day, the basis of the
+# battery maker's degradation warranty (125.7 MWh/day delivered = 1.4076 x 89.3).
+BATTERY = {"RO2": (50.0, 89.3, 1.4076)}
 ZONE = "HU"
 def use_zone(z):
-    global STATE, ZONE, P_MW, E_MWH
-    ZONE = z; STATE = ZONES[z][0]; P_MW, E_MWH = BATTERY.get(z, (40.0, 160.0))
+    global STATE, ZONE, P_MW, E_MWH, CYC
+    ZONE = z; STATE = ZONES[z][0]; P_MW, E_MWH, CYC = BATTERY.get(z, (40.0, 160.0, 2.0))
     import os
     if not os.path.exists(STATE):
         json.dump({"zone": z, "market": ZONES[z][1], "battery": {"power_mw": P_MW, "energy_mwh": E_MWH, "rte": 0.88},
