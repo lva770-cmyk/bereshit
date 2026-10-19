@@ -1,10 +1,8 @@
-name: בראשית – הקמת מדינות (רומניה, גרמניה)
+name: בראשית – הקמת מדינות (רומניה, פרויקט 50)
 # Seeding of new zones (v2, CET-day alignment fix): real prices for the last weeks, walk-forward backtest days, live plan for
 # tomorrow (if before the gate), and the year-long backtest per zone. Re-runnable; never overwrites real prices.
 on:
-  workflow_dispatch: {}
-  push:
-    paths: [".github/workflows/setup-zones.yml", "yearly.py"]
+  workflow_dispatch: {}   # manual only
 permissions:
   contents: write
 concurrency:
@@ -21,16 +19,16 @@ jobs:
           python-version: "3.12"
       - run: pip install numpy scipy
       - run: python engine.py backfill --zone RO --days 9 || true
-      - run: python engine.py backfill --zone DE --days 9 || true
+      - run: python engine.py backfill --zone RO2 --days 9 || true
       - run: python engine.py update
       - name: commit seeded zones
         run: |
           git config user.name "bereshit-bot"
           git config user.email "bereshit-bot@users.noreply.github.com"
           git add data*.json
-          git commit -m "zones: seed RO, DE $(date -u +%Y-%m-%dT%H:%MZ)" || true
+          git commit -m "zones: seed RO, RO2 $(date -u +%Y-%m-%dT%H:%MZ)" || true
           for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
-      - run: python yearly.py HU RO DE
+      - run: python yearly.py HU RO RO2
       - name: commit yearly
         run: |
           git add yearly-*.json
