@@ -25,7 +25,7 @@ jobs:
         env:
           ENTSOE_TOKEN: ${{ secrets.ENTSOE_TOKEN }}
       - name: year-long backtest for any zone that lacks one
-        run: for z in HU RO DE; do [ -f yearly-$z.json ] || python yearly.py $z || true; done
+        run: for z in HU RO RO2; do [ -f yearly-$z.json ] || python yearly.py $z || true; done
         env:
           ENTSOE_TOKEN: ${{ secrets.ENTSOE_TOKEN }}
       - name: commit if changed

@@ -19,15 +19,18 @@ STATE = "data.json"
 # Bidding zones on the same SDAC auction (gate 12:00 CET for all). Each zone has its own state file.
 ZONES = {"HU": ("data.json", "HUPX day-ahead (SDAC), 15-min"),
          "RO": ("data-RO.json", "OPCOM day-ahead (SDAC), 15-min"),
-         "DE": ("data-DE.json", "EPEX SPOT DE-LU day-ahead (SDAC), 15-min")}
-BZN = {"DE": "DE-LU"}   # Energy-Charts bidding-zone code where it differs from ours
+         "RO2": ("data-RO2.json", "OPCOM day-ahead (SDAC), 15-min · 2-hour battery")}
+# Germany (data-DE.json) is kept in the repo but no longer updated; add it back here to resume.
+BZN = {"DE": "DE-LU", "RO2": "RO"}   # Energy-Charts bidding-zone code where it differs from ours
+# Battery per zone (MW, MWh). Default 40 MW / 160 MWh (4 h). RO2 = a 2-hour 50 MW / 100 MWh plant on Romanian prices.
+BATTERY = {"RO2": (50.0, 100.0)}
 ZONE = "HU"
 def use_zone(z):
-    global STATE, ZONE
-    ZONE = z; STATE = ZONES[z][0]
+    global STATE, ZONE, P_MW, E_MWH
+    ZONE = z; STATE = ZONES[z][0]; P_MW, E_MWH = BATTERY.get(z, (40.0, 160.0))
     import os
     if not os.path.exists(STATE):
-        json.dump({"zone": z, "market": ZONES[z][1], "battery": {"power_mw": 40, "energy_mwh": 160, "rte": 0.88},
+        json.dump({"zone": z, "market": ZONES[z][1], "battery": {"power_mw": P_MW, "energy_mwh": E_MWH, "rte": 0.88},
                    "mode": "paper", "days": {}}, open(STATE, "w"), separators=(",", ":"))
 P_MW, E_MWH, RTE, CYC, WEAR = 40.0, 160.0, 0.88, 2.0, 3.0   # 40 MW / 160 MWh plant (4 h)
 
@@ -122,7 +125,7 @@ def _dst_len(day):
     return int((b.astimezone(dt.timezone.utc) - a.astimezone(dt.timezone.utc)).total_seconds() // 900)
 
 SOURCE = None        # which source served the last successful fetch (shown in the verification stamp)
-ENTSOE_EIC = {"HU": "10YHU-MAVIR----U", "RO": "10YRO-TEL------P", "DE": "10Y1001A1001A82H"}
+ENTSOE_EIC = {"HU": "10YHU-MAVIR----U", "RO": "10YRO-TEL------P", "RO2": "10YRO-TEL------P", "DE": "10Y1001A1001A82H"}
 
 def _get(url, kind="json", tries=3):
     import urllib.request, urllib.error, time

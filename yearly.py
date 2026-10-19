@@ -42,4 +42,4 @@ def run(zone):
     print(zone, len(rows), "days")
 
 if __name__ == "__main__":
-    for z in sys.argv[1:] or ["HU", "RO", "DE"]: run(z)
+    for z in sys.argv[1:] or ["HU", "RO", "RO2"]: run(z)
