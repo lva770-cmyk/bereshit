@@ -225,6 +225,26 @@ tr.fut td{opacity:.5}
 .dgrid .st{border:1px solid var(--line);border-radius:6px;padding:10px 12px}
 .dgrid .k{display:block;font-size:11.5px;color:var(--ink3)}.dgrid .v{display:block;font-size:20px;margin-top:2px}.dgrid .h{display:block;font-size:11px;color:var(--ink3);margin-top:2px}
 .deal .fine{font-size:11.5px;color:var(--ink3);margin:10px 0 0;line-height:1.6}
+.plant{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}.plant h3{margin:0 0 4px;font-size:17px}
+.plwrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel2);margin-bottom:10px}
+.plsvg{display:block;width:100%;min-width:760px;height:auto;font-family:inherit}
+.plsvg .pb{fill:var(--panel);stroke:var(--line2)}.plsvg .pb.kpi{stroke:var(--line2)}.plsvg .pb.grid{stroke:var(--ink3)}
+.plsvg .pw{stroke:var(--ink3);stroke-width:2.5}.plsvg .pw.dc{stroke-dasharray:4 3}.plsvg .pbus{stroke:var(--ink2);stroke-width:6}
+.plsvg .pw.fin{stroke:var(--in)}.plsvg .pw.fout{stroke:var(--out)}
+.plsvg .pw.fin,.plsvg .pw.fout{stroke-dasharray:10 6;animation:plflow 1s linear infinite}.plsvg .pw.fin{animation-direction:reverse}
+@keyframes plflow{to{stroke-dashoffset:-16}}
+@media (prefers-reduced-motion:reduce){.plsvg .pw.fin,.plsvg .pw.fout{animation:none}}
+.plsvg .pbrk{fill:var(--panel);stroke:var(--ink2);stroke-width:2}.plsvg .pcoil{fill:none;stroke:var(--ink2);stroke-width:2.5}
+.plsvg .pcont{fill:none;stroke:var(--line2);stroke-width:1.5}.plsvg .pfill{fill:var(--gain)}.plsvg .pfill.fin{fill:var(--in)}.plsvg .pfill.fout{fill:var(--out)}
+.plsvg text{fill:var(--ink2)}.plsvg .pl1{font-size:15px;font-weight:700;fill:var(--ink)}.plsvg .pl2{font-size:13px}.plsvg .pl3{font-size:11.5px;fill:var(--ink3)}
+.plsvg .plbig{font-size:30px;font-family:var(--f-num);fill:var(--ink)}.plsvg .plmid{font-size:16px;font-family:var(--f-num);fill:var(--ink)}
+.pld{border:1px solid var(--line);border-radius:6px;margin:6px 0;background:var(--panel)}.pld summary{cursor:pointer;padding:9px 12px;font-size:14px;color:var(--ink)}
+.pld[open] summary{border-bottom:1px solid var(--line)}.pltab .n{white-space:nowrap}.pltab td{white-space:normal!important}.pltab td:last-child{overflow-wrap:break-word}.pltab td{padding:6px 12px;font-size:13px;vertical-align:top}.pltab td:first-child{color:var(--ink3);width:34%;white-space:nowrap}
+@media (max-width:760px){.pltab td:first-child{white-space:normal;width:30%}.pltab td{padding:6px 8px;font-size:12.5px}}
+.plbox{position:relative;min-width:760px;container-type:inline-size}.plbox .plsvg{min-width:0}
+.pll{position:absolute;white-space:nowrap;line-height:1.2;color:var(--ink2);font-size:12.5px;font-size:1.14cqw;pointer-events:none}
+.pll.pl1{font-size:15px;font-size:1.36cqw;font-weight:700;color:var(--ink)}.pll.pl2{font-size:13px;font-size:1.18cqw}.pll.pl3{font-size:11.5px;font-size:1.05cqw;color:var(--ink3)}
+.pll.plbig{font-size:30px;font-size:2.7cqw;font-family:var(--f-num);color:var(--ink)}.pll.plmid{font-size:16px;font-size:1.45cqw;font-family:var(--f-num);color:var(--ink)}
 .calc50{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:4px 0 10px}.calc50 label{font-size:13.5px;color:var(--ink2)}
 .calc50 input{font:inherit;font-family:var(--f-num);font-size:16px;width:140px;padding:6px 10px;background:var(--panel);color:var(--ink);border:1px solid var(--line2);border-radius:6px;text-align:left}
 @media (max-width:760px){.dgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.deal{padding:14px}}
@@ -447,7 +467,7 @@ let LOGN=-1,LASTFLAP={};
 function flap(id,str){const box=$(id);const prev=LASTFLAP[id]||'';if(prev===str)return;LASTFLAP[id]=str;box.innerHTML=[...str].map((ch,i)=>`<span class="${prev[i]!==ch?'flip':''}">${ch}</span>`).join('')}
 function drawKpis(){const L=LIVE,prev=L?L.s0:null,pk=L?L.key:null;pick();if(LIVE.key!==pk||LIVE.s0!==prev){drawToday();drawLedger();drawCash()}
  const {c,s0,frac,replay,key,d}=LIVE;const so=upTo(c,s0,frac),full=upTo(c,96,0);const s=Math.min(95,s0);const v=replay?0:c.n[s];
- const socPrev=replay?c.soc[95]:(s>0?c.soc[s-1]:0);const socNow=replay?c.soc[95]:socPrev+(c.soc[s]-socPrev)*frac;const pct=socNow/EMAX*100;
+ const socPrev=replay?c.soc[95]:(s>0?c.soc[s-1]:0);const socNow=replay?c.soc[95]:socPrev+(c.soc[s]-socPrev)*frac;const pct=socNow/EMAX*100;updPlant(v,socNow);
  $('odolbl').textContent=replay?`רווח נקי · ${dlabel(key)} (היום האחרון עם נתונים)`:'רווח נקי היום · עד עכשיו';
  const odo=$('odo');odo.textContent=fmtEF(so.net);odo.classList.toggle('neg',so.net<0);
  $('odosub').innerHTML=replay?'<span style="color:var(--out)">אין עדיין נתונים להיום. מוצגת הפעלה חוזרת של היום האחרון</span>':`מחושב מחדש כל שנייה · רבע שעה ${s+1} מתוך 96`;
@@ -600,7 +620,61 @@ function drawDeal50(){dealHead('p50');const mw=ZI().mw;
  <div id="p50out"></div>
  <p class="fine">הנתונים של הסוללה לקוחים מנתוני ההצעה: ${bd('49.4 MW')} לרשת (ההספק המתוכנן בדוח התכנון), ${bd('83.8 MWh')} שמגיעים לרשת בפריקה מלאה בשנה הראשונה (מתוך ${bd('100 MWh')} נומינליים), נצילות הלוך-חזור של ${bd('88%')}, ועד ${bd('1.5')} מחזורים ביום, שזה הבסיס של אחריות היצרן.<br>איך מחושבת התשואה: ${bd(String(P50.years))} שנות הפעלה עם עקומת ירידת הקיבולת שבאחריות היצרן (מ-${bd('94.6%')} בשנה הראשונה ל-${bd('60.6%')} בשנה ה-17), תפעול ${bd(fmtE(P50.opex))} בשנה (הנחה שלנו, כי ההצעה לא כוללת נתון תפעול), והארכת אחריות הסוללות בשנים ${bd('6–10')} (${bd(fmtE(P50.wext))} בשנה, לפי חוזה הסוללות). לפני מסים ומימון. ההכנסה היא רק ממסחר יום-מראש.<br>
  איך נמדד: אותו מנוע של בראשית ואותה נעילת לוח לפני סגירת השער, על התחנה הזו ומחירי OPCOM האמיתיים, ${bd(dlabel(first)+'.'+first.slice(2,4)+'–'+dlabel(last)+'.'+last.slice(2,4))}: ${bd(String(nLive))} ימים נסחרו חי, השאר מהבדיקה לאחור. מסחר מדומה בלבד, שום פקודה לא נשלחת לבורסה.</p>`;
- const inp=$('p50px');inp.oninput=()=>{P50PX=inp.value;p50calc(yr)};p50calc(yr)}
+ $('dealbody').insertAdjacentHTML('beforeend',plant50Html());
+ const inp=$('p50px');inp.oninput=()=>{P50PX=inp.value;p50calc(yr)};p50calc(yr);if(LIVE)drawKpis()}
+/* ---------- Project 50: plant model (single-line diagram + equipment data), driven by the simulated dispatch ---------- */
+const PL={poc:49.4,txONAN:50,txONAF:63,eta1:0.929,aux25:0.55,skids:[{id:'BA1-1',line:1},{id:'BA1-4',line:2},{id:'BA1-5',line:2},{id:'BA1-2',line:3},{id:'BA1-3',line:3}]};
+function plBidi(str){return /[֐-׿]/.test(str)?str.replace(/[~+−]?[0-9A-Za-z][0-9A-Za-z.,/%°²×:\- ·~+]*[0-9A-Za-z%°²]/g,m=>`<bdi dir="ltr">${m}</bdi>`):str}
+function plSvg(){const W=1100,H=580;const LB=[];
+ const lab=(x,y,str,c,a,id)=>{a=a||'middle';str=plBidi(str);const tr=a==='middle'?'-50%':a==='end'?'-100%':'0';LB.push(`<div class="pll ${c||''}" dir="auto"${id?` id="${id}"`:''} style="left:${(x/W*100).toFixed(2)}%;top:${(y/H*100).toFixed(2)}%;transform:translate(${tr},-78%)">${str}</div>`);return ''};
+ const t=(x,y,str,c,a)=>lab(x,y,str,c,a);
+ const box=(x,y,w,h,c)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" class="${c||'pb'}"/>`;
+ const ln=(x1,y1,x2,y2,id,c)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="${c||'pw'}"${id?` id="${id}"`:''}/>`;
+ const brk=(x,y)=>`<rect x="${x-9}" y="${y-9}" width="18" height="18" class="pbrk"/>`;
+ const tx=(x,y,r)=>`<circle cx="${x}" cy="${y-r*.55}" r="${r}" class="pcoil"/><circle cx="${x}" cy="${y+r*.55}" r="${r}" class="pcoil"/>`;
+ let s=`<svg viewBox="0 0 ${W} ${H}" class="plsvg" aria-hidden="true">`;
+ s+=box(30,22,180,62,'pb grid')+t(120,47,'רשת 110 kV','pl1')+t(120,70,'תחנת משנה 220/110 kV','pl3');
+ s+=ln(210,52,351,52,'','pw')+t(280,38,'כבל 110 kV','pl3')+t(280,76,'1×400 mm² · ~250 m','pl3');
+ s+=brk(360,52)+t(360,92,'מפסק 110 kV','pl3')+t(360,108,'1250 A · 31.5 kA','pl3');
+ s+=ln(369,52,428,52,'','pw');
+ s+=tx(452,52,22)+t(500,34,'שנאי ראשי TX-01','pl1','start')+t(500,53,'110/20 kV · YNd11','pl2','start')+t(500,71,'50/63 MVA · Uk 11%','pl2','start')+t(500,89,'ווסת מתח תחת עומס','pl3','start');
+ lab(500,112,'—','pl3','start','pl_tx');
+ s+=ln(452,93,452,170,'','pw');
+ s+=box(800,20,270,94,'pb kpi')+t(935,42,'בנקודת החיבור (מדומה)','pl3');lab(935,80,'—','plbig','middle','pl_poc');lab(935,103,'—','pl3','middle','pl_dir');
+ s+=`<line x1="80" y1="170" x2="1050" y2="170" class="pbus"/>`+t(90,158,'פס 20 kV · 2000 A · 25 kA','pl2','start');
+ s+=ln(1010,170,1010,222,'','pw')+tx(1010,244,13)+t(1010,290,'שנאי עזר','pl3')+t(1010,306,'1.6 MVA · 20/0.4 kV','pl3')+t(1010,322,'~0.55 MW ב-25°C','pl3');
+ const fx={1:170,2:465,3:765};const sx=[170,400,530,700,830];
+ [1,2,3].forEach(L=>{s+=brk(fx[L],200)+ln(fx[L],170,fx[L],191,'','pw');t(fx[L]+15,204,`ענף ${L}`,'pl2','start');lab(fx[L]+15,221,'—','pl3','start','pl_l'+L)});
+ PL.skids.forEach((k,i)=>{const L=k.line,x=sx[i];s+=`<polyline points="${fx[L]},209 ${fx[L]},236 ${x},236 ${x},258" class="pw" fill="none"/>`;
+  s+=tx(x,280,11)+t(x+16,285,'10 MVA','pl3','start')+box(x-56,306,112,76,'pb skid')+t(x,325,`יחידת ממירים ${i+1}`,'pl2')+t(x,342,'8 × 1.25 MW','pl3');lab(x,368,'—','plmid','middle','pl_s'+i);
+  s+=ln(x,382,x,408,'','pw dc');
+  for(let j=0;j<4;j++){const bx=x-54+j*28;s+=`<rect x="${bx}" y="408" width="24" height="54" rx="3" class="pcont"/><rect x="${bx+3}" y="458" width="18" height="0" class="pfill" data-fill="1"/>`}
+  t(x,484,'4 מכולות · 20 MWh','pl3')});
+ s+=box(30,504,1040,64,'pb');lab(1050,532,'—','pl2','end','pl_soc');t(1050,556,'כחול = טעינה, האנרגיה זורמת מהרשת לסוללות · ענבר = פריקה, מהסוללות לרשת · הערכים מהמסחר המדומה של בראשית, בחלוקה שווה בין 5 היחידות','pl3','end');
+ return `<div class="plbox" role="img" aria-label="תרשים חד-קווי של התחנה">${s}</svg>${LB.join('')}</div>`}
+function plTable(rows){return `<div class="tw"><table class="pltab"><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</tbody></table></div>`}
+function plDetails(){const B=s=>s.split(' · ').map(x=>bd(x)).join(' · ');
+ const sec=(h,rows)=>`<details class="pld"><summary>${plBidi(h)}</summary>${plTable(rows.map(r=>[plBidi(r[0]),r[1]]))}</details>`;
+ const soh=[94.60,91.22,88.34,85.73,83.31,81.03,78.86,76.78,74.77,72.83,70.95,69.12,67.33,65.58,63.87,62.19,60.55],del=[83.8,80.8,78.2,75.9,73.8,71.7,69.8,68.0,66.2,64.5,62.8,61.2,59.6,58.1,56.5,55.1,53.6];
+ return sec('חיבור לרשת · הגבולות המאושרים',[['מתח החיבור',B('110 kV')+' · מתח מערכת מרבי '+B('123 kV')+' · רמת קצר '+B('31.5 kA')],['ייצוא מרבי',B('51,289 kW')+' ('+B('51,444 kVA')+')'],['טעינה מרבית מהרשת',B('51,289 kW')],['הספק ריאקטיבי בטעינה',B('+35,712 / −34,862 kVAr')],['הספק ריאקטיבי בפריקה',B('+35,650 / −34,869 kVAr')],['מקדם הספק מינימלי',B('0.95')+' בהספק מלא'],['חיזוקי רשת / הגבלה תפעולית','אין'],['זמן ניתוק תקלה קריטי',B('280 ms')],['מדידה','ב-'+B('110 kV')+', קטגוריה A, מונים '+B('0.2S')]])
+ +sec('תחנת המשנה של התחנה · 110 kV',[['מבנה','פס יחיד חיצוני, שדה קו אחד ושדה שנאי אחד'],['כבל לרשת',B('1×400 mm²')+' אלומיניום XLPE, כ-'+B('250 m')],['מפסקים ומנתקים',B('123 kV · 1250 A · 31.5 kA')],['משני זרם',B('400/5')+' בשדה הקו · '+B('500/5')+' בשדה השנאי'],['מגיני ברק',B('Ur 108 kV · 10 kA')],['פיקוד והגנות','IEC 61850 · SCADA/EMS · ‏DC '+B('220 V')+' · גנרטור חירום']])
+ +sec('השנאי הראשי TX-01',[['הספק',B('50 MVA')+' בקירור טבעי · '+B('63 MVA')+' בקירור מאולץ'],['מתחים וקבוצת חיבור',B('110/20 kV · YNd11')],['עכבת קצר',B('11%')+' (בסיס '+B('63 MVA')+')'],['הפסדי ריקם / עומס',B('35 kW')+' / עד '+B('184 kW')],['נצילות שיא (PEI)',B('99.745%')],['ווסת מתח תחת עומס',B('±9 × 1.78%')+' (ואקום)'],['הארקת נקודת האפס במתח בינוני','סליל '+B('4.62 Ω, 800 A')+' + נגד '+B('14.43 Ω')],['לוגיקת קירור','מעבר לקירור מאולץ מעל '+B('50 MVA')+'; ירידה ל-'+B('50 MVA')+' בתקלת מאווררים']])
+ +sec('מערכת 20 kV',[['פס ראשי','פס יחיד פנימי, '+B('24 kV · 2000 A · 25 kA')],['כבל לשנאי',B('18 × (1×400 mm²)')+' אלומיניום, '+B('164 m')],['ענף 1','יחידת ממירים 1 · '+B('10 MVA')+' · כבל '+B('101 m')],['ענף 2','יחידות 2–3 · '+B('20 MVA')+' · כבל '+B('147 m + 17 m')],['ענף 3','יחידות 4–5 · '+B('20 MVA')+' · כבל '+B('117 m + 17 m')],['מפסקי ענף',B('1250 A · 25 kA')+' · משני זרם '+B('750/5')]])
+ +sec('יחידות הממירים (5)',[['בכל יחידה','8 ממירים דו-כיווניים · '+B('10 MW / 11 MVA')+' · 4 מכולות'],['ממיר בודד',B('1,250 kW / 1,375 kVA')+' · '+B('690 V')+' · זרם '+B('1,046 A')+' (מרבי '+B('1,150 A')+')'],['טווח מתח DC',B('1,000–1,500 V')+' (הספק מלא מ-'+B('1,160 V')+')'],['הספק ריאקטיבי','עד '+B('±48%')+' מההספק · מקדם הספק '+B('0.9')+' השראי עד '+B('0.9')+' קיבולי'],['עיוות הרמוני',B('THDi < 3%')+' · נצילות שיא '+B('99%')],['שנאי היחידה',B('10 MVA · 20/0.69/0.69 kV · Dy11y11')+' · עכבה '+B('9.5%')+' · הפסדים '+B('5.4 / 69 kW')],['הספק התחנה',B('49.4 MW AC')]])
+ +sec('הסוללות (20 מכולות)',[['כימיה','LFP · תא '+B('314 Ah, 3.2 V')],['מכולה',B('5,015.9 kWh')+' · '+B('2,500 kW')+' · '+B('0.5C')+' · קירור נוזלי'],['מבנה מכולה','12 שרשראות של 416 תאים בטור ('+B('4,992')+' תאים) · '+B('1,331 V')+' (טווח '+B('1,040–1,500 V')+')'],['סה"כ',B('100.3 MWh')+' DC · '+B('50 MW')+' DC'],['טעינה','הספק קבוע '+B('0.5P')+' עד '+B('3.55 V')+' לתא, ואז '+B('0.1P')+' עד '+B('3.65 V')],['פריקה','עד '+B('2.50 V')+' לתא · מנוחה של 10 דקות אחרי מחזור מלא'],['אורך חיים',B('10,000')+' מחזורים עד '+B('70%')+' בריאות']])
+ +sec('צריכת עזר',[['שנאי עזר',B('1.6 MVA · 20/0.4 kV')],['צריכה בהפעלה',B('550 kW')+' ב-25°C · '+B('671 kW')+' ב-35°C · '+B('785 kW')+' ב-45°C'],['מכולה בודדת',B('25 / 29.5 / 34.5 kW')],['בתקלה','מכולה בלי מיזוג נחסמת ('+B('-5%')+') · יחידת ממירים בתקלה ('+B('-20%')+')']])
+ +sec('נצילות לאורך השרשרת',[['תא DC',B('98.2%')],['עזר במכולה',B('98.5%')],['כבלי DC',B('99.5%')],['ממיר',B('98.5%')],['שנאי יחידה',B('99.3%')],['כבלי 20 kV ומפסקים',B('99.65%')],['שנאי ראשי',B('99.4%')],['כבל 110 kV ושדה',B('99.95%')],['עזר התחנה',B('99.7%')],['כיוון אחד / הלוך-חזור',B('92.9%')+' / '+B('88.5%')]])
+ +sec('הפעלה וקוד רשת',[['חלון טעינה',B('10%–90%')+' בשנים הראשונות, '+B('5%–95%')+' עד שנה 10'],['מחזורים',B('1.5')+' ביום בממוצע, עד '+B('2')],['שירותי איזון (aFRR)','שמירת '+B('10%–20%')+' מהטעינה לכל כיוון · פקודות כל '+B('4')+' שניות'],['תגובת תדר','מעל '+B('50.2 Hz')+' ומתחת '+B('49.8 Hz')+' · droop '+B('5%')+' (טווח '+B('2%–12%')+')'],['טווחי תדר',B('49–51 Hz')+' ללא הגבלה · '+B('47.5–49')+' ו-'+B('51–51.5 Hz')+' לפחות 30 דקות · '+B('47–47.5 Hz')+' עד 20 שניות'],['עמידות',B('ROCOF 2 Hz/s')+' · קפיצת פאזה '+B('50°')+' · מתח רציף '+B('90%–110%')],['חיבור מחדש אחרי ניתוק',B('49.5–50.2 Hz')+' · '+B('90%–110%')+' מתח · המתנה '+B('60 s')]])
+ +sec('ירידת קיבולת לפי השנים',[['שנה','בריאות · אנרגיה לרשת בפריקה מלאה'],...soh.map((h,i)=>[B(String(i+1)),B(h.toFixed(1)+'% · '+del[i].toFixed(1)+' MWh')])])}
+function plant50Html(){return `<div class="plant"><h3>מבנה התחנה · מה מוביל למה</h3><p class="fine" style="margin:0 0 8px">התרשים עוקב אחרי האנרגיה מהרשת ועד התאים. ההספק בכל רכיב הוא מהלוח המדומה של היום, ברבע השעה הנוכחי.</p><div class="plwrap">${plSvg()}</div>${plDetails()}</div>`}
+function updPlant(v,socNow){if(ZI().deal!=='p50'||!$('pl_poc'))return;const a=Math.abs(v),dir=v>0?'out':v<0?'in':'';
+ $('pl_poc').textContent=(v>0?'+':v<0?'−':'')+a.toFixed(1)+' MW';$('pl_dir').textContent=v>0?'פריקה · זרימה לרשת':v<0?'טעינה · זרימה מהרשת':'ממתינה';
+ const ld=a/PL.txONAN*100;$('pl_tx').innerHTML=`עומס ${bd(ld.toFixed(0)+'%')} · ${a>PL.txONAN?'קירור מאולץ':'קירור טבעי'} · הפסדים בשרשרת ${bd('~'+(a*(1-PL.eta1)).toFixed(1)+' MW')}`;
+ const per=v/5;PL.skids.forEach((k,i)=>{$('pl_s'+i).textContent=(per>0?'+':per<0?'−':'')+Math.abs(per).toFixed(1)+' MW'});
+ [1,2,3].forEach(L=>{const n=PL.skids.filter(k=>k.line===L).length;$('pl_l'+L).textContent=`${(Math.abs(per)*n).toFixed(1)} MW`});
+ document.querySelectorAll('.plsvg .pw').forEach(e=>{e.classList.toggle('fin',dir==='in');e.classList.toggle('fout',dir==='out')});
+ const pct=Math.max(0,Math.min(100,socNow/EMAX*100));document.querySelectorAll('.plsvg [data-fill]').forEach(r=>{const h=50*pct/100;r.setAttribute('y',452-h);r.setAttribute('height',h);r.classList.toggle('fin',dir==='in');r.classList.toggle('fout',dir==='out')});
+ $('pl_soc').innerHTML=`סוללות: ${bd(pct.toFixed(0)+'%')} · ${bd(socNow.toFixed(1))} מתוך ${bd(EMAX+' MWh')} שמישים · ${dir==='in'?'נטענות':dir==='out'?'נפרקות':'במנוחה'}`}
 /* ---------- yearly backtest ---------- */
 const parseY=raw=>raw.split(';').filter(Boolean).map(r=>{const [d,pf,bl,nv,g]=r.split(',');return {d:'20'+d,pf:+pf*MWY,bl:+bl*MWY,nv:+nv*MWY,g:g!=null?+g*MWY:null}});
 const YCACHE={};let D=parseY(RAW_DAILY);let RANGE=0;
