@@ -78,14 +78,19 @@ def ecb():
     except Exception as e: print("ECB failed", e)
 
 if __name__ == "__main__":
-    os.makedirs(D, exist_ok=True); ecb()
-    end = dt.date.today() - dt.timedelta(days=1)
-    TOK = {U_IDA: token(U_IDA), U_ID: token(U_ID)}
+    os.makedirs(D, exist_ok=True)
+    if not os.environ.get("PART"): ecb()
+    end = dt.date.fromisoformat(os.environ["END"]) if os.environ.get("END") else dt.date.today() - dt.timedelta(days=1)
+    if os.environ.get("START"): START = dt.date.fromisoformat(os.environ["START"])
     have_ida, have_id = done(IDA), done(IDCT)
+    sfx = os.environ.get("PART")
+    if sfx:   # parallel chunk: write to its own part files (merged by the workflow)
+        IDA, IDCT = f"{D}/part_ida_{sfx}.csv", f"{D}/part_idct_{sfx}.csv"
+    TOK = {U_IDA: token(U_IDA), U_ID: token(U_ID)}
     fi = open(IDA, "a", newline=""); wi = csv.writer(fi)
     fc = open(IDCT, "a", newline=""); wc = csv.writer(fc)
-    if not have_ida: wi.writerow(["date", "auction", "interval", "price_eur"])
-    if not have_id: wc.writerow(["date", "res", "interval", "min", "max", "last", "ropex_id", "pmp1", "vol_buy", "vol_sell"])
+    if not have_ida or sfx: wi.writerow(["date", "auction", "interval", "price_eur"])
+    if not have_id or sfx: wc.writerow(["date", "res", "interval", "min", "max", "last", "ropex_id", "pmp1", "vol_buy", "vol_sell"])
     d = START; n = 0; t0 = time.time()
     while d <= end and time.time() - t0 < 50 * 60:
         s = d.isoformat()
@@ -95,7 +100,7 @@ if __name__ == "__main__":
             print(s, "IDA rows", len(rows)); n += 1; time.sleep(0.6)
         if s not in have_id:
             got = {}
-            for res in ("15", "60"):
+            for res in ("60",):   # 15-min continuous products are not published for most of the history
                 q = parse_id(post(U_ID, {"ziua": (d + dt.timedelta(days=1)).strftime("%d/%m/%Y"), "buton": "Refresh",
                                          "action": "trading_for", "limba": "ro", "tip": res})).get(d, [])
                 got[res] = q; time.sleep(0.6)

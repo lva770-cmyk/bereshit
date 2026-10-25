@@ -1,21 +1,78 @@
 name: בראשית – מחירי שוק תוך-יומי רומניה (מחקר)
+# Manual only. Fetches OPCOM intraday results in parallel date chunks, merges them into research/data/ro_ida.csv and
+# ro_idct.csv (+ ECB EUR/RON). Does not touch the live screen.
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      start: { description: "first delivery day", default: "2025-11-14" }
+      end:   { description: "last delivery day",  default: "2026-10-24" }
 permissions:
   contents: write
 concurrency:
   group: bereshit-research-intraday
   cancel-in-progress: false
 jobs:
+  chunks:
+    runs-on: ubuntu-latest
+    outputs:
+      list: ${{ steps.c.outputs.list }}
+    steps:
+      - id: c
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import datetime as dt, json
+          a=dt.date.fromisoformat("${{ inputs.start }}"); b=dt.date.fromisoformat("${{ inputs.end }}"); n=8; L=(b-a).days+1; n=min(n,L)
+          print("list="+json.dumps([{"part":str(i),"start":(a+dt.timedelta(days=i*L//n)).isoformat(),"end":(a+dt.timedelta(days=(i+1)*L//n-1)).isoformat()} for i in range(n)]))
+          PY
   fetch:
+    needs: chunks
     runs-on: ubuntu-latest
     timeout-minutes: 58
+    strategy:
+      fail-fast: false
+      matrix:
+        c: ${{ fromJson(needs.chunks.outputs.list) }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: python research/fetch_ro_intraday.py
+        env:
+          START: ${{ matrix.c.start }}
+          END: ${{ matrix.c.end }}
+          PART: ${{ matrix.c.part }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: part-${{ matrix.c.part }}
+          path: research/data/part_*.csv
+  merge:
+    needs: fetch
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@v4
+        with:
+          path: parts
+      - name: merge
+        run: |
+          python3 - <<'PY'
+          import csv, glob, os
+          for kind, main in (("ida", "research/data/ro_ida.csv"), ("idct", "research/data/ro_idct.csv")):
+              rows = list(csv.reader(open(main))); head, body = rows[0], rows[1:]
+              seen = {r[0] for r in body}
+              for f in sorted(glob.glob(f"parts/*/part_{kind}_*.csv")):
+                  for r in list(csv.reader(open(f)))[1:]:
+                      if r and r[0] not in seen: body.append(r)
+              body.sort(key=lambda r: r[0])
+              with open(main, "w", newline="") as fh: w = csv.writer(fh); w.writerow(head); w.writerows(body)
+              print(main, len(body), "rows,", len({r[0] for r in body}), "days")
+          PY
+          START=2099-01-01 python research/fetch_ro_intraday.py
       - name: commit
         run: |
           git config user.name "bereshit-bot"
