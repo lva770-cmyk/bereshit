@@ -233,7 +233,9 @@ tr.fut td{opacity:.5}
 .bal .lg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--ink3);margin:2px 0 6px}.bal .lg i{display:inline-block;width:11px;height:8px;border-radius:2px;margin-inline-end:5px;vertical-align:middle}
 .bal table{width:100%;border-collapse:collapse;font-size:13px}.bal td,.bal th{padding:6px 6px;border-bottom:1px solid var(--line);text-align:start}.bal th{color:var(--ink3);font-weight:500;font-size:12px}.bal td.n{font-family:var(--f-num);white-space:nowrap}
 .bal .ok{color:var(--gain)}
-.bal .bh{margin:18px 0 4px;font-size:12px;font-weight:500;color:var(--ink3);letter-spacing:.02em}
+.bal .bh{margin:20px 0 2px;font-size:14px;font-weight:600;color:var(--ink)}
+.bal .ex{margin:0 0 6px;font-size:12.5px;color:var(--ink2);line-height:1.55;max-width:760px}
+.bal .sum{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:6px 0 4px;background:var(--panel)}.bal .sum p{margin:0 0 8px;font-size:13.5px;line-height:1.7}.bal .sum bdi{white-space:nowrap}.bal .sum table{max-width:420px}.bal tr.tot td{font-weight:600;border-bottom:0}
 .bal .lg i.ln{width:14px;height:0;border-top:2px dashed;border-radius:0}.bal .lg i.hz{background:repeating-linear-gradient(45deg,rgba(239,233,220,.22) 0 1px,transparent 1px 5px);width:14px;height:10px}
 .bal i.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-inline-end:6px;vertical-align:-1px}
 .baltip{position:fixed;z-index:50;pointer-events:none;background:#24241f;border:1px solid #3a382f;border-radius:6px;padding:7px 9px;font-size:12px;color:var(--ink);box-shadow:0 6px 18px rgba(0,0,0,.35);min-width:150px;direction:rtl}
@@ -654,20 +656,22 @@ const BCOL={DA:'#7a7f88','aFRR up':'#c99a45','mFRR up':'#ead7aa','aFRR down':'#4
 const BHE={'aFRR up':'aFRR למעלה','aFRR down':'aFRR למטה','mFRR up':'mFRR למעלה','mFRR down':'mFRR למטה'};
 function balHtml(){return `<div class="bal" id="bal"><h3>מכרזי איזון ומסחר · תוכנית משולבת</h3><p class="fine" style="margin:0 0 8px">כל יום המערכת מחליטה כמה מגה-וואט להציע במכרזי האיזון היומיים של Transelectrica (aFRR ו-mFRR, למעלה ולמטה) וכמה להשאיר למסחר יום-מראש, כדי למקסם את ההכנסה של שניהם יחד. ההחלטה נעשית ביום הקודם, לפי תחזית מהשבוע האחרון בלבד. התנאי הקשיח: הסוללה תמיד יכולה לספק את מה שהתחייבה, כלומר יש הספק פנוי וגם מספיק אנרגיה בסוללה לכל שעה של התחייבות. מדומה בלבד.</p><div id="balbody"><p class="fine">טוען…</p></div></div>`}
 async function loadBal(){try{const r=await fetch('bal-RO2.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;BAL=await r.json();drawBal()}catch(e){const b=$('balbody');if(b)b.innerHTML='<p class="fine">הנתונים של מכרזי האיזון עדיין נבנים. הם יופיעו כאן אוטומטית.</p>'}}
+const BC={dis:'#d9a441',chg:'#5b8cc2',bal:'#e8e2d4',trade:'#5b8cc2',free:'#26251f'};
 function drawBal(){const box=$('balbody');if(!box||!BAL)return;const R=(BAL.rows||[]).slice(-365);
- const sum=i=>R.reduce((a,r)=>a+r[i],0);const da0=sum(1),da1=sum(2),cu=sum(3)+sum(5),cd=sum(4)+sum(6),tot=da1+cu+cd,up=tot/da0-1;
- const by=[['aFRR up',sum(3)],['aFRR down',sum(4)],['mFRR up',sum(5)],['mFRR down',sum(6)]];
+ const sum=i=>R.reduce((a,r)=>a+r[i],0);const da0=sum(1),da1=sum(2),bal=sum(3)+sum(4)+sum(5)+sum(6),tot=da1+bal,up=tot/da0-1;
  const days=Object.keys(BAL.days||{}).sort();const today=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Budapest'});
  if(!BALDAY||!BAL.days[BALDAY])BALDAY=days.includes(today)?today:days[days.length-1];
  box.innerHTML=`<div class="dgrid">
-  <div class="st"><span class="k">מסחר בלבד · ${bd(R.length)} ימים</span><span class="v num">${bd(fmtE(da0))}</span><span class="h">אותה תחזית, בלי מכרזים</span></div>
-  <div class="st"><span class="k">מסחר + מכרזי איזון</span><span class="v num up">${bd(fmtE(tot))}</span><span class="h">${bd((up>=0?'+':'')+(up*100).toFixed(0)+'%')} לעומת מסחר בלבד</span></div>
-  <div class="st"><span class="k">מתוכה ממכרזי איזון</span><span class="v num">${bd(fmtE(cu+cd))}</span><span class="h">aFRR ${bd(fmtE(by[0][1]+by[1][1]))} · mFRR ${bd(fmtE(by[2][1]+by[3][1]))}</span></div>
-  <div class="st"><span class="k">מתוכה ממסחר</span><span class="v num">${bd(fmtE(da1))}</span><span class="h">פחות ממסחר בלבד, כי חלק מהסוללה שמור לאיזון</span></div></div>
-  <h4 class="bh">הכנסה לפי חודש · מסחר + מכרזי איזון</h4><div class="ch" id="balm"></div><div class="lg"><span><i style="background:${BCOL.DA}"></i>מסחר</span>${['aFRR up','mFRR up','aFRR down','mFRR down'].map(k=>`<span><i style="background:${BCOL[k]}"></i>${BHE[k]}</span>`).join('')}<span><i class="ln" style="border-color:#d8d2c4;border-top-style:solid;border-top-width:1.25px"></i>מסחר בלבד, בלי מכרזים</span></div>
+  <div class="st"><span class="k">רק מסחר · שנה אחרונה</span><span class="v num">${bd(fmtE(da0))}</span><span class="h">קונים בזול, מוכרים ביוקר. בלי מכרזים</span></div>
+  <div class="st"><span class="k">מסחר + מכרזי איזון · שנה אחרונה</span><span class="v num up">${bd(fmtE(tot))}</span><span class="h">${bd((up>=0?'+':'')+(up*100).toFixed(0)+'%')} יותר מרק מסחר</span></div>
+  <div class="st"><span class="k">מתוך זה: תשלום על התחייבות לאיזון</span><span class="v num">${bd(fmtE(bal))}</span><span class="h">משלמים לנו על זה שהסוללה עומדת מוכנה</span></div>
+  <div class="st"><span class="k">מתוך זה: מסחר</span><span class="v num">${bd(fmtE(da1))}</span><span class="h">קצת פחות, כי חלק מהסוללה שמור לאיזון</span></div></div>
+  <h4 class="bh">1 · כמה הרווחנו בכל חודש</h4><p class="ex">כל עמודה היא חודש. החלק הכחול הוא הרווח מהמסחר, החלק הבהיר הוא התשלום על מכרזי האיזון. הקו הכתום מראה כמה היינו מרוויחים אילו רק סחרנו. ככל שהעמודה גבוהה יותר מהקו, המכרזים הוסיפו יותר.</p>
+  <div class="ch" id="balm"></div><div class="lg"><span><i style="background:${BC.trade}"></i>מסחר</span><span><i style="background:${BC.bal}"></i>מכרזי איזון</span><span><i class="ln" style="border-color:${BC.dis};border-top-style:solid"></i>אילו רק סחרנו</span></div>
+  <h4 class="bh" style="margin-top:22px">יום אחד מקרוב</h4>
   <div class="tabs" id="baltabs">${days.map(d=>`<button data-d="${d}">${d===today?'היום · ':d===addDays(today,1)?'מחר · ':''}${bd(d.slice(8)+'.'+d.slice(5,7))}</button>`).join('')}</div>
   <div id="balday"></div>
-  <p class="fine">איך זה עובד: לכל שעה המערכת חוזה את מחיר המכרז (ממוצע 7 הימים הקודמים באותה שעה) ואת מחיר יום-מראש, ופותרת בעיה אחת שמחלקת את הסוללה בין מסחר לבין התחייבויות איזון. כל מגה-וואט שמוצע למעלה צריך הספק פריקה פנוי ואנרגיה ל-${bd('30')} דקות (aFRR) או לשעה (mFRR) מעל לסוללה ריקה, וכל מגה-וואט למטה צריך הספק טעינה פנוי ומקום פנוי בסוללה. התשלום לפי מחיר הרכש הממוצע ש-Transelectrica פרסמה לאותה שעה (ENTSO-E), בהמרה מליי לאירו לפי שער ה-ECB. הנחות: עד ${bd('20%')} מהכמות שהמפעיל רכש באותה שעה, כי השוק קטן (כ-${bd('180 MW')} ב-aFRR); תשלום על אנרגיה שהופעלה בפועל לא נכלל; FCR לא נכלל.</p>`;
+  <details class="pld" style="margin-top:12px"><summary>איך זה מחושב ומה ההנחות</summary><p class="fine" style="margin-top:6px">ביום הקודם המערכת חוזה לכל שעה את מחיר המכרז (ממוצע 7 הימים הקודמים באותה שעה) ואת מחיר יום-מראש, ומחליטה איך לחלק את הסוללה. כל מגה-וואט שמתחייבים עליו "למעלה" (להזרים לרשת כשמבקשים) צריך הספק פנוי ואנרגיה בסוללה ל-${bd('30')} דקות (aFRR) או לשעה (mFRR); כל מגה-וואט "למטה" (לקלוט מהרשת) צריך הספק פנוי ומקום פנוי בסוללה. התשלום לפי מחיר הרכש הממוצע ש-Transelectrica פרסמה לאותה שעה, בהמרה מליי לאירו לפי שער ה-ECB. הנחות: עד ${bd('20%')} מהכמות שהמפעיל רכש באותה שעה, כי השוק קטן (כ-${bd('180 MW')} ב-aFRR); תשלום על אנרגיה שהופעלה בפועל לא נכלל; FCR לא נכלל.</p></details>`;
  document.querySelectorAll('#baltabs button').forEach(b=>{b.classList.toggle('on',b.dataset.d===BALDAY);b.onclick=()=>{BALDAY=b.dataset.d;drawBal()}});
  drawBalMonths(R);drawBalDay()}
 function balTip(){let t=document.getElementById('baltip');if(!t){t=document.createElement('div');t.id='baltip';t.className='baltip';t.hidden=true;document.body.appendChild(t)}return t}
@@ -678,68 +682,69 @@ function tipHide(){const t=document.getElementById('baltip');if(t)t.hidden=true}
 function rTop(x,y,w,h,r){if(h<=0)return'';r=Math.min(r,w/2,h);return`M${x},${y+h}V${y+r}Q${x},${y} ${x+r},${y}H${x+w-r}Q${x+w},${y} ${x+w},${y+r}V${y+h}Z`}
 function rBot(x,y,w,h,r){if(h<=0)return'';r=Math.min(r,w/2,h);return`M${x},${y}V${y+h-r}Q${x},${y+h} ${x+r},${y+h}H${x+w-r}Q${x+w},${y+h} ${x+w},${y+h-r}V${y}Z`}
 const BSURF='#161613',BGRID='#252420',BTXT='#77736a';
-function drawBalMonths(R){const m={};R.forEach(r=>{const k='20'+r[0].slice(0,5);(m[k]=m[k]||[0,0,0,0,0,0]);m[k][0]+=r[2];m[k][1]+=r[3];m[k][2]+=r[5];m[k][3]+=r[4];m[k][4]+=r[6];m[k][5]+=r[1]});
- const ks=Object.keys(m).sort();const box=$('balm');if(!box)return;box.innerHTML='';const W=720,H=230,pl=8,pr=54,pt=18,pb=26,ih=H-pt-pb;
- const tot=k=>m[k].slice(0,5).reduce((a,b)=>a+Math.max(0,b),0);const raw=Math.max(...ks.map(tot),...ks.map(k=>m[k][5]))||1;
+function drawBalMonths(R){const m={};R.forEach(r=>{const k='20'+r[0].slice(0,5);(m[k]=m[k]||[0,0,0]);m[k][0]+=r[2];m[k][1]+=r[3]+r[4]+r[5]+r[6];m[k][2]+=r[1]});
+ const ks=Object.keys(m).sort();const box=$('balm');if(!box)return;box.innerHTML='';const W=Math.max(340,box.clientWidth||720),H=W<520?200:220,pl=8,pr=54,pt=16,pb=26,ih=H-pt-pb;
+ const tot=k=>Math.max(0,m[k][0])+Math.max(0,m[k][1]);const raw=Math.max(...ks.map(tot),...ks.map(k=>m[k][2]))||1;
  const step=[1e5,2e5,2.5e5,5e5,1e6].find(s=>raw/s<=4.2)||1e6;const mx=Math.ceil(raw/step)*step;
- const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'הכנסה חודשית לפי מקור'},box);const slot=(W-pl-pr)/ks.length,bw=Math.min(18,slot*0.45);const Y=v=>pt+ih*(1-v/mx);
+ const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'הכנסה חודשית: מסחר ומכרזי איזון'},box);const slot=(W-pl-pr)/ks.length,bw=Math.min(22,slot*0.5);const Y=v=>pt+ih*(1-v/mx);
  for(let v=0;v<=mx+1;v+=step){el('line',{x1:pl,x2:W-pr,y1:Y(v),y2:Y(v),stroke:BGRID,'stroke-width':1},svg);const t=el('text',{x:W-pr+6,y:Y(v)+4},svg);t.textContent=v?fmtE(v):'€0'}
- const cols=[BCOL.DA,BCOL['aFRR up'],BCOL['mFRR up'],BCOL['aFRR down'],BCOL['mFRR down']],names=['מסחר','aFRR למעלה','mFRR למעלה','aFRR למטה','mFRR למטה'];
- let best=ks[0];ks.forEach(k=>{if(tot(k)>tot(best))best=k});
- ks.forEach((k,i)=>{const x=pl+i*slot+(slot-bw)/2;let y=Y(0);const segs=m[k].slice(0,5).map((v,j)=>[v,j]).filter(([v])=>v>0);
-  segs.forEach(([v,j],n)=>{const h=Math.max(0,(ih*v/mx)-(n?1:0));const top=y-(n?1:0)-h;const last=n===segs.length-1;
-   if(last)el('path',{d:rTop(x,top,bw,h,2),fill:cols[j]},svg);else el('rect',{x,y:top,width:bw,height:h,fill:cols[j]},svg);y=top});
-  const ly=Y(m[k][5]);el('line',{x1:x-5,x2:x+bw+5,y1:ly,y2:ly,stroke:'#d8d2c4','stroke-width':1.25},svg);
-  if(k===best){const t=el('text',{x:x+bw/2,y:y-6,'text-anchor':'middle',style:'fill:#bdb6a6;font-size:10.5px'},svg);t.textContent=fmtE(tot(k))}
-  const lab=el('text',{x:x+bw/2,y:H-8,'text-anchor':'middle'},svg);lab.textContent=k.slice(5)+'/'+k.slice(2,4);
-  const hit=el('rect',{x:pl+i*slot,y:pt,width:slot,height:ih,fill:'transparent',tabindex:0},svg);
-  const show=e=>tipShow(e,[...m[k].slice(0,5).map((v,j)=>[cols[j],names[j],fmtE(v)]).reverse(),['#efe9dc','סה״כ משולב',fmtE(tot(k))],['','מסחר בלבד',fmtE(m[k][5])]],k.slice(5)+'/'+k.slice(0,4));
-  hit.addEventListener('pointermove',show);hit.addEventListener('pointerleave',tipHide);hit.addEventListener('focus',e=>{const r=hit.getBoundingClientRect();show({clientX:r.left+r.width/2,clientY:r.top+30})});hit.addEventListener('blur',tipHide)})}
+ ks.forEach((k,i)=>{const x=pl+i*slot+(slot-bw)/2,a=Math.max(0,m[k][0]),b=Math.max(0,m[k][1]);const ha=ih*a/mx,hb=Math.max(0,ih*b/mx-1);
+  el('rect',{x,y:Y(a),width:bw,height:ha,fill:BC.trade},svg);if(hb>0)el('path',{d:rTop(x,Y(a)-1-hb,bw,hb,2),fill:BC.bal},svg);
+  const ly=Y(m[k][2]);el('line',{x1:x-5,x2:x+bw+5,y1:ly,y2:ly,stroke:BC.dis,'stroke-width':1.5},svg);
+  const lab=el('text',{x:x+bw/2,y:H-8,'text-anchor':'middle'},svg);lab.textContent=W<520?k.slice(5):k.slice(5)+'/'+k.slice(2,4);
+  const hit=el('rect',{x:pl+i*slot,y:pt,width:slot,height:ih,fill:'transparent'},svg);
+  hit.addEventListener('pointermove',e=>tipShow(e,[[BC.bal,'מכרזי איזון',fmtE(b)],[BC.trade,'מסחר',fmtE(a)],['','סה״כ',fmtE(a+b)],[BC.dis,'אילו רק סחרנו',fmtE(m[k][2])]],k.slice(5)+'/'+k.slice(0,4)));
+  hit.addEventListener('pointerleave',tipHide)})}
 function drawBalDay(){const d=BAL.days[BALDAY],box=$('balday');if(!d||!box)return;const P=BAL.battery.power_mw,E=BAL.battery.energy_mwh;
- const R=k=>i=>(d.res[k]||[])[Math.floor(i/4)]||0;const cf=d.capf||{};const mwh=k=>(d.res[k]||[]).reduce((a,b)=>a+b,0);
- const expC=k=>(d.res[k]||[]).reduce((a,v,h)=>a+v*((cf[k]||[])[h]||0),0);
- const rows=BK.map(k=>{const st=d.settled?d.settled[k]:null;return `<tr><td><i class="sw" style="background:${BCOL[k]}"></i>${BHE[k]}</td><td class="n">${bd(mwh(k).toFixed(0)+' MW·h')}</td><td class="n">${bd(fmtE(expC(k)))}</td><td class="n">${st!=null?bd(fmtE(st)):'—'}</td></tr>`}).join('');
- const lgP=[['DA','מסחר: פריקה (+) / טעינה (−)'],['aFRR up','aFRR למעלה'],['mFRR up','mFRR למעלה'],['aFRR down','aFRR למטה'],['mFRR down','mFRR למטה']];
- box.innerHTML=`<h4 class="bh">הספק בכל רבע שעה · ${bd('MW')}</h4><div class="ch" id="balp"></div><div class="lg">${lgP.map(([k,l])=>`<span><i style="background:${BCOL[k]}"></i>${l}</span>`).join('')}<span><i class="ln" style="border-color:#3d3b34"></i>גבול ההספק ${bd('±'+P+' MW')}</span></div>
- <h4 class="bh">אנרגיה בסוללה · ${bd('MWh')}</h4><div class="ch" id="bale"></div><div class="lg"><span><i class="ln" style="border-color:#efe9dc;border-top-style:solid"></i>אנרגיה בסוללה</span><span><i class="hz"></i>שמור להתחייבויות האיזון: הסוללה לא נכנסת לשם</span></div>
- <div style="overflow-x:auto"><table><thead><tr><th>מוצר</th><th>הוצע</th><th>צפי לפי התחזית</th><th>בפועל</th></tr></thead><tbody>${rows}
- <tr><td><i class="sw" style="background:${BCOL.DA}"></i>מסחר יום-מראש</td><td class="n">${bd(((d.net||[]).reduce((a,v)=>a+Math.max(0,v),0)*.25).toFixed(0)+' MWh')} נמכרו</td><td class="n">—</td><td class="n">${d.settled?bd(fmtE(d.settled.da)):'—'}</td></tr></tbody></table></div>
- <p class="fine">${d.settled?'היום הזה כבר נסגר: ההכנסה בפועל לפי מחירי יום-מראש ומחירי המכרז האמיתיים.':'עדיין לא נסגר: המחירים בפועל של היום הזה עוד לא ידועים כולם.'} הלוח נקבע ${bd(ilTime(new Date(d.planned_at).getTime()))}.</p>`;
- const hhmm=i=>String(Math.floor(i/4)).padStart(2,'0')+':'+String(15*(i%4)).padStart(2,'0');
- const today=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Budapest'});let nowS=-1;if(BALDAY===today){const n=new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/Budapest'}));nowS=n.getHours()*4+n.getMinutes()/15}
- // ---- power chart
- {const b=$('balp');const W=720,H=230,pl=8,pr=58,pt=10,pb=24,ih=H-pt-pb,mid=pt+ih/2;const bw=(W-pl-pr)/96,X=i=>pl+bw*i,Ym=v=>mid-v/P*(ih/2);
-  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'הספק: מסחר והתחייבויות איזון'},b);
-  [P,P/2,0,-P/2,-P].forEach(v=>{el('line',{x1:pl,x2:W-pr,y1:Ym(v),y2:Ym(v),stroke:Math.abs(v)===P?'#3d3b34':BGRID,'stroke-width':1,'stroke-dasharray':Math.abs(v)===P?'3 3':''},svg);const t=el('text',{x:W-pr+6,y:Ym(v)+4},svg);t.textContent=(v>0?'+':v<0?'−':'')+Math.abs(v)+' MW'});
-  for(let h=0;h<=24;h+=6){const t=el('text',{x:X(h*4),y:H-6,'text-anchor':h===0?'start':h===24?'end':'middle'},svg);t.textContent=String(h).padStart(2,'0')+':00'}
-  const g=Math.min(2,bw*0.3),w=Math.max(1,bw-g);
-  for(let i=0;i<96;i++){const n=d.net[i],x=X(i)+g/2;
-   // up side: DA discharge (if any), then aFRR up, then mFRR up, each separated by a 2px gap
-   let y=mid;const upSegs=[[Math.max(0,n),BCOL.DA],[R('aFRR up')(i),BCOL['aFRR up']],[R('mFRR up')(i),BCOL['mFRR up']]].filter(s=>s[0]>.3);
-   upSegs.forEach(([v,c],k)=>{const gap=k?1:0,h=Math.max(.5,(Ym(0)-Ym(v))-gap),top=y-gap-h;el(k===upSegs.length-1?'path':'rect',k===upSegs.length-1?{d:rTop(x,top,w,h,1),fill:c}:{x,y:top,width:w,height:h,fill:c},svg);y=top});
-   y=mid;const dnSegs=[[Math.max(0,-n),BCOL.DA],[R('aFRR down')(i),BCOL['aFRR down']],[R('mFRR down')(i),BCOL['mFRR down']]].filter(s=>s[0]>.3);
-   dnSegs.forEach(([v,c],k)=>{const gap=k?1:0,h=Math.max(.5,(Ym(-v)-Ym(0))-gap),top=y+gap;el(k===dnSegs.length-1?'path':'rect',k===dnSegs.length-1?{d:rBot(x,top,w,h,1),fill:c}:{x,y:top,width:w,height:h,fill:c},svg);y=top+h})}
-  el('line',{x1:pl,x2:W-pr,y1:mid,y2:mid,stroke:'#4a483f','stroke-width':1},svg);
-  if(nowS>=0){el('line',{x1:X(nowS),x2:X(nowS),y1:pt,y2:pt+ih,stroke:'#ff5a36','stroke-width':1,opacity:.8},svg)}
-  const cross=el('line',{y1:pt,y2:pt+ih,stroke:'#efe9dc','stroke-width':1,opacity:0},svg);
-  const hit=el('rect',{x:pl,y:pt,width:W-pl-pr,height:ih,fill:'transparent'},svg);
-  hit.addEventListener('pointermove',e=>{const r=svg.getBoundingClientRect();const i=Math.max(0,Math.min(95,Math.floor(((e.clientX-r.left)*W/r.width-pl)/bw)));cross.setAttribute('x1',X(i)+bw/2);cross.setAttribute('x2',X(i)+bw/2);cross.setAttribute('opacity',.6);
-   const n=d.net[i];tipShow(e,[[BCOL.DA,n>0.3?'מסחר: פריקה':n<-0.3?'מסחר: טעינה':'מסחר: ממתינה',Math.abs(n).toFixed(1)+' MW'],...BK.map(k=>[BCOL[k],BHE[k],R(k)(i).toFixed(1)+' MW'])],hhmm(i)+'–'+hhmm(i+1))});
-  hit.addEventListener('pointerleave',()=>{cross.setAttribute('opacity',0);tipHide()})}
- // ---- energy chart
- {const b=$('bale');const W=720,H=180,pl=8,pr=58,pt=10,pb=24,ih=H-pt-pb;const bw=(W-pl-pr)/96,X=i=>pl+bw*i,Y=v=>pt+ih*(1-v/E);
-  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'אנרגיה בסוללה ואזורי שמירה'},b);
-  const defs=el('defs',{},svg);const pat=el('pattern',{id:'balhz',width:6,height:6,patternUnits:'userSpaceOnUse',patternTransform:'rotate(45)'},defs);el('rect',{width:6,height:6,fill:'rgba(239,233,220,.03)'},pat);el('line',{x1:0,y1:0,x2:0,y2:6,stroke:'rgba(239,233,220,.16)','stroke-width':1},pat);
+ const res=k=>d.res[k]||Array(24).fill(0);const H24=[...Array(24).keys()];
+ const upH=H24.map(h=>res('aFRR up')[h]+res('mFRR up')[h]),dnH=H24.map(h=>res('aFRR down')[h]+res('mFRR down')[h]);
+ const netH=H24.map(h=>d.net.slice(h*4,h*4+4).reduce((a,b)=>a+b,0)/4);
+ const tradeH=netH.map(Math.abs),balH=H24.map(h=>Math.min(Math.max(upH[h],dnH[h]),Math.max(0,P-tradeH[h])));
+ // plain-language summary
+ const ranges=(f)=>{const out=[];let st=-1;for(let h=0;h<=24;h++){const on=h<24&&f(h);if(on&&st<0)st=h;if(!on&&st>=0){out.push(String(st).padStart(2,'0')+':00–'+String(h).padStart(2,'0')+':00');st=-1}}return out};
+ const chg=ranges(h=>netH[h]<-1),dis=ranges(h=>netH[h]>1),balHrs=H24.filter(h=>balH[h]>1),avgBal=balHrs.length?balHrs.reduce((a,h)=>a+balH[h],0)/balHrs.length:0;
+ const fc=(S&&S.days&&S.days[BALDAY]&&S.days[BALDAY].forecast)||null;
+ const daExp=fc?d.net.reduce((a,v,i)=>a+fc[i]*v*.25-(v>0?3*v*.25:0),0):null;
+ const balExp=BK.reduce((a,k)=>a+res(k).reduce((x,v,h)=>x+v*(((d.capf||{})[k]||[])[h]||0),0),0);
+ const daAct=d.settled?d.settled.da:null,balAct=d.settled?BK.reduce((a,k)=>a+(d.settled[k]||0),0):null;
+ const lbl=BALDAY===new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Budapest'})?'היום':dlabel(BALDAY);
+ box.innerHTML=`<div class="sum">
+  <p><b>מה הסוללה עושה ${lbl}:</b> ${chg.length?`טוענת בזול בשעות ${chg.map(x=>bd(x)).join(' · ')}`:'לא טוענת'}; ${dis.length?`מוכרת ביוקר בשעות ${dis.map(x=>bd(x)).join(' · ')}`:'לא מוכרת'}; ובשאר הזמן עומדת מוכנה לאיזון, ${bd(balHrs.length)} שעות בממוצע ${bd(Math.round(avgBal)+' MW')}.</p>
+  <table><thead><tr><th></th><th>צפי</th><th>בפועל</th></tr></thead><tbody>
+  <tr><td><i class="sw" style="background:${BC.trade}"></i>מסחר</td><td class="n">${daExp!=null?bd(fmtE(daExp)):'—'}</td><td class="n">${daAct!=null?bd(fmtE(daAct)):'—'}</td></tr>
+  <tr><td><i class="sw" style="background:${BC.bal}"></i>מכרזי איזון</td><td class="n">${bd(fmtE(balExp))}</td><td class="n">${balAct!=null?bd(fmtE(balAct)):'—'}</td></tr>
+  <tr class="tot"><td>סה״כ</td><td class="n">${daExp!=null?bd(fmtE(daExp+balExp)):'—'}</td><td class="n">${d.settled?bd(fmtE(daAct+balAct)):'עוד לא ידוע'}</td></tr></tbody></table></div>
+ <h4 class="bh">2 · איך מחלקים את ${bd(P+' MW')} של הסוללה בכל שעה</h4><p class="ex">כל עמודה היא שעה, וגובה העמודה המלאה הוא כל ההספק של הסוללה. כתום: מוכרים חשמל. כחול: קונים וטוענים. בהיר: ההספק ששמרנו בשביל מכרזי האיזון. מה שנשאר ריק לא בשימוש.</p>
+ <div class="ch" id="balp"></div><div class="lg"><span><i style="background:${BC.dis}"></i>מוכרים (פריקה)</span><span><i style="background:${BC.chg}"></i>קונים (טעינה)</span><span><i style="background:${BC.bal}"></i>שמור לאיזון</span><span><i style="background:${BC.free};outline:1px solid #3a382f"></i>לא בשימוש</span></div>
+ <h4 class="bh">3 · כמה חשמל יש בסוללה, והאם תמיד אפשר לעמוד בהתחייבות</h4><p class="ex">הקו הוא כמות החשמל בסוללה. הרצועה הבהירה היא הטווח המותר באותה שעה: מתחתיה לא היה מספיק חשמל לספק את מה שהבטחנו, ומעליה לא היה מקום לקלוט את מה שהבטחנו. הקו תמיד נשאר בתוך הרצועה.</p>
+ <div class="ch" id="bale"></div><div class="lg"><span><i class="ln" style="border-color:#e2dccf;border-top-style:solid"></i>חשמל בסוללה</span><span><i style="background:rgba(232,226,212,.14);outline:1px solid rgba(232,226,212,.25)"></i>טווח מותר</span></div>
+ <p class="fine">${d.settled?'היום הזה כבר נסגר, וה"בפועל" לפי המחירים האמיתיים.':'היום הזה עוד לא נסגר, לכן יש רק צפי.'} התוכנית נקבעה ${bd(ilTime(new Date(d.planned_at).getTime()))}, לפני שהמחירים היו ידועים.</p>`;
+ const today=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Budapest'});let nowH=-1;if(BALDAY===today){const n=new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/Budapest'}));nowH=n.getHours()+n.getMinutes()/60}
+ // ---- chart 2: hourly split of the battery's power
+ {const b=$('balp');const W=Math.max(340,b.clientWidth||720),H=W<520?190:210,pl=8,pr=54,pt=10,pb=24,ih=H-pt-pb;const slot=(W-pl-pr)/24,bw=Math.min(20,slot*0.66),Y=v=>pt+ih*(1-v/P);
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'חלוקת ההספק בכל שעה'},b);
+  [0,P/2,P].forEach(v=>{el('line',{x1:pl,x2:W-pr,y1:Y(v),y2:Y(v),stroke:BGRID,'stroke-width':1},svg);const t=el('text',{x:W-pr+6,y:Y(v)+4},svg);t.textContent=v+' MW'});
+  H24.forEach(h=>{const x=pl+h*slot+(slot-bw)/2;el('rect',{x,y:Y(P),width:bw,height:ih,fill:BC.free,rx:2},svg);
+   let y=Y(0);const segs=[[tradeH[h],netH[h]>0?BC.dis:BC.chg],[balH[h],BC.bal]].filter(s=>s[0]>.5);
+   segs.forEach(([v,c],n)=>{const hh=Math.max(1,ih*v/P-(n?1.5:0)),top=y-(n?1.5:0)-hh;el(n===segs.length-1?'path':'rect',n===segs.length-1?{d:rTop(x,top,bw,hh,2),fill:c}:{x,y:top,width:bw,height:hh,fill:c},svg);y=top});
+   if(h%(W<520?6:3)===0){const t=el('text',{x:h?x+bw/2:x,y:H-6,'text-anchor':h?'middle':'start'},svg);t.textContent=String(h).padStart(2,'0')+':00'}
+   const hit=el('rect',{x:pl+h*slot,y:pt,width:slot,height:ih,fill:'transparent'},svg);
+   hit.addEventListener('pointermove',e=>tipShow(e,[[netH[h]>0?BC.dis:BC.chg,netH[h]>1?'מוכרים':netH[h]<-1?'קונים':'מסחר: כלום',tradeH[h].toFixed(1)+' MW'],[BC.bal,'שמור לאיזון למעלה',upH[h].toFixed(1)+' MW'],[BC.bal,'שמור לאיזון למטה',dnH[h].toFixed(1)+' MW']],String(h).padStart(2,'0')+':00–'+String(h+1).padStart(2,'0')+':00'));
+   hit.addEventListener('pointerleave',tipHide)});
+  if(nowH>=0){const x=pl+nowH*slot;el('line',{x1:x,x2:x,y1:pt,y2:pt+ih,stroke:'#ff5a36','stroke-width':1,opacity:.8},svg)}}
+ // ---- chart 3: energy in the battery inside the allowed band
+ {const b=$('bale');const W=Math.max(340,b.clientWidth||720),H=W<520?160:180,pl=8,pr=54,pt=10,pb=24,ih=H-pt-pb;const bw=(W-pl-pr)/96,X=i=>pl+bw*i,Y=v=>pt+ih*(1-v/E);
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'חשמל בסוללה וטווח מותר'},b);
   [0,E/2,E].forEach(v=>{el('line',{x1:pl,x2:W-pr,y1:Y(v),y2:Y(v),stroke:BGRID,'stroke-width':1},svg);const t=el('text',{x:W-pr+6,y:Y(v)+4},svg);t.textContent=Math.round(v)+' MWh'});
-  for(let h=0;h<=24;h+=6){const t=el('text',{x:X(h*4),y:H-6,'text-anchor':h===0?'start':h===24?'end':'middle'},svg);t.textContent=String(h).padStart(2,'0')+':00'}
-  const stepPath=(arr,base)=>{let p=`M${X(0)},${Y(base)}`;arr.forEach((v,i)=>{p+=`L${X(i)},${Y(v)}L${X(i+1)},${Y(v)}`});return p+`L${X(96)},${Y(base)}Z`};
-  el('path',{d:stepPath(d.floor,0),fill:'url(#balhz)'},svg);el('path',{d:stepPath(d.ceil,E),fill:'url(#balhz)'},svg);
-  const soc=[E/2,...d.soc];el('path',{d:soc.map((v,i)=>`${i?'L':'M'}${X(i)},${Y(v)}`).join(''),fill:'none',stroke:'#e2dccf','stroke-width':1.6,'stroke-linejoin':'round','stroke-linecap':'round'},svg);
-  if(nowS>=0){el('line',{x1:X(nowS),x2:X(nowS),y1:pt,y2:pt+ih,stroke:'#ff5a36','stroke-width':1,opacity:.8},svg)}
-  const cross=el('line',{y1:pt,y2:pt+ih,stroke:'#efe9dc','stroke-width':1,opacity:0},svg);const dot=el('circle',{r:4,fill:'#efe9dc',stroke:BSURF,'stroke-width':2,opacity:0},svg);
-  const hit=el('rect',{x:pl,y:pt,width:W-pl-pr,height:ih,fill:'transparent'},svg);
-  hit.addEventListener('pointermove',e=>{const r=svg.getBoundingClientRect();const i=Math.max(0,Math.min(95,Math.floor(((e.clientX-r.left)*W/r.width-pl)/bw)));const x=X(i+1);cross.setAttribute('x1',x);cross.setAttribute('x2',x);cross.setAttribute('opacity',.6);dot.setAttribute('cx',x);dot.setAttribute('cy',Y(d.soc[i]));dot.setAttribute('opacity',1);
-   tipShow(e,[['#efe9dc','אנרגיה בסוללה',d.soc[i].toFixed(1)+' MWh'],['','מינימום להתחייבויות למעלה',d.floor[i].toFixed(1)+' MWh'],['','מקסימום להתחייבויות למטה',d.ceil[i].toFixed(1)+' MWh']],'סוף '+hhmm(i))});
+  for(let h=0;h<=24;h+=(W<520?6:3)){const t=el('text',{x:X(h*4),y:H-6,'text-anchor':h===0?'start':h===24?'end':'middle'},svg);t.textContent=String(h).padStart(2,'0')+':00'}
+  let band='';for(let i=0;i<96;i++)band+=`${i?'L':'M'}${X(i)},${Y(d.ceil[i])}L${X(i+1)},${Y(d.ceil[i])}`;for(let i=95;i>=0;i--)band+=`L${X(i+1)},${Y(d.floor[i])}L${X(i)},${Y(d.floor[i])}`;
+  el('path',{d:band+'Z',fill:'rgba(232,226,212,.10)',stroke:'rgba(232,226,212,.22)','stroke-width':1},svg);
+  const soc=[E/2,...d.soc];el('path',{d:soc.map((v,i)=>`${i?'L':'M'}${X(i)},${Y(v)}`).join(''),fill:'none',stroke:'#e2dccf','stroke-width':1.8,'stroke-linejoin':'round'},svg);
+  if(nowH>=0){const x=X(nowH*4);el('line',{x1:x,x2:x,y1:pt,y2:pt+ih,stroke:'#ff5a36','stroke-width':1,opacity:.8},svg)}
+  const cross=el('line',{y1:pt,y2:pt+ih,stroke:'#e2dccf','stroke-width':1,opacity:0},svg);const dot=el('circle',{r:4,fill:'#e2dccf',stroke:BSURF,'stroke-width':2,opacity:0},svg);
+  const hit=el('rect',{x:pl,y:pt,width:W-pl-pr,height:ih,fill:'transparent'},svg);const hm=i=>String(Math.floor(i/4)).padStart(2,'0')+':'+String(15*(i%4)).padStart(2,'0');
+  hit.addEventListener('pointermove',e=>{const r=svg.getBoundingClientRect();const i=Math.max(0,Math.min(95,Math.floor(((e.clientX-r.left)*W/r.width-pl)/bw)));const x=X(i+1);cross.setAttribute('x1',x);cross.setAttribute('x2',x);cross.setAttribute('opacity',.5);dot.setAttribute('cx',x);dot.setAttribute('cy',Y(d.soc[i]));dot.setAttribute('opacity',1);
+   tipShow(e,[['#e2dccf','חשמל בסוללה',d.soc[i].toFixed(1)+' MWh'],['','הכי מעט שמותר',d.floor[i].toFixed(1)+' MWh'],['','הכי הרבה שמותר',d.ceil[i].toFixed(1)+' MWh']],hm(i+1))});
   hit.addEventListener('pointerleave',()=>{cross.setAttribute('opacity',0);dot.setAttribute('opacity',0);tipHide()})}
 }
 
