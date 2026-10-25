@@ -641,21 +641,21 @@ let P50YR=0,IDJ=null;
 /* Revenue stacks for the return calculation. The day-ahead figure is the measured one above; balancing and intraday are
    added as UPLIFTS measured inside one consistent model (co-plan vs trade-only), so model differences do not leak in. */
 function p50stacks(yr){const st=[{k:'da',l:'יום-מראש בלבד',v:yr}];
- let balUp=null,idUp=null,half=null;
- if(BAL&&BAL.rows&&BAL.rows.length>=60){const R=BAL.rows.slice(-365),k=365/R.length;balUp=R.reduce((a,r)=>a+r[2]+r[3]+r[4]+r[5]+r[6]-r[1],0)*k}
+ let balTot=null,idUp=null,half=null;
+ if(BAL&&BAL.rows&&BAL.rows.length>=60){const R=BAL.rows.slice(-365),k=365/R.length;balTot=R.reduce((a,r)=>a+r[2]+r[3]+r[4]+r[5]+r[6],0)*k}
  if(IDJ&&IDJ.scenarios){const c=IDJ.scenarios.conservative.with_balancing,b=IDJ.scenarios.base,to=b.trade_only,wb=b.with_balancing,h=IDJ.balancing_half_price;
-  idUp=c.ida1+c.idc;if(h){const full=wb.da+wb.bal-to.da;half=full>0?(h.da+h.bal-to.da)/full:null}}
- if(balUp!=null)st.push({k:'bal',l:'+ מכרזי איזון',v:yr+balUp});
- if(balUp!=null&&idUp!=null){const all=yr+balUp+idUp;st.push({k:'all',l:'+ איזון + תוך-יומי',v:all,main:1});
-  if(half!=null)st.push({k:'h',l:'ואם מחירי האיזון בחצי',v:yr+balUp*half+idUp,risk:1});
+  idUp=c.ida1+c.idc;if(h)half=(wb.da+wb.bal)-(h.da+h.bal)}
+ if(balTot!=null)st.push({k:'bal',l:'+ מכרזי איזון',v:balTot});
+ if(balTot!=null&&idUp!=null){const all=balTot+idUp;st.push({k:'all',l:'+ איזון + תוך-יומי',v:all,main:1});
+  if(half!=null)st.push({k:'h',l:'ואם מחירי האיזון בחצי',v:balTot-half+idUp,risk:1});
   st.push({k:'m20',l:'ואם כל ההכנסות '+bd('−20%'),v:all*.8,risk:1})}
  else st.push({k:'m20',l:'אם ההכנסות '+bd('−20%'),v:yr*.8,risk:1});
- return {st,balUp,idUp}}
+ return {st,balUp:balTot!=null?balTot-yr:null,idUp}}
 function p50calc(yr){const out=$('p50out');if(!out)return;const v=parseFloat(P50PX);if(!(v>0)){out.innerHTML='<p class="fine" style="margin:0">הכניסו מחיר במיליוני אירו כדי לראות את התשואה.</p>';return}
  const capex=v*1e6,{st,balUp,idUp}=p50stacks(yr);
  const rows=st.map(r=>{const e=econAt(capex,r.v);return `<tr${r.main?' class="ok"':''}${r.risk?' style="color:var(--ink3)"':''}><td>${r.main?'<b>'+r.l+'</b>':r.l}</td><td class="n">${bd(fmtE(r.v))}</td><td class="n"><b>${bd((e.irr*100).toFixed(1)+'%')}</b></td><td class="n">${(e.pb?bd(String(e.pb))+' שנים':'מעל '+bd(String(P50.years)))}</td></tr>`}).join('');
  out.innerHTML=`<div class="tw"><table><thead><tr><th>הכנסה מ…</th><th>בשנה</th><th>IRR</th><th>החזר</th></tr></thead><tbody>${rows}</tbody></table></div>
- <p class="fine" style="margin:6px 0 0">מחיר ${bd(fmtE(capex))} = ${bd(fmtE(capex/ZI().mw))} למגה-וואט.${balUp!=null?` מכרזי האיזון מוסיפים ${bd(fmtE(balUp))} בשנה`:''}${idUp!=null?` והמסחר התוך-יומי ${bd(fmtE(idUp))} (בתרחיש השמרני). שתי השורות האפורות הן תרחישי סיכון לשורה המודגשת`:''}${balUp!=null?'. כל תוספת נמדדת כהפרש בתוך אותו מודל, כדי שההבדלים בין המודלים לא ינפחו אותה.':''} לא נכללו עמלות של חברת מסחר או מפעיל, ולא שחיקה מהירה יותר בגלל ההפעלות של האיזון.</p>`}
+ <p class="fine" style="margin:6px 0 0">מחיר ${bd(fmtE(capex))} = ${bd(fmtE(capex/ZI().mw))} למגה-וואט.${balUp!=null?` מכרזי האיזון מוסיפים ${bd(fmtE(balUp))} בשנה`:''}${idUp!=null?` והמסחר התוך-יומי ${bd(fmtE(idUp))} (בתרחיש השמרני). שתי השורות האפורות הן תרחישי סיכון לשורה המודגשת`:''}${balUp!=null?'. השורה עם מכרזי האיזון היא ההכנסה המלאה של התוכנית המשולבת, כולל המחיר של להשאיר את הסוללה חצי מלאה בחצות.':''} לא נכללו עמלות של חברת מסחר או מפעיל, ולא שחיקה מהירה יותר בגלל ההפעלות של האיזון.</p>`}
 function drawDeal50(){dealHead('p50');const mw=ZI().mw;
  const G={},N={},live={};(D||[]).forEach(r=>{if(r.g!=null){G[r.d]=r.g;N[r.d]=r.bl}});
  Object.keys(S.days||{}).forEach(k=>{const d=S.days[k];if(d.actual&&d.net&&d.realized!=null){const c=calc(d);G[k]=d.realized+c.wear.reduce((a,b)=>a+b,0);N[k]=d.realized;live[k]=d.source==='live'}});
