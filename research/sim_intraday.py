@@ -28,10 +28,11 @@ def load(shift=0):
     for r in csv.DictReader(open(R + "ro_ida.csv")):
         ida[(r["date"], r["auction"])][int(r["interval"])] = float(r["price_eur"])
     rates = {r["date"]: float(r["eur_ron"]) for r in csv.DictReader(open(R + "eur_ron.csv"))} if __import__("os").path.exists(R + "eur_ron.csv") else {}
-    idq, idh = collections.defaultdict(list), collections.defaultdict(list)
+    idh, vb, vs = collections.defaultdict(list), collections.defaultdict(list), collections.defaultdict(list)
     for r in csv.DictReader(open(R + "ro_idct.csv")):
-        v = float(r["ropex_id"]) if r["ropex_id"] else (float(r["last"]) if r["last"] else np.nan)
-        (idq if r["res"] == "15" else idh)[r["date"]].append(v)
+        if r["res"] != "60": continue
+        v = float(r["ropex_id"]) if r["ropex_id"] else np.nan
+        idh[r["date"]].append(v); vb[r["date"]].append(float(r["vol_buy"] or 0)); vs[r["date"]].append(float(r["vol_sell"] or 0))
     def series(day, auction):
         m = ida.get((day, auction))
         if not m: return None
@@ -39,14 +40,14 @@ def load(shift=0):
         return to96(a)
     def cont(day):
         rate = B._rate(rates, day) if rates else B.RON_FALLBACK
-        q = idq.get(day); h = idh.get(day)
-        if q and to96(q): return [x / rate for x in to96(q)]
+        h = idh.get(day)
         if h and len(h) in (23, 24, 25):
-            a = [x / rate for x in h for _ in range(4)]; return to96(a)
+            q = lambda arr: to96([x for x in arr for _ in range(4)])
+            return q([x / rate for x in h]), q(vb[day]), q(vs[day])     # EUR/MWh; hourly buy / sell volume (MWh = MW)
         return None
     return Pd, caps, series, cont
 
-def retrade(price, net_prev, plan, xcap):
+def retrade(price, net_prev, plan, xcap, sell_cap=None, buy_cap=None):
     """Max sum(price * x * 0.25) s.t. physical schedule net_prev + x feasible with plan reserves (power + energy)."""
     n = 96; dt_ = .25; ec = ed = B.RTE ** .5; E, P = B.E, B.P
     price = np.asarray(price, float); ok = ~np.isnan(price); pr = np.where(ok, price, 0.0)
@@ -72,13 +73,13 @@ def retrade(price, net_prev, plan, xcap):
     lo = [max(floor[t], floor[t + 1] if t + 1 < n else 0) for t in range(n)]       # energy kept for reserves (slot start & end)
     hi = [min(ceil[t], ceil[t + 1] if t + 1 < n else E) for t in range(n)]
     bounds = [(0, P)] * (2 * n) + [(min(lo[t], hi[t]), hi[t]) for t in range(n - 1)] + [(e0, e0)] \
-             + [((-xcap, xcap) if ok[t] else (0, 0)) for t in range(n)]
+             + [((-min(xcap, buy_cap[t] if buy_cap is not None else xcap), min(xcap, sell_cap[t] if sell_cap is not None else xcap)) if ok[t] else (0, 0)) for t in range(n)]
     res = linprog(cost, A_ub=A.tocsr(), b_ub=np.array(b), A_eq=Aeq.tocsr(), b_eq=beq, bounds=bounds, method="highs")
     if res.status: return np.zeros(n), 0.0
     x = res.x[X:]; x[np.abs(x) < 1e-6] = 0
     return x, float((pr * x * dt_).sum())
 
-def run(use_bal=True, xcap=25.0, steps=("IDA1", "ID"), shift=0):
+def run(use_bal=True, xcap=25.0, steps=("IDA1", "ID"), shift=0, share=0.2):
     Pd, caps, series, cont = load()
     rate = B.RON_FALLBACK; tot = collections.Counter(); nd = 0
     d = dt.date(2025, 10, 2); end = max(Pd)
@@ -90,10 +91,13 @@ def run(use_bal=True, xcap=25.0, steps=("IDA1", "ID"), shift=0):
             plan = B.coplan(f, capf, use_bal=use_bal); da, c = B.settle(plan, a, ca)
             tot["da"] += da; tot["bal"] += sum(c.values()); net = plan["net"].copy(); nd += 1
             for s in steps:
-                pr = p1 if s == "IDA1" else pc
+                sc = bc = None
+                if s == "IDA1": pr = p1
+                elif pc: pr, b_, s_ = pc; sc = share * np.asarray(b_); bc = share * np.asarray(s_)   # we sell into their buys
+                else: pr = None
                 if pr is None: continue
                 pr = np.roll(pr, shift) if shift else pr
-                x, v = retrade(pr, net, plan, xcap); tot[s] += v; tot[s + "_mwh"] += np.abs(x).sum() * .25; net = net + x
+                x, v = retrade(pr, net, plan, xcap, sc, bc); tot[s] += v; tot[s + "_mwh"] += np.abs(x).sum() * .25; net = net + x
         d += dt.timedelta(days=1)
     return nd, tot
 
