@@ -1,0 +1,232 @@
+{
+ "at": "2026-10-25T16:20:00.230091Z",
+ "window": [
+  "2026-10-16 16:00:00",
+  "2026-10-23 16:00:00"
+ ],
+ "token_present": true,
+ "A81_aFRR_daily": {
+  "http": 200,
+  "bytes": 95122,
+  "points": 275,
+  "tags": {
+   "procurement_Price.amount": {
+    "n": 275,
+    "sample": [
+     "14.1",
+     "12.58",
+     "12.56",
+     "12.59",
+     "11.45",
+     "11.33"
+    ]
+   },
+   "quantity": {
+    "n": 275,
+    "sample": [
+     "175",
+     "175",
+     "175",
+     "175",
+     "175",
+     "175"
+    ]
+   }
+  },
+  "resolution": [
+   "PT60M"
+  ],
+  "directions": [
+   "A01",
+   "A02"
+  ],
+  "reason": [],
+  "head": ""
+ },
+ "A81_mFRR_daily": {
+  "http": 200,
+  "bytes": 91487,
+  "points": 262,
+  "tags": {
+   "procurement_Price.amount": {
+    "n": 262,
+    "sample": [
+     "2.96",
+     "2.93",
+     "5.34",
+     "9.98",
+     "9.97",
+     "9.96"
+    ]
+   },
+   "quantity": {
+    "n": 262,
+    "sample": [
+     "200",
+     "200",
+     "200",
+     "200",
+     "200",
+     "200"
+    ]
+   }
+  },
+  "resolution": [
+   "PT60M"
+  ],
+  "directions": [
+   "A01",
+   "A02"
+  ],
+  "reason": [],
+  "head": ""
+ },
+ "A81_FCR_daily": {
+  "http": 200,
+  "bytes": 19466,
+  "points": 25,
+  "tags": {
+   "procurement_Price.amount": {
+    "n": 25,
+    "sample": [
+     "335",
+     "335",
+     "335",
+     "335",
+     "335",
+     "335"
+    ]
+   },
+   "quantity": {
+    "n": 25,
+    "sample": [
+     "97",
+     "127",
+     "99",
+     "97",
+     "127",
+     "99"
+    ]
+   }
+  },
+  "resolution": [
+   "PT60M"
+  ],
+  "directions": [
+   "A03"
+  ],
+  "reason": [],
+  "head": ""
+ },
+ "A81_aFRR_any": {
+  "http": 400,
+  "bytes": 868,
+  "points": 0,
+  "tags": {},
+  "resolution": [],
+  "directions": [],
+  "reason": [
+   "Mandatory parameter Type_MarketAgreement.Type is missing."
+  ],
+  "head": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Acknowledgement_MarketDocument\n\txmlns=\"urn:iec62325.351:tc57wg16:451-1:acknowledgementdocument:7:0\">\n\t<mRID>e6d380b7-84b2-4</mRID>\n\t<createdDateTime>2026-10-25T16:20:28Z</createdDateTime>\n\t<sender_MarketParticipant.mRID codingScheme=\"A01\">10X1001A1001A450</sen"
+ },
+ "A15_aFRR_procured": {
+  "http": 400,
+  "bytes": 920,
+  "points": 0,
+  "tags": {},
+  "resolution": [],
+  "directions": [],
+  "reason": [
+   "The number of instances (133) exceeds the allowed maximum (100) for data item PROCURED_BALANCING_CAPACITY_R3."
+  ],
+  "head": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Acknowledgement_MarketDocument\n\txmlns=\"urn:iec62325.351:tc57wg16:451-1:acknowledgementdocument:7:0\">\n\t<mRID>9c270beb-f97b-4</mRID>\n\t<createdDateTime>2026-10-25T16:20:45Z</createdDateTime>\n\t<sender_MarketParticipant.mRID codingScheme=\"A01\">10X1001A1001A450</sen"
+ },
+ "A15_mFRR_procured": {
+  "http": 400,
+  "bytes": 920,
+  "points": 0,
+  "tags": {},
+  "resolution": [],
+  "directions": [],
+  "reason": [
+   "The number of instances (170) exceeds the allowed maximum (100) for data item PROCURED_BALANCING_CAPACITY_R3."
+  ],
+  "head": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Acknowledgement_MarketDocument\n\txmlns=\"urn:iec62325.351:tc57wg16:451-1:acknowledgementdocument:7:0\">\n\t<mRID>022a845e-3be3-4</mRID>\n\t<createdDateTime>2026-10-25T16:20:58Z</createdDateTime>\n\t<sender_MarketParticipant.mRID codingScheme=\"A01\">10X1001A1001A450</sen"
+ },
+ "A84_aFRR_energy_price": {
+  "http": 200,
+  "bytes": 340525,
+  "points": 1322,
+  "tags": {
+   "activation_Price.amount": {
+    "n": 1322,
+    "sample": [
+     "1130.588",
+     "1106.667",
+     "1110.778",
+     "1100",
+     "0",
+     "0"
+    ]
+   }
+  },
+  "resolution": [
+   "PT15M"
+  ],
+  "directions": [
+   "A01",
+   "A02"
+  ],
+  "reason": [],
+  "head": ""
+ },
+ "A84_mFRR_energy_price": {
+  "http": 200,
+  "bytes": 988,
+  "points": 0,
+  "tags": {},
+  "resolution": [],
+  "directions": [],
+  "reason": [
+   "No matching data found for Data item PRICES_OF_ACTIVATED_BALANCING_ENERGY_R3 [TR 17.1.F, IF aFRR 3.16] (10YRO-TEL------P) and interval 2026-10-16T16:00:00Z/2026-10-23T16:00:00Z."
+  ],
+  "head": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Acknowledgement_MarketDocument\n\txmlns=\"urn:iec62325.351:tc57wg16:451-1:acknowledgementdocument:7:0\">\n\t<mRID>a3e13116-b553-4</mRID>\n\t<createdDateTime>2026-10-25T16:21:25Z</createdDateTime>\n\t<sender_MarketParticipant.mRID codingScheme=\"A01\">10X1001A1001A450</sen"
+ },
+ "A85_imbalance_price": {
+  "http": 200,
+  "bytes": 287228,
+  "points": 1282,
+  "tags": {
+   "imbalance_Price.amount": {
+    "n": 1282,
+    "sample": [
+     "699.945",
+     "693.462",
+     "697.911",
+     "699.352",
+     "698.603",
+     "262.278"
+    ]
+   }
+  },
+  "resolution": [
+   "PT15M"
+  ],
+  "directions": [],
+  "reason": [],
+  "head": ""
+ },
+ "A89_contracted_reserves": {
+  "http": 400,
+  "bytes": 969,
+  "points": 0,
+  "tags": {},
+  "resolution": [],
+  "directions": [],
+  "reason": [
+   "The combination of [DOCUMENT_TYPE=A89, PROCESS_TYPE=A51, BUSINESS_TYPE=B95] is not valid, or the requested data is not allowed to be fetched via this service."
+  ],
+  "head": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Acknowledgement_MarketDocument\n\txmlns=\"urn:iec62325.351:tc57wg16:451-1:acknowledgementdocument:7:0\">\n\t<mRID>93b3252b-4eb4-4</mRID>\n\t<createdDateTime>2026-10-25T16:21:51Z</createdDateTime>\n\t<sender_MarketParticipant.mRID codingScheme=\"A01\">10X1001A1001A450</sen"
+ }
+}
