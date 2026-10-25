@@ -1,0 +1,25 @@
+name: בראשית – בדיקת דפי שוק תוך-יומי OPCOM (מחקר)
+on:
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: bereshit-update
+  cancel-in-progress: false
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python research/probe_opcom_intraday.py
+      - name: commit
+        run: |
+          git config user.name "bereshit-bot"
+          git config user.email "bereshit-bot@users.noreply.github.com"
+          git add research/data/opcom_probe
+          git commit -m "research: OPCOM intraday page probe" || exit 0
+          for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
