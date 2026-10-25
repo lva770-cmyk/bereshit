@@ -239,6 +239,17 @@ tr.fut td{opacity:.5}
 .baltip{position:fixed;z-index:50;pointer-events:none;background:#24241f;border:1px solid #3a382f;border-radius:6px;padding:7px 9px;font-size:12px;color:var(--ink);box-shadow:0 6px 18px rgba(0,0,0,.35);min-width:150px;direction:rtl}
 .baltip .tt{color:var(--ink3);font-family:var(--f-num);margin-bottom:4px}.baltip .tr{display:flex;align-items:center;gap:7px;margin:2px 0}.baltip .tr i{width:10px;height:2px;border-radius:1px;flex:none}.baltip .tr b{font-family:var(--f-num);font-weight:600;direction:ltr;min-width:62px;text-align:end}.baltip .tr span{color:var(--ink2)}.bal .bad{color:var(--loss)}
 .plant{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}.plant h3{margin:0 0 4px;font-size:17px}
+.p3wrap{position:relative;height:clamp(360px,54vw,580px);border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#15160f;margin-bottom:10px;touch-action:none}
+.p3wrap canvas{display:block;width:100%!important;height:100%!important;cursor:grab}.p3wrap canvas:active{cursor:grabbing}
+.p3l{position:absolute;inset:0;pointer-events:none;overflow:hidden}.p3t{position:absolute;left:0;top:0;background:rgba(17,17,15,.8);border:1px solid #3a382f;border-radius:6px;padding:3px 8px;font-size:12px;color:var(--ink);white-space:nowrap;text-align:center;line-height:1.35;backdrop-filter:blur(3px)}
+.p3t.g{color:var(--ink2)}.p3t.sk{font-size:11.5px;padding:2px 7px}
+.p3wrap{container-type:inline-size}.p3hud{position:absolute;top:8px;inset-inline-end:8px;background:rgba(17,17,15,.82);border:1px solid #3a382f;border-radius:8px;padding:8px 11px;min-width:150px;backdrop-filter:blur(4px)}
+.p3hud .k{font-size:11px;color:var(--ink3)}.p3hud .v{font-family:var(--f-num);font-size:22px;font-weight:600;line-height:1.2}.p3hud .s{font-size:11.5px;color:var(--ink2);display:flex;align-items:center;gap:6px}.p3hud .s i{width:8px;height:8px;border-radius:50%}
+.p3hud .bar{height:6px;background:#2a2923;border-radius:3px;overflow:hidden;margin:4px 0 2px;direction:ltr}.p3hud .bar b{display:block;height:100%;border-radius:3px}
+@container (max-width:560px){.p3t.sk{display:none!important}.p3hud{padding:5px 8px;min-width:118px}.p3hud .v{font-size:16px}.p3hud .k{font-size:10px}.p3t{font-size:10.5px}}.p3t.big{padding:6px 10px;border-color:#5c5a50}.p3t.big b{display:block;font-family:var(--f-num);font-size:19px;font-weight:600}.p3t.big span{display:block;font-size:11px;color:var(--ink3)}
+.p3bar{position:absolute;top:8px;inset-inline-start:8px;display:flex;gap:6px;align-items:center}.p3bar button{font:inherit;font-size:12px;background:rgba(17,17,15,.8);color:var(--ink2);border:1px solid #3a382f;border-radius:99px;padding:4px 10px;cursor:pointer}
+.p3hint{position:absolute;bottom:8px;inset-inline-start:10px;font-size:11px;color:var(--ink3);pointer-events:none}
+.pltabs{display:flex;gap:6px;margin:8px 0}.pltabs button{font:inherit;font-size:12.5px;background:var(--panel2);color:var(--ink2);border:1px solid var(--line);border-radius:99px;padding:4px 11px;cursor:pointer}.pltabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .plwrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel2);margin-bottom:10px}
 .plsvg{display:block;width:100%;min-width:760px;height:auto;font-family:inherit}
 .plsvg .pb{fill:var(--panel);stroke:var(--line2)}.plsvg .pb.kpi{stroke:var(--line2)}.plsvg .pb.grid{stroke:var(--ink3)}
@@ -272,6 +283,7 @@ tr.fut td{opacity:.5}
 main.wrap.dim{opacity:.35;pointer-events:none;transition:opacity .15s}
 @media (max-width:640px){.zones{width:100%}.zones button{flex:1;min-width:0;padding:7px 6px}}
 </style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 </head><body>
 <div class="intro" id="intro" role="dialog" aria-modal="true" aria-labelledby="introT" dir="rtl">
   <div class="intro-card">
@@ -633,7 +645,7 @@ function drawDeal50(){dealHead('p50');const mw=ZI().mw;
  <div id="p50out"></div>
  <p class="fine">הסוללה במודל: כ-${bd('50 MW')}, כ-${bd('84 MWh')} לרשת בפריקה מלאה בשנה הראשונה (מתוך ${bd('100 MWh')} נומינליים), נצילות הלוך-חזור של ${bd('88%')}, ועד ${bd('1.5')} מחזורים ביום.<br>איך מחושבת התשואה: ${bd(String(P50.years))} שנות הפעלה עם ירידת קיבולת של כ-${bd('2.75%')} בשנה, ותפעול של ${bd(fmtE(P50.opex))} בשנה (הנחה). לפני מסים ומימון. ההכנסה היא רק ממסחר יום-מראש.<br>
  איך נמדד: אותו מנוע של בראשית ואותה נעילת לוח לפני סגירת השער, על התחנה הזו ומחירי OPCOM האמיתיים, ${bd(dlabel(first)+'.'+first.slice(2,4)+'–'+dlabel(last)+'.'+last.slice(2,4))}: ${bd(String(nLive))} ימים נסחרו חי, השאר מהבדיקה לאחור. מסחר מדומה בלבד, שום פקודה לא נשלחת לבורסה.</p>`;
- $('dealbody').insertAdjacentHTML('beforeend',balHtml()+plant50Html());loadBal();
+ $('dealbody').insertAdjacentHTML('beforeend',balHtml()+plant50Html());loadBal();mount3d();
  const inp=$('p50px');inp.oninput=()=>{P50PX=inp.value;p50calc(yr)};p50calc(yr);if(LIVE)drawKpis()}
 
 /* ---------- Project 50: balancing-capacity auctions co-optimised with day-ahead trading (bal-RO2.json) ---------- */
@@ -730,6 +742,12 @@ function drawBalDay(){const d=BAL.days[BALDAY],box=$('balday');if(!d||!box)retur
    tipShow(e,[['#efe9dc','אנרגיה בסוללה',d.soc[i].toFixed(1)+' MWh'],['','מינימום להתחייבויות למעלה',d.floor[i].toFixed(1)+' MWh'],['','מקסימום להתחייבויות למטה',d.ceil[i].toFixed(1)+' MWh']],'סוף '+hhmm(i))});
   hit.addEventListener('pointerleave',()=>{cross.setAttribute('opacity',0);dot.setAttribute('opacity',0);tipHide()})}
 }
+
+let P3D=null,P3DLAST=null;
+function mount3d(){const host=$('p3d');if(!host)return;
+ document.querySelectorAll('#pltabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#pltabs button').forEach(x=>x.classList.toggle('on',x===b));const v=b.dataset.v;$('p3d').hidden=v!=='3d';$('plsld').hidden=v!=='sld'});
+ if(!window.WebGLRenderingContext){$('p3d').hidden=true;$('plsld').hidden=false;return}
+ import('./plant3d.js').then(m=>{P3D=m.mount(host);$('p3reset').onclick=()=>P3D.reset();if(P3DLAST)P3D.update(...P3DLAST)}).catch(()=>{$('p3d').hidden=true;$('plsld').hidden=false;const t=$('pltabs');if(t)t.hidden=true})}
 /* ---------- Project 50: plant model (single-line diagram + equipment data), driven by the simulated dispatch ---------- */
 const PL={poc:50,txONAN:50,txONAF:63,eta1:0.929,aux25:0.55,skids:[{id:'S1',line:1},{id:'S2',line:2},{id:'S3',line:2},{id:'S4',line:3},{id:'S5',line:3}]};
 function plBidi(str){return /[֐-׿]/.test(str)?str.replace(/[~+−]?[0-9A-Za-z][0-9A-Za-z.,/%°²×:\- ·~+]*[0-9A-Za-z%°²]/g,m=>`<bdi dir="ltr">${m}</bdi>`):str}
@@ -760,8 +778,8 @@ function plSvg(){const W=1100,H=580;const LB=[];
   t(x,484,'4 מכולות · 20 MWh','pl3')});
  s+=box(30,504,1040,64,'pb');lab(1050,532,'—','pl2','end','pl_soc');t(1050,556,'כחול = טעינה, האנרגיה זורמת מהרשת לסוללות · ענבר = פריקה, מהסוללות לרשת · הערכים מהמסחר המדומה של בראשית, בחלוקה שווה בין 5 היחידות','pl3','end');
  return `<div class="plbox" role="img" aria-label="תרשים חד-קווי של התחנה">${s}</svg>${LB.join('')}</div>`}
-function plant50Html(){return `<div class="plant"><h3>מבנה התחנה · מה מוביל למה</h3><p class="fine" style="margin:0 0 8px">התרשים עוקב אחרי האנרגיה מהרשת ועד התאים. ההספק בכל רכיב הוא מהלוח המדומה של היום, ברבע השעה הנוכחי.</p><div class="plwrap">${plSvg()}</div></div>`}
-function updPlant(v,socNow){if(ZI().deal!=='p50'||!$('pl_poc'))return;const a=Math.abs(v),dir=v>0?'out':v<0?'in':'';
+function plant50Html(){return `<div class="plant"><h3>מבנה התחנה · מה מוביל למה</h3><p class="fine" style="margin:0 0 8px">התרשים עוקב אחרי האנרגיה מהרשת ועד התאים. ההספק בכל רכיב הוא מהלוח המדומה של היום, ברבע השעה הנוכחי.</p><div class="pltabs" id="pltabs"><button data-v="3d" class="on">תלת-ממד</button><button data-v="sld">תרשים חד-קווי</button></div><div class="p3wrap" id="p3d"><div class="p3bar"><button type="button" id="p3reset">איפוס מבט</button></div><div class="p3hint">גררו כדי לסובב · גלגלת או צביטה לזום</div></div><div class="plwrap" id="plsld" hidden>${plSvg()}</div></div>`}
+function updPlant(v,socNow){if(ZI().deal!=='p50')return;P3DLAST=[v,socNow/EMAX];if(P3D)P3D.update(v,socNow/EMAX);if(!$('pl_poc'))return;const a=Math.abs(v),dir=v>0?'out':v<0?'in':'';
  $('pl_poc').textContent=(v>0?'+':v<0?'−':'')+a.toFixed(1)+' MW';$('pl_dir').textContent=v>0?'פריקה · זרימה לרשת':v<0?'טעינה · זרימה מהרשת':'ממתינה';
  const ld=a/PL.txONAN*100;$('pl_tx').innerHTML=`עומס ${bd(ld.toFixed(0)+'%')} · ${a>PL.txONAN?'קירור מאולץ':'קירור טבעי'} · הפסדים בשרשרת ${bd('~'+(a*(1-PL.eta1)).toFixed(1)+' MW')}`;
  const per=v/5;PL.skids.forEach((k,i)=>{$('pl_s'+i).textContent=(per>0?'+':per<0?'−':'')+Math.abs(per).toFixed(1)+' MW'});
