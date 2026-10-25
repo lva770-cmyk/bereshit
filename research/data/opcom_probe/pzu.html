@@ -1,0 +1,2043 @@
+<!---------------------------------------------------------------- HEADER --------------------------------------------------------------->
+
+<!DOCTYPE html>
+<html>
+	<head>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>PZU: Raport PIP si Volum Tranzactionat</title>
+		<!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-G55N5F5DZV"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+        
+          gtag('config', 'G-G55N5F5DZV');
+        </script>
+        
+
+
+		<link rel="stylesheet" type="text/css" href="https://www.opcom.ro/pp/css/mf.css" />
+		<link rel="stylesheet" type="text/css" href="https://www.opcom.ro/pp/css/home.css" />
+		<link rel="stylesheet" type="text/css" href="https://www.opcom.ro/pp/css/print.css" media="print">
+		<link rel="stylesheet" type="text/css" href="https://www.opcom.ro/pp/men_orizontal/men_oriz.css" />
+		<link rel="stylesheet" type="text/css" href="https://www.opcom.ro/pp/men_st_pp/men_st.css" />
+		<link rel="stylesheet" type="text/css" href="https://www.opcom.ro/pp/js/jquery-ui.css" />
+		<link rel="stylesheet" type="text/css" href="https://www.opcom.ro/pp/grafice_ip/js/layout.css" />
+		<link rel="stylesheet" type="text/css" href="https://www.opcom.ro/pp/css/tabs_ida.css" /><style type="text/css">
+		#graf_PIP_Vol {
+			float: right;
+			margin-left: 30px;
+			position: relative;
+		
+		}
+		#graf_PIP_Volen {
+			float: right;
+			margin-left: 30px;
+			position: relative;
+		}
+		#tab_PIP_Vol {
+			width: 460px;
+			height:550px;
+			float: left;
+			margin-top:-2px;
+		}
+		
+		#tab_PIP_Vol table { width: 260px; border:#9ac1c9 solid; border-width: 0 0 1px 1px; border-spacing: 0; border-collapse: collapse; margin-left: 0px;}
+		#tab_PIP_Vol td {border:#9ac1c9 solid ; border-width: 1px 1px 0 0; margin: 0; padding: 0 3px; }
+		
+		#tab_PIP_Vol th { background-color: #4E8781; color:#FFFFFF!important; text-align: center; border:#9ac1c9 solid ; border-width: 1px 1px 0 0; margin: 0;padding:2px; vertical-align:middle; line-height:10px;}
+		#contp img.pickerImg { display: inline; margin-left: -20px; margin-right: 0px; }
+		
+		#lang input{ background-color: transparent!important; border:none!important;}
+		
+		#contp { width: 940px;}
+		
+		#legend { margin-left:30px; margin-top:5px; height:30px;}
+		.legendLabel {font-size:12px;}
+		
+        .ui-datepicker {
+            z-index: 10 !important;
+        }
+		</style>
+		<!--  [if IE]><script language="javascript" type="text/javascript" src="/opcom/pp/grafice_ip/js/excanvas.min.js"></script><![endif]-->
+		
+		<script type="text/javascript" src="https://www.opcom.ro/pp/js/jquery.js"></script>
+		<script type="text/javascript" src="https://www.opcom.ro/pp/grafice_ip/js/jquery.flot.js"></script>
+		<script type="text/javascript" src="https://www.opcom.ro/pp/grafice_ip/js/jquery.flot.stack.min.js"></script>
+		<script src="https://www.opcom.ro/pp/grafice_ip/js/jquery.colorhelpers.js"></script>
+		<script type="text/javascript" src="https://www.opcom.ro/pp/js/jquery-ui.js"></script>
+    <script src="https://www.opcom.ro/utile/chart.js"></script>
+
+		<style>
+		#flotTip { text-align:center; border:1px solid #ff6600; background-color: #bfd1d1; }
+		img {border: none;}
+		</style>
+
+
+				<script type="text/javascript">
+
+		function MM_menu_sari(targ,selObj,restore){ //v3.0
+		  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+
+		  if (restore) selObj.selectedIndex=0;
+		}
+		jQuery( function() {
+			jQuery( "#datepicker" ).datepicker({ dateFormat: "dd/mm/yy",firstDay: 1, buttonImage: "/opcom/pcs/calendar.gif",buttonImageOnly: true,changeMonth: true,changeYear: true});
+		  } );
+				jQuery( function() {
+			jQuery( "#datepickeren" ).datepicker({ dateFormat: "mm/dd/yy",firstDay: 1, buttonImage: "/opcom/pcs/calendar.gif",buttonImageOnly: true,changeMonth: true,changeYear: true});
+		  } );
+		jQuery( function() {
+						var dateFormat = "dd/mm/yy",
+						  from = jQuery( "#from" )
+							.datepicker({
+							  dateFormat: "dd/mm/yy",
+							  minDate: new Date(2015, 1 - 1, 1),
+						      changeMonth: true,
+							  numberOfMonths: 2, firstDay: 1, buttonImage: "/opcom/pcs/calendar.gif",buttonImageOnly: true,
+							})
+							/*.on( "change", function() {
+							  to.datepicker( "option", "minDate", getDate( this ) );
+							})*/,
+						  to = jQuery( "#to" ).datepicker({
+							dateFormat: "dd/mm/yy",
+							gotoCurrent: true,
+							minDate: new Date(2015, 1 - 1, 1),
+							changeMonth: true,
+							numberOfMonths: 2, firstDay: 1, buttonImage: "/opcom/pcs/calendar.gif",buttonImageOnly: true,
+						  })
+						  /*.on( "change", function() {
+							from.datepicker( "option", "maxDate", getDate( this ) );
+						  })*/;
+
+						function getDate( element ) {
+						  var date;
+						  try {
+							date = jQuery.datepicker.parseDate( dateFormat, element.value );
+						  } catch( error ) {
+							date = null;
+						  }
+
+						  return date;
+						}
+		 } );
+		jQuery( function() {
+						var dateFormat = "mm/dd/yy",
+						  from = jQuery( "#fromen" )
+							.datepicker({
+							  dateFormat: dateFormat,
+							  minDate: new Date(2015, 1 - 1, 1),
+						      changeMonth: true,
+							  numberOfMonths: 2, firstDay: 1, buttonImage: "/opcom/pcs/calendar.gif",buttonImageOnly: true,
+							})
+							/*.on( "change", function() {
+							  to.datepicker( "option", "minDate", getDate( this ) );
+							})*/,
+						  to = jQuery( "#toen" ).datepicker({
+							dateFormat: dateFormat,
+							gotoCurrent: true,
+							minDate: new Date(2015, 1 - 1, 1),
+							changeMonth: true,
+							numberOfMonths: 2, firstDay: 1, buttonImage: "/opcom/pcs/calendar.gif",buttonImageOnly: true,
+						  })
+						  /*.on( "change", function() {
+							from.datepicker( "option", "maxDate", getDate( this ) );
+						  })*/;
+
+						function getDate( element ) {
+						  var date;
+						  try {
+							date = jQuery.datepicker.parseDate( dateFormat, element.value );
+						  } catch( error ) {
+							date = null;
+						  }
+                        }
+						  return date;
+
+		 } );
+     </script>
+	</head>
+
+<body>
+
+<div id="wrapper" >
+	<div id="lang">
+        		
+		<a href="https://www.opcom.ro/grafice-ip-raportPIP-si-volumTranzactionat/en">
+			<img src="https://www.opcom.ro/pcs/en.jpg" />
+		</a>
+		
+		
+		
+	
+	</div><!--lang-->
+
+	<!-- Top banner -->
+		<!-- Banner left-->
+<!--
+<div style="background: url(/opcom/pp/img/banner26aniv.png) no-repeat left; width: 800px; height: 118px; margin-top: 0px; float:  left;">
+-->
+<a href="https://www.opcom.ro/opcom/uploads/doc/Comunicate/Opcom2026ro.mp4">
+	<div style="background: url(https://www.opcom.ro/pp/img/banner26aniv.png) no-repeat left; position:relative; width: 1000px; height: 118px; margin-top: 0px; float:  left; z-index: 2;">
+<!--			<div style="background: url(/opcom/pp/img/lma_site5.png) no-repeat right top; z-index: 11;position:absolute; width: 281px; height: 131px; margin-left:880px;margin-top:14px; float: right;"> </div>
+-->
+	<!-- PERIODIC, ANUAL, CRACIUN SI ANUL NOU, MESAJ
+     <a href="https://www.opcom.ro/pp/img/bradfelicitare.jpg" target = "new"> <div style="background: url(/pp/img/lma_site5.png) no-repeat right top;z-index: 11;position:absolute;width: 281px;height: 131px;margin-left:760px;margin-top:-13px;float: right;"> </div></a>
+     -->
+		<img style="margin-top: 0px; margin-left: 0px; height: 118px; text-decoration: none;" align=left src="https://www.opcom.ro/pcs/homemap1.gif" border=\"0\" usemap="#Map">
+		<map style="border: 0px;" name="Map">
+		  <area shape="rect" border="0" coords="13,13,116,118" href="https://www.opcom.ro/acasa/ro" alt="Home">
+		</map>
+	</div>
+	</a>
+	<!-- END Banner left -->
+		<!--Banner right-->
+	<div style="background: url(https://www.opcom.ro/pp/baner/4.png) no-repeat; left: 802px; width: 398px; height: 118px; position:absolute; float: right; z-index: 1;"> </div><!--header dreapta-->
+
+	<!-- END Banner right -->
+
+	<!-- END Top banner 
+		<li class="level1n" ><a style="line-height: normal; "href="#" ><br/><span style="font-weight: bold;">Important for prosumers!</span><br/> DAM weighted average price for August 2022: <span class="blink" style="color:#4E8781;">2,423.86 lei/MWh</span> <br/></a><br/></li>
+	    -->
+	    <li class="level1n" ><a style="line-height: normal; "href="#" ><br/><span style="font-weight: bold;">&nbsp;&nbsp;</span> <br/>&nbsp;&nbsp; <span class="blink" style="color:#4E8781;">&nbsp;&nbsp;</span> <br/></a><br/></li>
+	<!-- Men orizontal--><!---->
+	<div>
+		
+
+		<div id="menu_pp_oriz">
+    		<ul id="nav"><li id="home" ><a href="https://www.opcom.ro/acasa/ro">&nbsp;<img src="https://www.opcom.ro/pp/men_orizontal/home.png" width="13" height="10" border="0" /></a></li><li id="tr_rez"  ><a href="https://www.opcom.ro/tranzactii-rezultate-home/ro/136">Tranzac&#355;ii - Rezultate</a></li><li id="tr_prod"  ><a href="https://www.opcom.ro/tranzactii-produse/ro/137">Tranzac&#355;ionare - Produse</a></li><li id="an_st"  ><a href="https://www.opcom.ro/anunturi-stiri/ro/138">Anun&#355;uri - &#350;tiri</a></li><li id="comp"  ><a href="https://www.opcom.ro/compania/ro/139">Compania</a></li><li id="lan">&nbsp;</li>
+    		</ul>
+		</div><!--/ men orizontal-->
+    </div>
+    <!--END Men orizontal-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!---------------------------------------------------------------- END HEADER --------------------------------------------------------------->
+<!---------------------------------------------------------------- CONTENT --------------------------------------------------------------->
+<!--Meniu stanga-->
+<div id="men_left"><div class="menu"><h3>Tranzac&#355;ii - Rezultate</h3>
+		    <ul>
+				<li><a href="#url" class="level11" ><p>Pia&#355;a pentru Ziua Urm&#259;toare&nbsp;&raquo;</p></a>
+					<ul>
+						<li><a class="level21" href="https://www.opcom.ro/rapoarte-pzu-limita-scala-pret/ro">Limite scal&#259; de pre&#355;</a></li>
+						<li><a class="subm" href="https://www.opcom.ro/rapoarte-pzu-raportAtc/ro"><p>Capacit&#259;&#355;i de interconexiune disponibile-ATC</p></a></li>
+						<li><a class="subm" href="https://www.opcom.ro/grafice-ip-raportPIP-si-volumTranzactionat/ro" ><p>Rezultate PZU RO</p></a></li>
+						<li><a class="subm" href="https://www.opcom.ro/rapoarte-pzu-raportMarketResults/ro">Rezultate cuplare PZU</a></li>
+						<li><a class="subm" href="https://www.opcom.ro/rapoarte-pzu-preturi-blocuri/ro">Pre&#355; blocuri</a></li>
+						<li><a class="level2n" href="https://www.opcom.ro/rapoarte-pzu-curbe-agregate/ro">Curbe agregate</a></li>
+					</ul>
+				</li>
+
+				<li><a href="#url" class="nivel_intermediar" ><p>Pia&#355;a Intra-zilnic&#259;&nbsp;&raquo;</p></a>
+                    <ul>
+						<li><a href="#url" class="level21" ><p>Tranzac&#355;ionare continu&#259; <br />(IDCT)&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/rapoarte-pi-limite-scala-pret-pi/ro" >Limite scal&#259; de pre&#355;</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/rapoarte-pi-raport-atc-pi/ro" ><p>Capacita&#355;i disponibile de interconexiune - ATC</p></a></li>
+								<li><a class="subm" href="https://www.opcom.ro/rapoarte-pi-raport-cuplare-pi/ro" >Rezultate cuplare PI</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/rapoarte-pi-rezultate-pi/ro" >Tranzac&#355;ii PI</a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/rapoarte-pi-raport-blocuri/ro" >Blocuri tranzac&#355;ionate</a></li>
+							</ul>
+					    </li>
+						<li><a href="#url" class="level2n" ><p>Licita&#355;ii intra-zilnic&#259;<br />(IDA)&nbsp;&raquo;</p></a>	
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/rapoarte-ida-limite-scala-pret/ro" >Limite scal&#259; de pre&#355;</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/rapoarte-ida-raport-atc/ro" ><p>Capacita&#355;i disponibile de interconexiune - ATC</p></a></li>
+								<li><a class="subm" href="https://www.opcom.ro/rapoarte-ida-rezultate-licitatii/ro" >Rezultate licita&#355;ii IDA</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/rapoarte-ida-rezultate-cuplare/ro" >Rezultate cuplare IDA</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/rapoarte-ida-pret-blocuri/ro" >Pre&#355; blocuri</a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/rapoarte-ida-curbe-agregate/ro">Curbe agregate</a></li>
+							</ul>
+					    </li>
+					</ul>
+
+                    <!--
+					<ul>
+						<li><a class="level21" href="https://www.opcom.ro/rapoarte-pi-limite-scala-pret-pi/ro" >Limite scal&#259; de pre&#355;</a></li>
+						<li><a class="subm" href="https://www.opcom.ro/rapoarte-pi-raport-atc-pi/ro" ><p>Capacita&#355;i disponibile de interconexiune - ATC</p></a></li>
+						<li><a class="subm" href="https://www.opcom.ro/rapoarte-pi-raport-cuplare-pi/ro" >Rezultate cuplare PI</a></li>
+						<li><a class="subm" href="https://www.opcom.ro/rapoarte-pi-rezultate-pi/ro" >Tranzac&#355;ii PI</a></li>
+						<li><a class="level2n" href="https://www.opcom.ro/rapoarte-pi-raport-blocuri/ro" >Blocuri tranzac&#355;ionate</a></li>
+					</ul>
+                    -->
+				</li>
+					
+        		<li><a href="#url" class="nivel_intermediar" ><p>Pia&#355;a Centralizat&#259; cu negociere dubl&#259; continu&#259; a contractelor bilaterale de energie electric&#259;&nbsp;&raquo;</p></a>
+					<ul>
+						<li><a href="#url" class="level2n" ><p>Modalitatea de Tranzac&#355;ionare<br />PC-OTC&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/rapoarte-otc-raport-rez-otc/ro">Rezultate zilnice</a></li>
+ 								<li><a class="subm" href="https://www.opcom.ro/rapoarte-otc-raport-otc50/ro"><p>Detalii complete tranzac&#355;ii mai mari de 50MW</p></a></li>
+								<li><a class="subm" href="https://www.opcom.ro/rapoarte-otc-raport-otc10/ro"><p>Detalii complete tranzac&#355;ii cu varia&#355;ia pre&#355;ului de închidere mai mare de 10%</p></a></li>
+								<li><a class="subm" href="https://www.opcom.ro/rapoarte-otc-raport-otc-date-zilnice-agregate2/ro"><p>Date zilnice agregate</p></a></li> 
+								<li><a class="level2n" href="https://www.opcom.ro/rapoarte-otc-statistici-otc/ro">Statistici</a></li> 
+							</ul>
+					   </li>
+					</ul>
+				</li>
+				
+        		<li><a href="#url" class="nivel_intermediar"><p>Pia&#355;a centralizat&#259; a contractelor bilaterale de energie electric&#259;&nbsp;&raquo;</p></a>
+					<ul>
+					   <li><a href="#url" class="level21"><p>Modalitatea de Tranzac&#355;ionare PCCB-LE-flex&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/rapoarte-pccb-le-flex-of-rez-pcccb-le-flex/ro">Anun&#355;uri-Oferte</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/rapoarte-pccb-le-flex-rez-pccb-le-flex/ro">Rezultate</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/rapoarte-pccb-le-flex-neconforme-le-flex/ro">Oferte neconforme</a></li>
+<!--								<li><a class="level21" href="https://www.opcom.ro/tranzactii_rezultate/tranzactii_rezfm.php?lang=ro&id=318">Anun&#355;uri-Oferte</a></li>
+									<li><a class="subm" href="https://www.opcom.ro/tranzactii_rezultate/tranzactii_rezfm.php?lang=ro&id=319">Rezultate</a></li>
+									<li><a class="subm" href="https://www.opcom.ro/tranzactii_rezultate/tranzactii_rez.php?lang=ro&id=320">Oferte neconforme</a></li>
+-->								<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate-tranzactii-rezfm/ro/316">Contracte reziliate</a></li>
+		        				<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate-rez/ro/317">Contracte neconforme</a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/rapoarte-pccb-le-flex-statistici-flex/ro">Statistici</a></li>								
+								</ul>
+					   </li>
+					   <li><a href="#url" class="level21"><p>Modalitatea de Tranzac&#355;ionare PCCB-NC&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/rapoarte-pccb-nc-rezultate-pccbnc/ro">Rezultate zilnice</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/rapoarte-pccb-nc-imgpccbnc/ro"><p>Ecranul sistemului de<br/>tranzac&#355;ionare</p></a></li>
+								<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate-rez/ro/215">Contracte neconforme</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate-rez/ro/304">Contracte reziliate</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate-rez/ro/216">Tranzac&#355;ii anulate</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/rapoarte-pccb-nc-raport-pccbnc-date-zilnice-agregate/ro"><p>Date zilnice agregate</p></a></li> 
+								<li><a class="level2n" href="https://www.opcom.ro/rapoarte-pccb-nc-statistici/ro">Statistici</a></li>								
+						</ul>
+                       </li>
+<!--                       <li><a href="#url" class="level21"><p>Modalitatea de Tranzac&#355;ionare PCCB-PC&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/tranzactii-rezultate-rez/ro/217">Anun&#355;uri-Oferte-Rezultate</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate-rez/ro/218">Oferte neconforme</a></li>
+		        				<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate-rez/ro/219">Contracte neconforme</a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/pccb-tranzactii-rezultate/ro/280">Statistici</a></li>
+							</ul>
+                       </li>-->
+					   <li><a href="#url" class="level21"><p>Arhiva Rezultate PCCB-LE&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/arhiva-pccb-le-rapoarte-oferte-rezultate-pccb-le/ro">Anun&#355;uri-Oferte</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/arhiva-pccb-le-rapoarte-pccb-le-rezultate/ro">Rezultate</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/arhiva-pccb-le-rapoarte-pccb-le-neconforme/ro">Oferte neconforme</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate-rezfm/ro/303">Contracte reziliate</a></li>
+		        				<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate-rezfm/ro/211">Contracte neconforme</a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/arhiva-statisticiPCCBLE/ro">Statistici</a></li> 
+							</ul>
+					   </li>
+					   <li><a href="#url" class="level21"><p>Arhiva Rezultate PCCB&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/arhiva-pccb-raport-ofertePCCB/ro">Oferte &#x15F;i rezultate 2012-2014</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/arhiva-pccb-tranzactii-rezultate/ro/157">Rezultate 2011</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/arhiva-pccb-tranzactii-rezultate/ro/101">Rezultate 2010</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/arhiva-pccb-tranzactii-rezultate/ro/94">Rezultate 2009</a></li>
+		        				<li><a class="subm" href="https://www.opcom.ro/arhiva-pccb-tranzactii-rezultate/ro/96">Rezultate 2008</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/arhiva-pccb-tranzactii-rezultate/ro/97">Rezultate 2007</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/arhiva-pccb-tranzactii-rezultate/ro/98">Rezultate 2006</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/arhiva-pccb-raportCentralizatorRezultatePCCB/ro">Centralizator</a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/arhiva-pccb-raportStatisticiPCCB/ro">Statistici</a></li>
+							</ul>
+					   </li>
+					   <li><a href="#url" class="level2n"><p>Arhiva Rezultate PCCB-NC&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/arhiva-pccb-nc-raport-ofertePCCBNC/ro">Oferte &#x219;i rezultate 2012-2014</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/arhiva-pccb-nc-raport-ofertePCCBNC2011/ro">Rezultate 2011</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate-rez/ro/93">Rezultate 2010</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate-rez/ro/115">Rezultate 2009</a></li>
+		        				<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate-rez/ro/116">Rezultate 2008</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/arhiva-pccb-tranzactii-rezultate/ro/117">Rezultate 2007</a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/arhiva-pccb-nc-statistici/ro">Statistici</a></li> 
+							</ul>
+					  </li>
+					</ul>
+				</li>
+	
+        		<li><a href="#url" class="nivel_intermediar"><p>Pia&#355;a Centralizat&#259; pentru energia electric&#259; din surse regenerabile sus&#355;inut&#259; prin certificate verzi&nbsp;&raquo;</p></a>
+					<ul>
+					   <li><a href="#url" class="level2n"><p>Modalitatea PCE-ESRE-CV&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/pce-esre-cv-rapoarte-oferte-rezultate/ro">Anun&#355;uri-Oferte</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/pce-esre-cv-rapoarte-rezultate/ro">Rezultate</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/pce-esre-cv-oferte-neconforme/ro">Oferte neconforme</a></li>
+		        				<li><a class="subm" href="https://www.opcom.ro/pce-esre-cv-contracte-neconforme/ro/309">Contracte neconforme</a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/pce-esre-cv-rapoarte-statistici/ro">Statistici</a></li> 
+							</ul>
+					   </li>
+					</ul>
+				</li>
+									
+        		<li><a href="#url" class="nivel_intermediar" ><p>Pia&#355;a Centralizat&#259; pentru Serviciul Universal&nbsp;&raquo;</p></a>
+					<ul>
+						<li><a class="level21" href="https://www.opcom.ro/pcsu-raport/ro/286">Pre&#355;uri de deschidere a licita&#355;iei</a></li>
+						<li><a class="subm" href="https://www.opcom.ro/pcsu-raport-rezultate/ro">Rezultate lunare</a></li>
+						<li><a href="#url" class="level2n" ><p>Arhiva PCSU 2015-2017&nbsp;&raquo;</p></a>
+						<ul>
+							<li><a class="level21" href="https://www.opcom.ro/pcsu-raport-oferte/ro/232">Anun&#355;uri-Specifica&#355;ii</a></li>
+							<li><a class="level2n" href="https://www.opcom.ro/pcsu-raport-rezultate/ro/233">Rezultate</a></li>
+						</ul>
+					</ul>
+				</li>
+				
+
+<!--PMC-->						
+        		<li><a href="#url" class="nivel_intermediar" ><p>Pia&#355;a de energie electric&#259; pentru clien&#355;ii finali mari&nbsp;&raquo;</p></a>
+					<ul>
+						<li><a href="#url" class="level21" ><p>Modalitatea de Tranzac&#355;ionare<br />PMC&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/rapoarte-pmc-oferte/ro">Anun&#355;uri</a></li> 
+								<li><a class="subm" href="https://www.opcom.ro/rapoarte-pmc-rezultate/ro">Rezultate</a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/rapoarte-pmc-statistici/ro">Statistici</a></li>
+							</ul>
+						<li><a class="level2n" href="https://www.opcom.ro/tranzactii-rezultate-tranzactii-rezfm/ro/253">Arhiva Anun&#355;uri - Rezultate</a>	
+					   </li>
+					</ul>
+				</li>
+
+        		
+<!--PCTL-->				
+        		<li><a href="#url" class="nivel_intermediar" ><p>Pia&#355;a centralizat&#259; destinat&#259; atribuirii contractelor de energie electric&#259; pentru perioade lungi de livrare&nbsp;&raquo;</p></a>
+					<ul>
+						<li><a href="#url" class="level21" ><p>Modalitatea de Tranzac&#355;ionare<br />PCTL&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/tranzactii-rezultate-tranzactii-rezfm/ro/338">Anun&#355;uri</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate-tranzactii-rezfm/ro/339">Rezultate</a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/tranzactii-rezultate-tranzactii-rezfm/ro/334">Contracte neconforme</a></li>
+							</ul>
+					   </li>
+					</ul>
+				</li>
+
+				
+<!--GAZE-->										
+				<li><a href="#url" class="nivel_intermediar" ><p>Pia&#355;a pentru Ziua Urm&#259;toare de Gaze Naturale&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/pzu-gn-raport/ro">Rezultate zilnice</a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/pzu-gn-tranzactii-rezultate/ro/329"><p>Obliga&#355;ia de ofertare&nbsp;&raquo;<br/>Tranzac&#355;ii Ordin ANRE 144/17.07.2020</p></a></li>
+							</ul>
+				</li>
+  				<li><a href="#url" class="nivel_intermediar" ><p>Pia&#355;a intrazilnica de gaze naturale&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/pi-gn-rapoarte-rezultate/ro">Rezultate zilnice</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/pi-gn-tranzactii-rezultate/ro/330"><p>Obliga&#355;ia de ofertare&nbsp;&raquo;<br/>Pre&#355;uri produse</p></a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/pi-gn-tranzactii-rezultate/ro/331"><p>Obliga&#355;ia de ofertare&nbsp;&raquo;<br/>Tranzac&#355;ii Ordin ANRE 144/17.07.2020</p></a></li>
+							</ul>
+				</li>
+
+        		<li><a href="#url" class="nivel_intermediar" ><p>Pia&#355;a centralizat&#259; de gaze naturale&nbsp;&raquo;</p></a>
+					<ul>
+						<li><a href="#url" class="level21" ><p>Modalitatea de Tranzac&#355;ionare PCGN-LN&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/pcgnln-rapoarte-rezultate/ro">Oferte &#x15F;i rezultate</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/pcgnln-rapoarte-obligatie-ofertare/ro"><p>Obliga&#355;ia de ofertare&nbsp;&raquo;<br/>Pre&#355;uri produse</p></a></li>
+								<li><a class="subm" href="https://www.opcom.ro/pcgnln-tranzactii-rezultate/ro/323"><p>Obliga&#355;ia de ofertare&nbsp;&raquo;<br/>Tranzac&#355;ii Ordin ANRE 143/17.07.2020</p></a></li>
+								<li><a class="subm" href="https://www.opcom.ro/pcgnln-tranzactii-rezultate/ro/324"><p>Obliga&#355;ia de ofertare&nbsp;&raquo;<br/>Tranzac&#355;ii Ordin ANRE 144/17.07.2020</p></a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/pcgnln-rapoarte-statistici/ro">Statistici</a></li> 
+							</ul>
+					   </li>
+						<li><a href="#url" class="level21" ><p>Modalitatea de Tranzac&#355;ionare PCGN-LP&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/pcgnlp-rapoarte-rezultate/ro">Anun&#355;uri, Oferte &#x15F;i rezultate</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/pcgnlp-tranzactii-rezultate/ro/325"><p>Obliga&#355;ia de ofertare&nbsp;&raquo;<br/>Pre&#355;uri produse</p></a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/pcgnlp-tranzactii-rezultate/ro/326"><p>Obliga&#355;ia de ofertare&nbsp;&raquo;<br/>Tranzac&#355;ii Ordin ANRE 144/17.07.2020</p></a></li>
+							</ul>
+					   </li>
+					   <li><a href="#url" class="level2n" ><p>Modalitatea de Tranzac&#355;ionare PCGN-OTC&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/pcgn-otc-rapoarte-rezultate/ro">Oferte &#x15F;i rezultate</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate/ro/327"><p>Obliga&#355;ia de ofertare&nbsp;&raquo;<br/>Pre&#355;uri produse</p></a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/tranzactii-rezultate/ro/328"><p>Obliga&#355;ia de ofertare&nbsp;&raquo;<br/>Tranzac&#355;ii Ordin ANRE 144/17.07.2020</p></a></li>
+							</ul>
+					   </li>
+					</ul>
+				</li>
+<!--Gaze Flex PPF-TL-->				
+        		<li><a href="#url" class="nivel_intermediar" ><p>Pia&#355;a Produselor Flexibile pe Termen Mediu &#x15F;i Lung de Gaze Naturale&nbsp;&raquo;</p></a>
+					<ul>
+						<li><a class="level21" href="https://www.opcom.ro/tranzactii-rezultate-tranzactii-rezfm/ro/345">Anun&#355;uri, Oferte</a></li>
+						<li><a class="level2n" href="https://www.opcom.ro/tranzactii-rezultate-tranzactii-rezfm/ro/346">Rezultate</a></li>
+					</ul>
+				</li>
+												
+				<li><a href="#url" class="nivel_intermediar"><p>Pia&#355;a Certificatelor Verzi&nbsp;&raquo;</p></a>
+					<ul>
+						<li><a href="#url" class="level21"><p>Pia&#355;a Centralizat&#259; anonim&#259; spot de Certificate Verzi (PCSCV)&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/pcv-pcscv-rapoarte-rezultate/ro">Rezultate zilnice</a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/pcv-pcscv-rapoarte-oferte/ro">Oferte</a></li>
+							</ul>
+						</li>
+						<li><a href="#url" class="level21"><p>Arhiva Pia&#355;a Centralizat&#259; a Certificatelor Verzi&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/tranzactii-rezultate/ro/54">Rezultate sesiuni</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate/ro/64">Arhiva curbe agregate</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate/ro/174">Arhiva Pre&#355;uri Medii Ponderate</a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/tranzactii-rezultate-tranzactii-rezfm/ro/254">Rapoarte lunare</a></li>
+							</ul>
+						</li>
+						<li><a href="#url" class="level21"><p>Pia&#355;a Centralizat&#259; anonim&#259; la termen de Certificate Verzi (PCTCV)&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/pcv-pctcv-rapoarte-rezultate/ro">Rezultate zilnice</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/pcv-pctcv-rapoarte-oferte/ro">Oferte PCTCV</a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/tranzactii-rezultate-rez/ro/266">Contracte invalidate</a></li>
+							</ul>
+						</li>
+						<li><a href="#url" class="level21" href="#url"><p>Arhiva Pia&#355;a Contractelor Bilaterale a Certificatelor Verzi&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/pcv-pcbcv-rapoarte/ro">Oferte &#x15F;i rezultate</a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/tranzactii-rezultate-rez/ro/53">Rapoarte lunare</a></li>
+						    </ul>
+						</li>
+						<li><a href="#url" class="level21"><p>Lista operatori economici care nu au &#238;ndeplinit obliga&#355;ia de achizi&#355;ie de CV&nbsp;&raquo;</p></a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/tranzactii-rezultate/ro/267">Trimestru</a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/tranzactii-rezultate/ro/268">An</a></li>
+							</ul>
+						</li>
+						<li><a class="level2n" href="https://www.opcom.ro/tranzactii-rezultate-lunare/ro/269"><p>Rapoarte lunare PCV&nbsp;&raquo;</p></a>
+						</li>
+					</ul>
+				</li>				
+				<li><a href="#url" class="nivel_intermediar"><p>Decontare&nbsp;&raquo;</p></a>
+					<ul>
+						<li><a class="level21" href="https://www.opcom.ro/tranzactii-rezultate/ro/10">Pia&#355;a pentru Ziua Urm&#259;toare</a></li>
+						<!-- <li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate/ro/167">Pia&#355;a Intra-Zilnic&#259;</a></li>-->
+						<li><a href="#url" class="level21" >Pia&#355;a Intra-Zilnic&#259;</a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/tranzactii-rezultate/ro/167">Tranzac&#355;ionare continu&#259; (IDCT)</a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/tranzactii-rezultate/ro/383">Licita&#355;ii Intra-zilnice (IDA)</a></li>
+							</ul>
+						</li>
+						<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate/ro/292"><p>Piata pentru Ziua Urmatoare de Gaze Naturale</p></a></li>
+						<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate/ro/16">Pia&#355;a de Echilibrare 2011-ian.2021</a></li>
+						<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate/ro/234">Pia&#355;a de Echilibrare 2005-2010</a></li>
+						<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate/ro/348">Dezechilibre PRE</a></li>
+						<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate/ro/350">Note de Regularizare</a></li>																																							 
+						<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate/ro/26"><p>Venituri/costuri suplimentare din echilibrarea sistemului</p></a></li>
+						<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate/ro/258">Dezechilibrul sistemului</a></li>
+						<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate/ro/235">Bilan&#355; energetic</a></li>
+						<li><a class="level2n" href="https://www.opcom.ro/tranzactii-rezultate/ro/264">Costuri recalcul&#259;ri</a></li>
+					</ul>
+				</li>
+				
+				<li><a href="#url" class="level1n"><p>Supraveghere Pie&#355;e&nbsp;&raquo;</p></a>
+					<ul>
+						<li><a href="#url" class="level21">Rapoarte&nbsp;&raquo;</a>
+							<ul>
+								
+								
+								<li><a class="level21" href="https://www.opcom.ro/tranzactii-rezultate/ro/25">S&#259;pt&#259;m&#226;nale</a></li>
+								<li><a class="subm" href="https://www.opcom.ro/tranzactii-rezultate/ro/22">Lunare</a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/tranzactii-rezultate/ro/21">Anuale</a></li>
+								
+							</ul>	
+						</li>
+						<li><a class="subm" href="https://www.opcom.ro/ropexfm/ro">ROPEX_FM &#x15F;i cantit&#259;&#355;i &#238;n livrare</a></li>	
+						<li><a href="#url" class="level2n">Indicatori de concentrare&nbsp;&raquo;</a>
+							<ul>
+								<li><a class="level21" href="https://www.opcom.ro/grafice-ip-indicatori-pzu/ro"><p>Indicatori PZU</p></a></li>
+								<li><a class="subm" href="https://www.opcom.ro/grafice-ip-indicatori-pi/ro"><p>Indicatori PI</p></a></li>
+								<li><a class="subm" href="https://www.opcom.ro/grafice-ip-indicatori-pcotc/ro"><p>Indicatori PC-OTC</p></a></li>
+								<li><a class="subm" href="https://www.opcom.ro/grafice-ip-indicatori-pccble/ro"><p>Indicatori PCCB-LE</p></a></li>
+								<li><a class="subm" href="https://www.opcom.ro/grafice-ip-indicatori-pccb-le-flex/ro"><p>Indicatori PCCB-LE-Flex</p></a></li>
+								<li><a class="subm" href="https://www.opcom.ro/grafice-ip-indicatori-pccbnc/ro"><p>Indicatori PCCB-NC</p></a></li>
+								<li><a class="subm" href="https://www.opcom.ro/grafice-ip-indicatori-pccb-esre/ro"><p>Indicatori PCE-ESRE-CV</p></a></li>
+								<li><a class="level2n" href="https://www.opcom.ro/grafice-ip-indicatori-pcscv/ro"><p>Indicatori PCSCV</p></a></li>
+							</ul>	
+						</li>
+					</ul>
+				</li>
+
+		    </ul>
+	</div></div>
+<!-- END Meniu stanga-->
+<style>
+#tab_PIP_Vol #rez15min{
+    overflow: auto; 
+}
+#tab_PIP_Vol #rez30min,
+#tab_PIP_Vol #rez60min {
+    overflow: auto; 
+    width:40%;
+}
+
+
+.scrollbar::-webkit-scrollbar,
+#tab_PIP_Vol::-webkit-scrollbar {
+    width: 10px; 
+    height: 10px; 
+}
+.scrollbar::-webkit-scrollbar-track,
+#tab_PIP_Vol::-webkit-scrollbar-track {
+    background: #ffffff; 
+}
+
+.scrollbar::-webkit-scrollbar-thumb,
+#tab_PIP_Vol::-webkit-scrollbar-thumb {
+    background-color: #4e8781; 
+    border-radius: 5px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover,
+#tab_PIP_Vol::-webkit-scrollbar-thumb:hover {
+    background-color: #3a6662; 
+}
+.scrollbar,
+#tab_PIP_Vol  {
+    scrollbar-color: #4e8781 #ffffff; 
+    scrollbar-width: auto;
+}
+
+th.sticky {
+  position: sticky;
+  top: 0;              
+  z-index: 10;         
+  margin: 0;
+  border-top: none;   
+}
+
+th.top1 {
+  top: -7px;
+  z-index: 5;
+}table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+
+
+
+
+</style>
+<script>
+jQuery( function() {
+	jQuery( "#pzu_rezultate_datepicker" ).datepicker({ 
+		dateFormat: "dd/mm/yy",
+		firstDay: 1, 
+		//beforeShowDay: enableAllTheseDays,
+		buttonImage: "/opcom/pcs/calendar.gif",
+		buttonImageOnly: true,
+		changeMonth: true,
+		changeYear: true
+	});
+} );
+</script>
+<div id="contp"> 
+
+	
+<div id="headeer">
+    <table width="100%" border="0">
+        <tr>
+            <td width="200px" align="right" valign="top">
+                <p>
+                    Tranzactionare pentru: &nbsp;&nbsp;&nbsp;                </p>
+            </td>
+
+            <td valign="middle">
+                <div id="call">
+                	
+                    <form method="post" action="https://www.opcom.ro/grafice-ip-raportPIP-si-volumTranzactionat/ro">
+                	   <input type="hidden" name="_token" value="OSiTSdCsey8lfaeU6mAQDWAYp7SUb8EbQSuNyRF1" />
+                	   
+                	   <input type="text" id="pzu_rezultate_datepicker" name="trading_for" value="26/10/2026" autocomplete="off" readonly />
+                	   <input name="buton" type="submit" value="Refresh" style="font-size: 12px;" target="new"/>
+                	   <input type="hidden" name="action" value="trading_for"  />
+                	   <input name="limba" type="hidden" value="ro" style="font-size: 12px;"/>
+                    </form>
+                    &nbsp;&nbsp;&nbsp;
+                </div>
+            </td>
+
+            <td align="right" valign="top">
+                <p>Export&nbsp;:&nbsp;&nbsp;</p>
+            </td>
+
+            <td valign="top">
+                                                           <form method="post">
+                            <select name="menu_sari" id="menu_sari" onchange="pzu_rezultate_export_trigger('parent', this, 0)">
+                                <option value="#">Select a format & PT</option>
+                                <option resolution=15 value="https://www.opcom.ro/rapoarte-pzu-raportPIP-export-csv/26/10/2026/ro?resolution=15">CSV - PT15</option><option resolution=30 value="https://www.opcom.ro/rapoarte-pzu-raportPIP-export-csv/26/10/2026/ro?resolution=30">CSV - PT30</option><option resolution=60 value="https://www.opcom.ro/rapoarte-pzu-raportPIP-export-csv/26/10/2026/ro?resolution=60">CSV - PT60</option><option resolution=15 value="https://www.opcom.ro/rapoarte-pzu-raportPIP-export-xml/26/10/2026/ro?resolution=15">XML - PT15</option><option resolution=30 value="https://www.opcom.ro/rapoarte-pzu-raportPIP-export-xml/26/10/2026/ro?resolution=30">XML - PT30</option><option resolution=60 value="https://www.opcom.ro/rapoarte-pzu-raportPIP-export-xml/26/10/2026/ro?resolution=60">XML - PT60</option>                            </select>
+    
+                            <input type="hidden" name="_token" value="OSiTSdCsey8lfaeU6mAQDWAYp7SUb8EbQSuNyRF1" />
+                            <input name="zi" type="hidden" value="26"/>
+                            <input name="luna" type="hidden" value="10"/>
+                            <input name="an" type="hidden" value="2026"/>
+                            <input name="limba" type="hidden" value="ro"/>
+                        </form>
+                                       
+                   
+                            </td>
+        </tr>
+    </table>
+</div>
+<div class="tab">
+<div style="display:block;width: 100%;height: 30px;"><div style="float:left;"><button class='tablinks active' onclick="openResolution(event, 'rez15min',15 )" id='tab15'>15min</button></div><div style="float:left;"><button class='tablinks' onclick="openResolution(event, 'rez30min',30 )" id='tab30'>30min</button></div><div style="float:left;"><button class='tablinks' onclick="openResolution(event, 'rez60min',60 )" id='tab60'>60min</button></div></div><div id="tab_PIP_Vol" style=" max-height:550px; width:520px; float:left;"><div id="rez15min" class="tabcontent"><div style=" max-height:530px; "><table cellpadding="5" cellspacing="0" class="border_table" style="width:100%;"><tr style="height:50px;">
+                         <th class="sticky top1">Zona de tranzactionare</th>
+        <th class="sticky top1">Interval</th>
+        <th class="sticky top1">ROPEX_DAM_15min [Lei/MWh]</th>
+        <th class="sticky top1">Volum tranzacționat [MW]</th>
+        <th class="sticky top1">Volum tranzacționat pe cumpărare [MW]</th>
+        <th class="sticky top1">Volum tranzacționat pe vânzare [MW]</th>
+                          </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>1</td>
+                    <td align='right'>1.298,77</td>
+                    <td align='right'>1.791,6</td>
+                    <td align='right'>1.791,6</td>
+                    <td align='right'>1.287,6</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>2</td>
+                    <td align='right'>1.219,65</td>
+                    <td align='right'>1.788,6</td>
+                    <td align='right'>1.788,6</td>
+                    <td align='right'>1.295,3</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>3</td>
+                    <td align='right'>1.322,09</td>
+                    <td align='right'>1.789,2</td>
+                    <td align='right'>1.789,2</td>
+                    <td align='right'>1.295,4</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>4</td>
+                    <td align='right'>1.356,29</td>
+                    <td align='right'>1.789,1</td>
+                    <td align='right'>1.789,1</td>
+                    <td align='right'>1.296,8</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>5</td>
+                    <td align='right'>1.302,17</td>
+                    <td align='right'>1.704,5</td>
+                    <td align='right'>1.704,5</td>
+                    <td align='right'>1.219,6</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>6</td>
+                    <td align='right'>1.335,29</td>
+                    <td align='right'>1.705,7</td>
+                    <td align='right'>1.705,7</td>
+                    <td align='right'>1.218,5</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>7</td>
+                    <td align='right'>1.295,31</td>
+                    <td align='right'>1.709,6</td>
+                    <td align='right'>1.709,6</td>
+                    <td align='right'>1.216,6</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>8</td>
+                    <td align='right'>1.264,44</td>
+                    <td align='right'>1.711,7</td>
+                    <td align='right'>1.711,7</td>
+                    <td align='right'>1.212,7</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>9</td>
+                    <td align='right'>1.333,60</td>
+                    <td align='right'>1.388,2</td>
+                    <td align='right'>1.388,2</td>
+                    <td align='right'>1.176,9</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>10</td>
+                    <td align='right'>1.333,47</td>
+                    <td align='right'>1.395,7</td>
+                    <td align='right'>1.395,7</td>
+                    <td align='right'>1.172,3</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>11</td>
+                    <td align='right'>1.311,77</td>
+                    <td align='right'>1.399,5</td>
+                    <td align='right'>1.399,5</td>
+                    <td align='right'>1.163,3</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>12</td>
+                    <td align='right'>1.219,96</td>
+                    <td align='right'>1.407,3</td>
+                    <td align='right'>1.407,3</td>
+                    <td align='right'>1.164,6</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>13</td>
+                    <td align='right'>1.333,49</td>
+                    <td align='right'>1.729,1</td>
+                    <td align='right'>1.729,1</td>
+                    <td align='right'>1.193,0</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>14</td>
+                    <td align='right'>1.319,98</td>
+                    <td align='right'>1.744,5</td>
+                    <td align='right'>1.744,5</td>
+                    <td align='right'>1.181,2</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>15</td>
+                    <td align='right'>1.299,99</td>
+                    <td align='right'>1.761,7</td>
+                    <td align='right'>1.761,7</td>
+                    <td align='right'>1.166,1</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>16</td>
+                    <td align='right'>1.243,74</td>
+                    <td align='right'>1.799,0</td>
+                    <td align='right'>1.799,0</td>
+                    <td align='right'>1.164,8</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>17</td>
+                    <td align='right'>1.339,87</td>
+                    <td align='right'>2.128,8</td>
+                    <td align='right'>2.128,8</td>
+                    <td align='right'>1.192,8</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>18</td>
+                    <td align='right'>1.185,05</td>
+                    <td align='right'>2.180,3</td>
+                    <td align='right'>2.180,3</td>
+                    <td align='right'>1.192,0</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>19</td>
+                    <td align='right'>1.293,75</td>
+                    <td align='right'>2.244,4</td>
+                    <td align='right'>2.244,4</td>
+                    <td align='right'>1.191,3</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>20</td>
+                    <td align='right'>1.042,57</td>
+                    <td align='right'>2.303,6</td>
+                    <td align='right'>2.303,6</td>
+                    <td align='right'>1.189,9</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>21</td>
+                    <td align='right'>1.080,19</td>
+                    <td align='right'>2.112,4</td>
+                    <td align='right'>2.112,4</td>
+                    <td align='right'>1.321,9</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>22</td>
+                    <td align='right'>1.227,25</td>
+                    <td align='right'>2.179,0</td>
+                    <td align='right'>2.179,0</td>
+                    <td align='right'>1.316,9</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>23</td>
+                    <td align='right'>1.398,91</td>
+                    <td align='right'>2.248,6</td>
+                    <td align='right'>2.248,6</td>
+                    <td align='right'>1.317,1</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>24</td>
+                    <td align='right'>1.490,44</td>
+                    <td align='right'>2.302,7</td>
+                    <td align='right'>2.302,7</td>
+                    <td align='right'>1.316,5</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>25</td>
+                    <td align='right'>1.460,23</td>
+                    <td align='right'>1.762,5</td>
+                    <td align='right'>1.762,5</td>
+                    <td align='right'>1.172,4</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>26</td>
+                    <td align='right'>1.500,00</td>
+                    <td align='right'>1.784,4</td>
+                    <td align='right'>1.784,4</td>
+                    <td align='right'>1.176,4</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>27</td>
+                    <td align='right'>1.500,00</td>
+                    <td align='right'>1.795,1</td>
+                    <td align='right'>1.795,1</td>
+                    <td align='right'>1.178,2</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>28</td>
+                    <td align='right'>1.428,41</td>
+                    <td align='right'>1.816,0</td>
+                    <td align='right'>1.816,0</td>
+                    <td align='right'>1.180,1</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>29</td>
+                    <td align='right'>1.576,95</td>
+                    <td align='right'>1.792,1</td>
+                    <td align='right'>1.792,1</td>
+                    <td align='right'>1.162,5</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>30</td>
+                    <td align='right'>1.445,98</td>
+                    <td align='right'>1.798,0</td>
+                    <td align='right'>1.798,0</td>
+                    <td align='right'>1.164,2</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>31</td>
+                    <td align='right'>1.439,00</td>
+                    <td align='right'>1.766,4</td>
+                    <td align='right'>1.766,4</td>
+                    <td align='right'>1.165,6</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>32</td>
+                    <td align='right'>1.529,68</td>
+                    <td align='right'>1.715,4</td>
+                    <td align='right'>1.715,4</td>
+                    <td align='right'>1.170,6</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>33</td>
+                    <td align='right'>1.368,77</td>
+                    <td align='right'>2.332,5</td>
+                    <td align='right'>2.332,5</td>
+                    <td align='right'>1.016,0</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>34</td>
+                    <td align='right'>1.291,56</td>
+                    <td align='right'>2.292,8</td>
+                    <td align='right'>2.292,8</td>
+                    <td align='right'>1.017,5</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>35</td>
+                    <td align='right'>1.099,02</td>
+                    <td align='right'>2.243,0</td>
+                    <td align='right'>2.243,0</td>
+                    <td align='right'>1.021,9</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>36</td>
+                    <td align='right'>1.437,84</td>
+                    <td align='right'>2.169,9</td>
+                    <td align='right'>2.169,9</td>
+                    <td align='right'>1.023,5</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>37</td>
+                    <td align='right'>1.228,09</td>
+                    <td align='right'>2.240,6</td>
+                    <td align='right'>2.240,6</td>
+                    <td align='right'>965,5</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>38</td>
+                    <td align='right'>1.189,18</td>
+                    <td align='right'>2.202,5</td>
+                    <td align='right'>2.202,5</td>
+                    <td align='right'>966,8</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>39</td>
+                    <td align='right'>1.304,10</td>
+                    <td align='right'>2.175,9</td>
+                    <td align='right'>2.175,9</td>
+                    <td align='right'>971,7</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>40</td>
+                    <td align='right'>1.475,43</td>
+                    <td align='right'>2.147,1</td>
+                    <td align='right'>2.147,1</td>
+                    <td align='right'>984,0</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>41</td>
+                    <td align='right'>1.013,27</td>
+                    <td align='right'>2.228,3</td>
+                    <td align='right'>2.228,3</td>
+                    <td align='right'>952,2</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>42</td>
+                    <td align='right'>1.098,67</td>
+                    <td align='right'>2.189,6</td>
+                    <td align='right'>2.189,6</td>
+                    <td align='right'>953,3</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>43</td>
+                    <td align='right'>1.299,98</td>
+                    <td align='right'>2.191,2</td>
+                    <td align='right'>2.191,2</td>
+                    <td align='right'>960,7</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>44</td>
+                    <td align='right'>1.316,15</td>
+                    <td align='right'>2.151,1</td>
+                    <td align='right'>2.151,1</td>
+                    <td align='right'>963,2</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>45</td>
+                    <td align='right'>1.276,48</td>
+                    <td align='right'>1.933,9</td>
+                    <td align='right'>1.933,9</td>
+                    <td align='right'>948,6</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>46</td>
+                    <td align='right'>1.299,98</td>
+                    <td align='right'>1.927,9</td>
+                    <td align='right'>1.927,9</td>
+                    <td align='right'>956,5</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>47</td>
+                    <td align='right'>1.300,76</td>
+                    <td align='right'>1.916,6</td>
+                    <td align='right'>1.916,6</td>
+                    <td align='right'>958,7</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>48</td>
+                    <td align='right'>1.319,98</td>
+                    <td align='right'>1.914,1</td>
+                    <td align='right'>1.914,1</td>
+                    <td align='right'>961,4</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>49</td>
+                    <td align='right'>1.349,65</td>
+                    <td align='right'>1.987,8</td>
+                    <td align='right'>1.987,8</td>
+                    <td align='right'>945,5</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>50</td>
+                    <td align='right'>1.377,19</td>
+                    <td align='right'>2.009,0</td>
+                    <td align='right'>2.009,0</td>
+                    <td align='right'>938,3</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>51</td>
+                    <td align='right'>1.381,65</td>
+                    <td align='right'>2.011,9</td>
+                    <td align='right'>2.011,9</td>
+                    <td align='right'>931,1</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>52</td>
+                    <td align='right'>1.088,30</td>
+                    <td align='right'>2.030,8</td>
+                    <td align='right'>2.030,8</td>
+                    <td align='right'>924,3</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>53</td>
+                    <td align='right'>1.328,80</td>
+                    <td align='right'>1.550,8</td>
+                    <td align='right'>1.550,8</td>
+                    <td align='right'>928,1</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>54</td>
+                    <td align='right'>1.389,72</td>
+                    <td align='right'>1.612,1</td>
+                    <td align='right'>1.612,1</td>
+                    <td align='right'>925,3</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>55</td>
+                    <td align='right'>1.273,91</td>
+                    <td align='right'>1.652,1</td>
+                    <td align='right'>1.652,1</td>
+                    <td align='right'>921,7</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>56</td>
+                    <td align='right'>1.206,37</td>
+                    <td align='right'>1.664,1</td>
+                    <td align='right'>1.664,1</td>
+                    <td align='right'>917,3</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>57</td>
+                    <td align='right'>1.097,36</td>
+                    <td align='right'>1.494,8</td>
+                    <td align='right'>1.494,8</td>
+                    <td align='right'>922,6</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>58</td>
+                    <td align='right'>1.285,55</td>
+                    <td align='right'>1.542,7</td>
+                    <td align='right'>1.542,7</td>
+                    <td align='right'>918,3</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>59</td>
+                    <td align='right'>1.407,40</td>
+                    <td align='right'>1.582,6</td>
+                    <td align='right'>1.582,6</td>
+                    <td align='right'>914,3</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>60</td>
+                    <td align='right'>1.485,07</td>
+                    <td align='right'>1.629,2</td>
+                    <td align='right'>1.629,2</td>
+                    <td align='right'>911,6</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>61</td>
+                    <td align='right'>1.500,98</td>
+                    <td align='right'>1.621,7</td>
+                    <td align='right'>1.621,7</td>
+                    <td align='right'>924,1</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>62</td>
+                    <td align='right'>1.688,61</td>
+                    <td align='right'>1.677,5</td>
+                    <td align='right'>1.677,5</td>
+                    <td align='right'>919,0</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>63</td>
+                    <td align='right'>1.987,21</td>
+                    <td align='right'>1.741,0</td>
+                    <td align='right'>1.741,0</td>
+                    <td align='right'>919,5</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>64</td>
+                    <td align='right'>2.085,11</td>
+                    <td align='right'>1.804,1</td>
+                    <td align='right'>1.804,1</td>
+                    <td align='right'>918,8</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>65</td>
+                    <td align='right'>1.922,28</td>
+                    <td align='right'>1.967,3</td>
+                    <td align='right'>1.967,3</td>
+                    <td align='right'>981,4</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>66</td>
+                    <td align='right'>1.946,73</td>
+                    <td align='right'>2.038,8</td>
+                    <td align='right'>2.038,8</td>
+                    <td align='right'>980,3</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>67</td>
+                    <td align='right'>1.915,72</td>
+                    <td align='right'>2.069,8</td>
+                    <td align='right'>2.069,8</td>
+                    <td align='right'>979,7</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>68</td>
+                    <td align='right'>1.982,10</td>
+                    <td align='right'>2.062,2</td>
+                    <td align='right'>2.062,2</td>
+                    <td align='right'>979,7</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>69</td>
+                    <td align='right'>1.869,38</td>
+                    <td align='right'>2.077,1</td>
+                    <td align='right'>2.077,1</td>
+                    <td align='right'>1.186,9</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>70</td>
+                    <td align='right'>1.940,54</td>
+                    <td align='right'>2.079,8</td>
+                    <td align='right'>2.079,8</td>
+                    <td align='right'>1.187,8</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>71</td>
+                    <td align='right'>2.009,99</td>
+                    <td align='right'>2.071,1</td>
+                    <td align='right'>2.071,1</td>
+                    <td align='right'>1.189,8</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>72</td>
+                    <td align='right'>2.038,40</td>
+                    <td align='right'>2.054,3</td>
+                    <td align='right'>2.054,3</td>
+                    <td align='right'>1.191,2</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>73</td>
+                    <td align='right'>1.742,68</td>
+                    <td align='right'>2.048,3</td>
+                    <td align='right'>2.048,3</td>
+                    <td align='right'>1.262,4</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>74</td>
+                    <td align='right'>1.692,00</td>
+                    <td align='right'>2.023,0</td>
+                    <td align='right'>2.023,0</td>
+                    <td align='right'>1.264,5</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>75</td>
+                    <td align='right'>1.722,50</td>
+                    <td align='right'>1.985,3</td>
+                    <td align='right'>1.985,3</td>
+                    <td align='right'>1.267,7</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>76</td>
+                    <td align='right'>1.738,79</td>
+                    <td align='right'>1.959,0</td>
+                    <td align='right'>1.959,0</td>
+                    <td align='right'>1.269,0</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>77</td>
+                    <td align='right'>1.750,20</td>
+                    <td align='right'>1.925,1</td>
+                    <td align='right'>1.925,1</td>
+                    <td align='right'>1.136,5</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>78</td>
+                    <td align='right'>1.718,69</td>
+                    <td align='right'>1.902,8</td>
+                    <td align='right'>1.902,8</td>
+                    <td align='right'>1.140,0</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>79</td>
+                    <td align='right'>1.661,63</td>
+                    <td align='right'>1.844,1</td>
+                    <td align='right'>1.844,1</td>
+                    <td align='right'>1.110,2</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>80</td>
+                    <td align='right'>1.736,16</td>
+                    <td align='right'>1.780,6</td>
+                    <td align='right'>1.780,6</td>
+                    <td align='right'>1.150,4</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>81</td>
+                    <td align='right'>1.857,86</td>
+                    <td align='right'>1.690,0</td>
+                    <td align='right'>1.690,0</td>
+                    <td align='right'>1.158,0</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>82</td>
+                    <td align='right'>1.816,53</td>
+                    <td align='right'>1.625,8</td>
+                    <td align='right'>1.625,8</td>
+                    <td align='right'>1.158,5</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>83</td>
+                    <td align='right'>1.692,00</td>
+                    <td align='right'>1.570,8</td>
+                    <td align='right'>1.570,8</td>
+                    <td align='right'>1.154,5</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>84</td>
+                    <td align='right'>1.783,68</td>
+                    <td align='right'>1.497,3</td>
+                    <td align='right'>1.497,3</td>
+                    <td align='right'>1.165,5</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>85</td>
+                    <td align='right'>1.847,77</td>
+                    <td align='right'>1.442,4</td>
+                    <td align='right'>1.442,4</td>
+                    <td align='right'>1.147,3</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>86</td>
+                    <td align='right'>1.688,48</td>
+                    <td align='right'>1.364,8</td>
+                    <td align='right'>1.364,8</td>
+                    <td align='right'>1.114,8</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>87</td>
+                    <td align='right'>1.596,00</td>
+                    <td align='right'>1.294,3</td>
+                    <td align='right'>1.294,3</td>
+                    <td align='right'>1.119,8</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>88</td>
+                    <td align='right'>1.364,49</td>
+                    <td align='right'>1.223,0</td>
+                    <td align='right'>1.223,0</td>
+                    <td align='right'>1.125,4</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>89</td>
+                    <td align='right'>1.618,08</td>
+                    <td align='right'>1.159,6</td>
+                    <td align='right'>1.159,6</td>
+                    <td align='right'>1.121,0</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>90</td>
+                    <td align='right'>1.496,50</td>
+                    <td align='right'>1.133,5</td>
+                    <td align='right'>1.096,9</td>
+                    <td align='right'>1.133,5</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>91</td>
+                    <td align='right'>1.442,60</td>
+                    <td align='right'>1.154,2</td>
+                    <td align='right'>1.048,9</td>
+                    <td align='right'>1.154,2</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>92</td>
+                    <td align='right'>1.252,57</td>
+                    <td align='right'>1.174,8</td>
+                    <td align='right'>997,1</td>
+                    <td align='right'>1.174,8</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>93</td>
+                    <td align='right'>1.379,82</td>
+                    <td align='right'>1.703,4</td>
+                    <td align='right'>1.703,4</td>
+                    <td align='right'>1.180,2</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>94</td>
+                    <td align='right'>1.250,76</td>
+                    <td align='right'>1.649,0</td>
+                    <td align='right'>1.649,0</td>
+                    <td align='right'>1.213,9</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>95</td>
+                    <td align='right'>1.159,38</td>
+                    <td align='right'>1.608,6</td>
+                    <td align='right'>1.608,6</td>
+                    <td align='right'>1.246,0</td>
+                </tr><tr>
+                    <td align='center'>Romania</td>
+                    <td style='text-align:center; vertical-align:middle;'>96</td>
+                    <td align='right'>1.028,85</td>
+                    <td align='right'>1.566,6</td>
+                    <td align='right'>1.566,6</td>
+                    <td align='right'>1.278,8</td>
+                </tr></table></div></div><div id="rez30min" class="tabcontent"><div style=" max-height:530px; "><table cellpadding="5" cellspacing="0" class="border_table" style="width:100%;"><tr style="height:50px;">
+                          <th class="sticky top1">Interval</th>
+        <th class="sticky top1">Pret Mediu 30 min[Lei/MWh]</th>
+                          </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>1</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.259,21</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>2</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.339,19</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>3</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.318,73</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>4</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.279,87</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>5</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.333,53</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>6</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.265,87</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>7</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.326,73</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>8</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.271,87</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>9</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.262,46</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>10</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.168,16</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>11</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.153,72</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>12</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.444,68</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>13</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.480,11</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>14</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.464,21</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>15</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.511,46</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>16</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.484,34</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>17</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.330,17</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>18</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.268,43</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>19</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.208,63</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>20</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.389,77</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>21</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.055,97</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>22</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.308,07</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>23</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.288,23</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>24</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.310,37</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>25</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.363,42</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>26</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.234,98</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>27</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.359,26</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>28</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.240,14</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>29</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.191,46</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>30</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.446,23</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>31</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.594,79</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>32</td>
+                        <td style='text-align:center; vertical-align:middle;'>2.036,16</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>33</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.934,50</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>34</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.948,91</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>35</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.904,96</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>36</td>
+                        <td style='text-align:center; vertical-align:middle;'>2.024,19</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>37</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.717,34</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>38</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.730,65</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>39</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.734,44</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>40</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.698,89</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>41</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.837,20</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>42</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.737,84</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>43</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.768,12</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>44</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.480,24</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>45</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.557,29</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>46</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.347,58</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>47</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.315,29</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>48</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.094,11</td>
+                    </tr></table></div></div><div id="rez60min" class="tabcontent"><div style=" max-height:530px; "><table cellpadding="5" cellspacing="0" class="border_table" style="width:100%;"><tr style="height:50px;">
+                          <th class="sticky top1">Interval</th>
+        <th class="sticky top1">Pret Mediu 60 min[Lei/MWh]</th>
+                          </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>1</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.299,20</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>2</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.299,30</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>3</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.299,70</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>4</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.299,30</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>5</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.215,31</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>6</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.299,20</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>7</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.472,16</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>8</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.497,90</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>9</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.299,30</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>10</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.299,20</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>11</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.182,02</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>12</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.299,30</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>13</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.299,20</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>14</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.299,70</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>15</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.318,84</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>16</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.815,48</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>17</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.941,71</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>18</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.964,58</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>19</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.723,99</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>20</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.716,67</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>21</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.787,52</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>22</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.624,18</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>23</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.452,44</td>
+                    </tr><tr>
+                        <td style='text-align:center; vertical-align:middle;'>24</td>
+                        <td style='text-align:center; vertical-align:middle;'>1.204,70</td>
+                    </tr></table></div></div></div><div style="float:left; width:400px;margin-right:100px;margin-top:50px;height:300px;" id = "ropex_table"><table cellpadding="0" cellspacing="0" width="100%" class="border_table" style="margin-top:10px;">
+        <th width="125" style="text-align:center; vertical-align:middle;">&nbsp;</th>
+        <th width="70" style="text-align:center; vertical-align:middle;">ROPEX_DAM<br/>[Lei/MWh]</th>
+        <th width="65" style="text-align:center; vertical-align:middle;">Volum<br/>[MWh]</th>
+      </tr>
+   <tr>
+    <td>ROPEX_DAM_Base*<br />(1-96)</td>
+    <td><div align="right">1.454,62</div></td>
+    <td><div align="right">43.790,2</div></td>
+</tr>
+<tr>
+    <td>ROPEX_DAM_Peak*<br />(33-80)</td>
+    <td><div align="right">1.513,33</div></td>
+    <td><div align="right">23.439,5</div></td>
+</tr>
+<tr>
+    <td>ROPEX_DAM_Off_peak*<br />(1-32) & (81-96)</td>
+    <td><div align="right">1.395,91</div></td>
+    <td><div align="right">20.350,7</div></td>
+</tr>
+<tr>
+    <td rowspan = "2">ROPEX_DAM_Storage<br />[Lei/MWh]</td>
+	<td><div align="right">First 2h/Last 2h</div></td>
+    <td><div align="right">920,52</div></td>
+</tr>
+<tr>
+	<td><div align="right">First 4h/Last 4h</div></td>
+    <td><div align="right">769,56</div></td>
+</tr>
+          </table><div style="margin-right:20px;clear:both;">
+						   <sup>*)</sup>detaliile privind modul de calcul al indicatorilor specifici (vers. 15) pot fi vizualizate <a class="inline" href="/uploads/doc/pg1/Definitii_indicatori_RO Versiunea 15.pdf" target=new><em>aici</em>
+						   <img border=0 src="/uploads/img_opcom/document.gif"></a>
+						</div>
+			</div>	</div><div id="graf_PIP_Vol" style="margin-top:10px;">
+    <div style="width:100%; overflow-x:auto; float:left;">
+        <div id="placeholder" style="width:950px; height:315px; "></div>
+    </div>
+    <div id="legend"></div>
+</div><script type='text/javascript'>
+function openResolution(evt, resName, resolution) {
+    let select = document.getElementById('menu_sari');
+    let substring = resName.replace('min','');
+
+    //ROPEX DAM tabel (tabel mic)
+    if(substring != 'rez15') {
+        document.getElementById( 'ropex_table' ).style.display = 'none';
+    }else{
+        document.getElementById( 'ropex_table' ).style.display = '';
+    }
+    //END ROPEX DAM tabel (tabel mic)
+
+    //Export CSV & XML
+    let resolution_export_data_rez = resName.replace('min','');
+    let resolution_export_data_int = resolution_export_data_rez.replace('rez','');
+    const selectExportData = document.querySelector('select[name=menu_sari]'); 
+    for (let i = selectExportData.options.length - 1; i > 0; i--) {
+        if (!(selectExportData.options[i].getAttribute('resolution') == resolution_export_data_int)) {
+            selectExportData.options[i].hidden = true; //Ascunde optiuni
+        }else{
+            selectExportData.options[i].hidden = false; //Afiseaza optiuni
+        }
+    }
+    //END Export CSV & XML    
+
+    var tabcontent = document.getElementsByClassName('tabcontent');
+    for (var i = 0; i < tabcontent.length; i++) { tabcontent[i].style.display = 'none'; }
+
+    var tablinks = document.getElementsByClassName('tablinks');
+    for (var i = 0; i < tablinks.length; i++) { tablinks[i].className = tablinks[i].className.replace(' active', ''); }
+
+    document.getElementById(resName).style.display = 'block';
+    evt.currentTarget.className += ' active';
+
+    //graf_PIP_Vol adaugam margin-top
+   switch(substring){
+        case 'rez15':
+            document.getElementById('graf_PIP_Vol').style.margin = '0px 0px 0px 0px';
+            break;
+        case 'rez30':
+            document.getElementById('graf_PIP_Vol').style.margin = '70px 0px 0px 0px';
+            break;
+        case 'rez60':
+            document.getElementById('graf_PIP_Vol').style.margin = '0px 0px 0px 0px';
+            break;
+   }
+
+    var resVal = resolution;
+    renderChart(resVal);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    if ('15') {
+        document.getElementById('tab15').click();
+    }
+});
+
+function addSeparatorsNF(nStr, inD, outD, sep) {
+    nStr += '';
+    var dpos = nStr.indexOf(inD);
+    var nStrEnd = '';
+    if (dpos != -1) {
+        nStrEnd = outD + nStr.substring(dpos + 1);
+        nStr = nStr.substring(0, dpos);
+    }
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(nStr)) { nStr = nStr.replace(rgx, '$1' + sep + '$2'); }
+    return nStr + nStrEnd;
+}
+function renderChart(res){
+    var chartData = {"15":{"pret":[[1,1298.77],[2,1219.65],[3,1322.09],[4,1356.29],[5,1302.17],[6,1335.29],[7,1295.31],[8,1264.44],[9,1333.6],[10,1333.47],[11,1311.77],[12,1219.96],[13,1333.49],[14,1319.98],[15,1299.99],[16,1243.74],[17,1339.87],[18,1185.05],[19,1293.75],[20,1042.57],[21,1080.19],[22,1227.25],[23,1398.91],[24,1490.44],[25,1460.23],[26,1500],[27,1500],[28,1428.41],[29,1576.95],[30,1445.98],[31,1439],[32,1529.68],[33,1368.77],[34,1291.56],[35,1099.02],[36,1437.84],[37,1228.09],[38,1189.18],[39,1304.1],[40,1475.43],[41,1013.27],[42,1098.67],[43,1299.98],[44,1316.15],[45,1276.48],[46,1299.98],[47,1300.76],[48,1319.98],[49,1349.65],[50,1377.19],[51,1381.65],[52,1088.3],[53,1328.8],[54,1389.72],[55,1273.91],[56,1206.37],[57,1097.36],[58,1285.55],[59,1407.4],[60,1485.07],[61,1500.98],[62,1688.61],[63,1987.21],[64,2085.11],[65,1922.28],[66,1946.73],[67,1915.72],[68,1982.1],[69,1869.38],[70,1940.54],[71,2009.99],[72,2038.4],[73,1742.68],[74,1692],[75,1722.5],[76,1738.79],[77,1750.2],[78,1718.69],[79,1661.63],[80,1736.16],[81,1857.86],[82,1816.53],[83,1692],[84,1783.68],[85,1847.77],[86,1688.48],[87,1596],[88,1364.49],[89,1618.08],[90,1496.5],[91,1442.6],[92,1252.57],[93,1379.82],[94,1250.76],[95,1159.38],[96,1028.85]],"cantitate":[[1,1791.6],[2,1788.6],[3,1789.2],[4,1789.1],[5,1704.5],[6,1705.7],[7,1709.6],[8,1711.7],[9,1388.2],[10,1395.7],[11,1399.5],[12,1407.3],[13,1729.1],[14,1744.5],[15,1761.7],[16,1799],[17,2128.8],[18,2180.3],[19,2244.4],[20,2303.6],[21,2112.4],[22,2179],[23,2248.6],[24,2302.7],[25,1762.5],[26,1784.4],[27,1795.1],[28,1816],[29,1792.1],[30,1798],[31,1766.4],[32,1715.4],[33,2332.5],[34,2292.8],[35,2243],[36,2169.9],[37,2240.6],[38,2202.5],[39,2175.9],[40,2147.1],[41,2228.3],[42,2189.6],[43,2191.2],[44,2151.1],[45,1933.9],[46,1927.9],[47,1916.6],[48,1914.1],[49,1987.8],[50,2009],[51,2011.9],[52,2030.8],[53,1550.8],[54,1612.1],[55,1652.1],[56,1664.1],[57,1494.8],[58,1542.7],[59,1582.6],[60,1629.2],[61,1621.7],[62,1677.5],[63,1741],[64,1804.1],[65,1967.3],[66,2038.8],[67,2069.8],[68,2062.2],[69,2077.1],[70,2079.8],[71,2071.1],[72,2054.3],[73,2048.3],[74,2023],[75,1985.3],[76,1959],[77,1925.1],[78,1902.8],[79,1844.1],[80,1780.6],[81,1690],[82,1625.8],[83,1570.8],[84,1497.3],[85,1442.4],[86,1364.8],[87,1294.3],[88,1223],[89,1159.6],[90,1133.5],[91,1154.2],[92,1174.8],[93,1703.4],[94,1649],[95,1608.6],[96,1566.6]]},"30":{"pret":[[1,"1259.21"],[2,"1339.19"],[3,"1318.73"],[4,"1279.87"],[5,"1333.53"],[6,"1265.87"],[7,"1326.73"],[8,"1271.87"],[9,"1262.46"],[10,"1168.16"],[11,"1153.72"],[12,"1444.68"],[13,"1480.11"],[14,"1464.21"],[15,"1511.46"],[16,"1484.34"],[17,"1330.17"],[18,"1268.43"],[19,"1208.63"],[20,"1389.77"],[21,"1055.97"],[22,"1308.07"],[23,"1288.23"],[24,"1310.37"],[25,"1363.42"],[26,"1234.98"],[27,"1359.26"],[28,"1240.14"],[29,"1191.46"],[30,"1446.23"],[31,"1594.79"],[32,"2036.16"],[33,"1934.50"],[34,"1948.91"],[35,"1904.96"],[36,"2024.19"],[37,"1717.34"],[38,"1730.65"],[39,"1734.44"],[40,"1698.89"],[41,"1837.20"],[42,"1737.84"],[43,"1768.12"],[44,"1480.24"],[45,"1557.29"],[46,"1347.58"],[47,"1315.29"],[48,"1094.11"]]},"60":{"pret":[[1,"1299.20"],[2,"1299.30"],[3,"1299.70"],[4,"1299.30"],[5,"1215.31"],[6,"1299.20"],[7,"1472.16"],[8,"1497.90"],[9,"1299.30"],[10,"1299.20"],[11,"1182.02"],[12,"1299.30"],[13,"1299.20"],[14,"1299.70"],[15,"1318.84"],[16,"1815.48"],[17,"1941.71"],[18,"1964.58"],[19,"1723.99"],[20,"1716.67"],[21,"1787.52"],[22,"1624.18"],[23,"1452.44"],[24,"1204.70"]]}};
+    var dataKey = res.toString();
+    var arr_plot_series = [];
+
+    jQuery('#placeholder').empty();
+    jQuery('#legend').empty();
+
+    if(!chartData[dataKey]) return;
+
+    // 🔹 Volume – îl adăugăm doar pentru rez 15
+    if(dataKey === '15' && chartData[dataKey].cantitate && chartData[dataKey].cantitate.length > 0){
+        arr_plot_series.push({
+            data: chartData[dataKey].cantitate.map(function(item){ return [item[0], parseFloat(item[1] || 0)]; }),
+            yaxis: 1,
+            color: 'rgba(60, 140, 146, 1)',
+            bars: { show: true, barWidth: 0.7, align: 'center', fill: true, lineWidth: 0 },
+            label: 'Volum [MW]'
+        });
+    }
+
+    // 🔹 Price – pe toate rezolutiile
+   if(chartData[dataKey].pret && chartData[dataKey].pret.length > 0){
+        arr_plot_series.push({
+            data: chartData[dataKey].pret.map(function(item){ 
+                // parseFloat și fix la 2 zecimale pentru toate rezoluțiile
+                var val = (item[1]==='-' || item[1]===null) ? 0 : parseFloat(item[1]);
+                return [item[0], parseFloat(val.toFixed(2))]; 
+            }),
+            yaxis: 2,
+            color: 'rgb(255,102,0)',
+            lines: { show:true },
+            points: { show: true, radius: 1 },
+            label: (dataKey === '30' || dataKey === '60') ? 'Pret [Lei/MWh]' : 'Pret [Lei/MWh]'
+        });
+    }
+
+    var tickStep = chartData[dataKey].cantitate && chartData[dataKey].cantitate.length > 0 
+        ? Math.ceil(chartData[dataKey].cantitate.length / 10) 
+        : 1;
+
+ let options = {
+    xaxis: {
+        position: 'bottom',
+        show: true,
+        tickLength: 0,
+        color: '#000',
+        tickSize: 5,      // increments of 5
+        tickDecimals: 0   // no decimals
+    },
+    yaxes: [
+        
+    ],
+
+    grid: {
+        borderWidth: { top: 0, right: 0, bottom: 0, left: 0 },
+        hoverable: true,
+        clickable: true
+    },
+    hooks: {
+        draw: [function(plot, ctx) {
+            const offset = plot.getPlotOffset();
+            const plotWidth = plot.width();
+            const plotHeight = plot.height();
+
+            ctx.save();
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 1;
+
+            // horizontal line at the bottom
+            ctx.beginPath();
+            ctx.moveTo(offset.left, offset.top + plotHeight);
+            ctx.lineTo(offset.left + plotWidth, offset.top + plotHeight);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(offset.left, offset.top);
+            ctx.lineTo(offset.left, offset.top + plotHeight);
+            ctx.stroke();
+            
+            //Eliminare linie axa Y , pe dreapta, pe 30,60min
+            if(dataKey==15){
+                // RIGHT Y-AXIS LINE
+                ctx.beginPath();
+                ctx.moveTo(offset.left + plotWidth, offset.top);
+                ctx.lineTo(offset.left + plotWidth, offset.top + plotHeight);
+                ctx.stroke();
+            }
+            //END Eliminare linie axa Y , pe dreapta, pe 30,60min
+
+            ctx.restore();
+        }]
+    },
+    legend: { show: true, container: jQuery('#legend'), noColumns: 2 }
+};
+
+//Grafic afisare la 15 , pe else 30,60min
+if(dataKey == 15){
+    options.yaxes.push({  
+            position: 'left',
+            show: true,
+            tickLength: 0,
+            color: '#000'
+        },
+        {
+            position: 'right',
+            show: true,
+            tickLength: 0,
+            color: '#000'
+        });
+
+} else {
+    //Pe 30,60min. Nu afisam axa Y 1.0 ... 
+    options.yaxes.push({  
+            position: 'right',
+            show: false,
+            tickLength: 0,
+            color: 'rgba(0,0,0,0)'
+        },
+        {
+            position: 'left',
+            show: true,
+            tickLength: 0,
+            color: '#000',
+            tickFormatter: function(val, axis) {
+                if(val === 0) return ''; // remove the zero label
+                return val;
+            }
+        });
+}
+
+
+jQuery.plot(jQuery('#placeholder'), arr_plot_series, options);
+
+
+   jQuery('#placeholder').unbind('plothover').bind('plothover', function(event, pos, item){
+    jQuery('#tooltip').remove();
+    if(item){
+        var x = item.datapoint[0].toFixed(0);
+        var y;
+        var unit;
+        if(item.seriesIndex === 0){
+            // volum
+            y = parseFloat(item.datapoint[1].toFixed(2));
+            unit = ' MW';
+        } else {
+            // preț – întotdeauna cu 2 zecimale
+            y = parseFloat(item.datapoint[1].toFixed(2));
+            unit = (dataKey === '30' || dataKey === '60') ? ' Lei/MWh' : ' Lei/MWh';
+        }
+            jQuery('<div id="tooltip">Interval: ' + x + '<br>' + addSeparatorsNF(y, '.', '.', ',') + ' ' + unit + '</div>')
+            .css({
+            position: 'absolute',
+            display: 'none',
+            top: item.pageY + 5,
+            left: item.pageX + 5,
+            border: '1px solid #ff6600',
+            'background-color': '#bfd1d1',
+            opacity: 0.85,
+            'text-align': 'center'
+        }).appendTo('body').fadeIn(200);
+        }
+    });
+}
+
+</script><style>
+.tabcontent { display:none; }
+.tablinks.active { background-color:#ccc; }
+.tablinks { cursor:pointer; padding:5px 10px; margin-right:5px; }
+</style>
+
+</div><!--cont-->
+
+<!---------------------------------------------------------------- END CONTENT --------------------------------------------------------------->
+
+<!---------------------------------------------------------------- FOOTER --------------------------------------------------------------->
+<script>
+
+
+
+
+function pzu_rezultate_export_trigger(targ, selObj, restore) { 
+    var url = selObj.options[selObj.selectedIndex].value;
+    if (url !== "#") {
+        eval(targ + ".location='" + url + "'");
+    }
+    if (restore) selObj.selectedIndex = 0;
+}
+
+
+//Calendar date disponibile
+let enabledDates = "";
+enabledDates_arr = '["2026-10-25","2026-10-26"]';
+
+if(enabledDates_arr.length > 0){
+	enabledDates = new Array(JSON.parse(enabledDates_arr))[0];
+}else{
+	enabledDates = 0;
+}
+
+
+function enableAllTheseDays(date_calendar) {
+	let msec = Date.parse(date_calendar);
+    const date_obj = new Date(msec);
+    let day = ('0' + (date_obj.getDate())).slice(-2);
+    let month = ('0' + (date_obj.getMonth()+1)).slice(-2);
+    let year = date_obj.getFullYear();
+	
+	let date_ymd = year+"-"+month+"-"+day;
+	
+	if (jQuery.inArray(date_ymd, enabledDates) !== -1) {
+		//console.log("iff");
+      return [true];
+    }
+    
+    return [false];
+}
+//END Calendar date disponibile
+
+</script>
+
+	 <div class="clear">&nbsp;</div>
+	 <div class="clear">&nbsp;</div>
+     <div id="menu_pp_oriz_jos">
+    	
+
+    		<ul id="nav_jos">
+		<li id="button1"><a  href="https://www.opcom.ro/disclaimer/133/ro">Disclaimer</a></li>
+		<li id="button2"><a href="https://www.opcom.ro/sitemap/ro/154">Sitemap</a></li>
+        <li id="button3"> <a  href="https://www.opcom.ro/links/ro/135">Links</a></li>
+		<li id="stirider"> <a href="#"><div id="derulari">
+			<marquee scrollAmount=2 scrollDelay=5>Noi participanti: POWER PEAK TRADING S.R.L. (PCV), AENRO ENERGY HOLDING S.R.L. (PCV), GENESIS BIOTECH S.R.L. (PCE-ESRE-CV) si ENERINTENS SOLAR S.R.L. (PZU, PI) s-au alaturat OPCOM in luna octombrie.</marquee></div></a></li>			
+             <li  id="button5"><a style = "width: 126px; " href="https://www.opcom.ro/rss/ro">RSS</a></li>
+             <li style = "border-right: 0px solid #fff"  id="button6"> <a style = "width: 126px;" href="https://www.opcom.ro/contact-us/ro/134">Contact us</a></li>	
+			</ul>
+	
+<!--/ men orizontal-->
+<div id="footer">&copy; OPCOM &nbsp;</div>
+
+
+
+
+   	 </div>
+		
+<style>
+#close_cookie{display:none;}
+	#close_cookie:checked + #cookie_consent_popup{display:none;}	
+	
+#cookie_consent_popup{
+	position:fixed;
+/* 	bottom:130px; */
+/* 	left: 672px; */
+/* 	width:1187px; */
+/* 	height:40px; */
+	opacity: 0.65; 
+	width: 1187px;
+	height: 40px; 
+	top: 90%;
+	left: 50%;
+	 transform: translate(-50%, -50%);
+	background-color:#4E8781;
+	padding:6px;
+	text-align: center;
+	 z-index:300;
+}
+
+/* 	#cookie_consent_popup h1{ */
+/* 		font-size:1.2em; */
+/* 	} */
+/* 		#cookie_consent_popup h1:before{ */
+/* 			content:""; */
+/* 			padding:0; */
+/* 		} */
+	#cookie_consent_popup p{
+		font-size:0.7em;
+	}
+	#cookie_consent_popup #close_cookie_box{
+		position:absolute;
+		top:6px;right:20px;
+		cursor:pointer;
+		font-size:1.3em;
+		color: #BFD1D1; 
+	}
+	#cookie_consent_popup #ok_cookie_box{
+		position:absolute;
+		bottom:20px;right:20px;
+		cursor:pointer;
+		font-size:1.6em;
+		padding:10px 20px;
+		font-weight:700;
+		color:white;
+	}
+#cookie_consent_popup button {
+  background-color: #BFD1D1;
+  border: none;
+  color: white;
+  padding: 3px 8px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+</style>
+
+
+
+			<input type="checkbox" id="close_cookie"></input>
+			
+			<div id="cookie_consent_popup">
+				
+				
+					<input type="hidden" name="_token" value="OSiTSdCsey8lfaeU6mAQDWAYp7SUb8EbQSuNyRF1" />
+					<input type="checkbox" id="close_cookie"></input>
+					<input type="hidden" name="consent_cookie" value="1" />
+					
+					
+					<label for="close_cookie" id="close_cookie_box">X</label>
+					
+					<p style="font-family: Arial, Verdana, Helvetica, sans-serif;font-size:14px;color: #FFFFFF;">
+											Folosim module cookie sau tehnologii similare <strong>strict necesare</strong> pentru buna functionarea a website-ului. 
+											<button type="button" class="button" value="Accept">Accept</button>
+					</p>
+										
+			</div>
+			<script>
+	                    
+	                    jQuery("#cookie_consent_popup .button").on("click", function(){
+							//console.log("subb");
+		                   // return;
+		                   jQuery.ajax({
+						         type:'POST',
+						         url:'https://www.opcom.ro/cookie',
+						         headers: {'X-CSRF-TOKEN': 'OSiTSdCsey8lfaeU6mAQDWAYp7SUb8EbQSuNyRF1'},
+						         data:{'consent_cookie':1},
+						         success:function(data){
+// 							         console.log("zzz");
+// 							         console.log(data);
+							         jQuery("#cookie_consent_popup").remove();
+						         }
+						      });
+		                   
+		                });
+	                    
+	                    </script>
+	</div><!--wrapper-->
+
+</body>
+</html>
+<!---------------------------------------------------------------- END FOOTER --------------------------------------------------------------->

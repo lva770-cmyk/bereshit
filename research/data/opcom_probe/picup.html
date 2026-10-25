@@ -1,0 +1,1324 @@
+<!---------------------------------------------------------------- HEADER --------------------------------------------------------------->
+<!DOCTYPE html>
+<html>
+	<head>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Rezultate cuplare PI</title>
+		<!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-G55N5F5DZV"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+        
+          gtag('config', 'G-G55N5F5DZV');
+        </script>
+        
+
+
+		<link rel="stylesheet" type="text/css" href="https://www.opcom.ro/pp/css/mf.css" />
+		<link rel="stylesheet" type="text/css" href="https://www.opcom.ro/pp/css/home.css" />
+		<link rel="stylesheet" type="text/css" href="https://www.opcom.ro/pp/css/print.css" media="print">
+		<link rel="stylesheet" type="text/css" href="https://www.opcom.ro/pp/men_orizontal/men_oriz.css" />
+		<link rel="stylesheet" type="text/css" href="https://www.opcom.ro/pp/men_st_pp/men_st.css" />
+		<link rel="stylesheet" type="text/css" href="https://www.opcom.ro/pp/js/jquery-ui.css" />
+		<link rel="stylesheet" type="text/css" href="https://www.opcom.ro/pp/grafice_ip/js/layout.css" />
+		<link rel="stylesheet" type="text/css" media="print" href="https://www.opcom.ro/pp/css/printpp.css" />
+		<style type="text/css">
+
+			table.tab  { border:#9ac1c9 solid; border-width: 0 0 1px 1px; border-spacing: 0; border-collapse: collapse; margin: auto; width:90%; text-align:center;padding: 4px; }
+			table.tab td {border:#9ac1c9 solid ; border-width: 1px 1px 0 0; margin: 0;padding: 4px; }
+			#prodPrioritara table { border:#9ac1c9 solid; border-width: 0 0 1px 1px; border-spacing: 0; border-collapse: collapse; margin: auto; }
+			#prodPrioritara td {border:#9ac1c9 solid ; border-width: 1px 1px 0 0; margin: 0; }
+			
+			#prodPrioritara th { background-color: #4E8781; color:#FFFFFF!important; text-align: center; font-weight: normal;}
+			table.tab th { background-color: #4E8781; color:#FFFFFF!important; border:#9ac1c9 solid ; border-width: 1px 1px 0 0;padding: 4px; margin:0;}
+			.color { background-color: #bfd1d1; color:#000; }
+			.color2 {background-color: #4e8781; color: #fff;padding-left: 2px;}
+			#contp img.pickerImg { display: inline; margin-left: -20px; margin-right: 0px; }
+			#men_orizontal { margin-top: -30px;}
+			#lang input{ background-color: transparent!important; border:none!important;}
+			#contp { width: 1200px; padding:0; margin:0;}
+			
+			</style>
+		<!--  [if IE]><script language="javascript" type="text/javascript" src="/opcom/pp/grafice_ip/js/excanvas.min.js"></script><![endif]-->
+		
+		<script type="text/javascript" src="https://www.opcom.ro/pp/js/jquery.js"></script>
+		<script type="text/javascript" src="https://www.opcom.ro/pp/grafice_ip/js/jquery.flot.js"></script>
+		<script type="text/javascript" src="https://www.opcom.ro/pp/grafice_ip/js/jquery.flot.stack.min.js"></script>
+		<script src="https://www.opcom.ro/pp/grafice_ip/js/jquery.colorhelpers.js"></script>
+		<script type="text/javascript" src="https://www.opcom.ro/pp/js/jquery-ui.js"></script>
+    <script src="https://www.opcom.ro/utile/chart.js"></script>
+
+		<style>
+		#flotTip { text-align:center; border:1px solid #ff6600; background-color: #bfd1d1; }
+		img {border: none;}
+		</style>
+
+
+				<script type="text/javascript">
+
+		function MM_menu_sari(targ,selObj,restore){ //v3.0
+		  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+
+		  if (restore) selObj.selectedIndex=0;
+		}
+		jQuery( function() {
+			jQuery( "#datepicker" ).datepicker({ dateFormat: "dd/mm/yy",firstDay: 1, buttonImage: "/opcom/pcs/calendar.gif",buttonImageOnly: true,changeMonth: true,changeYear: true});
+		  } );
+				jQuery( function() {
+			jQuery( "#datepickeren" ).datepicker({ dateFormat: "mm/dd/yy",firstDay: 1, buttonImage: "/opcom/pcs/calendar.gif",buttonImageOnly: true,changeMonth: true,changeYear: true});
+		  } );
+		jQuery( function() {
+						var dateFormat = "dd/mm/yy",
+						  from = jQuery( "#from" )
+							.datepicker({
+							  dateFormat: "dd/mm/yy",
+							  minDate: new Date(2015, 1 - 1, 1),
+						      changeMonth: true,
+							  numberOfMonths: 2, firstDay: 1, buttonImage: "/opcom/pcs/calendar.gif",buttonImageOnly: true,
+							})
+							/*.on( "change", function() {
+							  to.datepicker( "option", "minDate", getDate( this ) );
+							})*/,
+						  to = jQuery( "#to" ).datepicker({
+							dateFormat: "dd/mm/yy",
+							gotoCurrent: true,
+							minDate: new Date(2015, 1 - 1, 1),
+							changeMonth: true,
+							numberOfMonths: 2, firstDay: 1, buttonImage: "/opcom/pcs/calendar.gif",buttonImageOnly: true,
+						  })
+						  /*.on( "change", function() {
+							from.datepicker( "option", "maxDate", getDate( this ) );
+						  })*/;
+
+						function getDate( element ) {
+						  var date;
+						  try {
+							date = jQuery.datepicker.parseDate( dateFormat, element.value );
+						  } catch( error ) {
+							date = null;
+						  }
+
+						  return date;
+						}
+		 } );
+		jQuery( function() {
+						var dateFormat = "mm/dd/yy",
+						  from = jQuery( "#fromen" )
+							.datepicker({
+							  dateFormat: dateFormat,
+							  minDate: new Date(2015, 1 - 1, 1),
+						      changeMonth: true,
+							  numberOfMonths: 2, firstDay: 1, buttonImage: "/opcom/pcs/calendar.gif",buttonImageOnly: true,
+							})
+							/*.on( "change", function() {
+							  to.datepicker( "option", "minDate", getDate( this ) );
+							})*/,
+						  to = jQuery( "#toen" ).datepicker({
+							dateFormat: dateFormat,
+							gotoCurrent: true,
+							minDate: new Date(2015, 1 - 1, 1),
+							changeMonth: true,
+							numberOfMonths: 2, firstDay: 1, buttonImage: "/opcom/pcs/calendar.gif",buttonImageOnly: true,
+						  })
+						  /*.on( "change", function() {
+							from.datepicker( "option", "maxDate", getDate( this ) );
+						  })*/;
+
+						function getDate( element ) {
+						  var date;
+						  try {
+							date = jQuery.datepicker.parseDate( dateFormat, element.value );
+						  } catch( error ) {
+							date = null;
+						  }
+                        }
+						  return date;
+
+		 } );
+     </script>
+	</head>
+
+<body>
+
+<div id="wrapper" >
+	<div id="lang">
+        		
+		<a href="https://www.opcom.ro/rapoarte-pi-raport-cuplare-pi/en">
+			<img src="https://www.opcom.ro/pcs/en.jpg" />
+		</a>
+		
+		
+		
+	
+	</div><!--lang-->
+
+	<!-- Top banner -->
+		<!-- Banner left-->
+<!--
+<div style="background: url(/opcom/pp/img/banner26aniv.png) no-repeat left; width: 800px; height: 118px; margin-top: 0px; float:  left;">
+-->
+<a href="https://www.opcom.ro/opcom/uploads/doc/Comunicate/Opcom2026ro.mp4">
+	<div style="background: url(https://www.opcom.ro/pp/img/banner26aniv.png) no-repeat left; position:relative; width: 1000px; height: 118px; margin-top: 0px; float:  left; z-index: 2;">
+<!--			<div style="background: url(/opcom/pp/img/lma_site5.png) no-repeat right top; z-index: 11;position:absolute; width: 281px; height: 131px; margin-left:880px;margin-top:14px; float: right;"> </div>
+-->
+	<!-- PERIODIC, ANUAL, CRACIUN SI ANUL NOU, MESAJ
+     <a href="https://www.opcom.ro/pp/img/bradfelicitare.jpg" target = "new"> <div style="background: url(/pp/img/lma_site5.png) no-repeat right top;z-index: 11;position:absolute;width: 281px;height: 131px;margin-left:760px;margin-top:-13px;float: right;"> </div></a>
+     -->
+		<img style="margin-top: 0px; margin-left: 0px; height: 118px; text-decoration: none;" align=left src="https://www.opcom.ro/pcs/homemap1.gif" border=\"0\" usemap="#Map">
+		<map style="border: 0px;" name="Map">
+		  <area shape="rect" border="0" coords="13,13,116,118" href="https://www.opcom.ro/acasa/ro" alt="Home">
+		</map>
+	</div>
+	</a>
+	<!-- END Banner left -->
+		<!--Banner right-->
+	<div style="background: url(https://www.opcom.ro/pp/baner/19.png) no-repeat; left: 802px; width: 398px; height: 118px; position:absolute; float: right; z-index: 1;"> </div><!--header dreapta-->
+
+	<!-- END Banner right -->
+
+	<!-- END Top banner 
+		<li class="level1n" ><a style="line-height: normal; "href="#" ><br/><span style="font-weight: bold;">Important for prosumers!</span><br/> DAM weighted average price for August 2022: <span class="blink" style="color:#4E8781;">2,423.86 lei/MWh</span> <br/></a><br/></li>
+	    -->
+	    <li class="level1n" ><a style="line-height: normal; "href="#" ><br/><span style="font-weight: bold;">&nbsp;&nbsp;</span> <br/>&nbsp;&nbsp; <span class="blink" style="color:#4E8781;">&nbsp;&nbsp;</span> <br/></a><br/></li>
+	<!-- Men orizontal--><!---->
+	<div>
+		
+
+		<div id="menu_pp_oriz">
+    		<ul id="nav"><li id="home" ><a href="https://www.opcom.ro/acasa/ro">&nbsp;<img src="https://www.opcom.ro/pp/men_orizontal/home.png" width="13" height="10" border="0" /></a></li><li id="tr_rez"  ><a href="https://www.opcom.ro/tranzactii-rezultate-home/ro/136">Tranzac&#355;ii - Rezultate</a></li><li id="tr_prod"  ><a href="https://www.opcom.ro/tranzactii-produse/ro/137">Tranzac&#355;ionare - Produse</a></li><li id="an_st"  ><a href="https://www.opcom.ro/anunturi-stiri/ro/138">Anun&#355;uri - &#350;tiri</a></li><li id="comp"  ><a href="https://www.opcom.ro/compania/ro/139">Compania</a></li><li id="lan">&nbsp;</li>
+    		</ul>
+		</div><!--/ men orizontal-->
+    </div>
+    <!--END Men orizontal-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!---------------------------------------------------------------- END HEADER --------------------------------------------------------------->
+
+
+<!---------------------------------------------------------------- CONTENT --------------------------------------------------------------->
+<div id="contp">
+
+<div id="headeer">
+
+ <table width="100%" border="0">
+  <tr>
+    <td width="200px" align="right" valign="top"><p style="padding-top 3px"><p>Tranzactionare pentru: </p></td>
+    <td valign="middle"><div id="call"> <form method="post" action="https://www.opcom.ro/rapoarte-pi-raport-cuplare-pi/ro">
+				<input type="hidden" name="_token" value="OSiTSdCsey8lfaeU6mAQDWAYp7SUb8EbQSuNyRF1" />
+			   <input type="text" id="datepicker" name="ziua" value="26/10/2026">
+			   <input name="buton" type="submit" value="Refresh" style="font-size: 12px;" target="new"/>
+			   <input type="hidden" name="action" value="trading_for" />
+			   <input name="limba" type="hidden" value="ro" style="font-size: 12px;"/> &nbsp;&nbsp;&nbsp;Produs: <select name="tip">
+				<option value =60 >60 min</option>
+				<option value =15 >15 min</option></select></p></form>&nbsp;&nbsp;&nbsp;</div></td>
+		<td valign="top">
+
+  </tr>
+</table>
+	</div>
+
+<p><i>NOTA: Procesul de ofertare si tranzactionare pe PI se realizeaza in EUR, preturile afisate in lei avand exclusiv caracter informativ. Cursul de schimb pentru fiecare zi de livrare este cel publicat de BNR in ziua anterioara zilei de livrare respective. Pretul minim al scalei de pret este -9999 EUR/MWh, iar pretul maxim al scalei de pret este +9999 EUR/MWh</i></p><p></p><table border="0" width="49.8%" align="left" cellpadding="0" cellspacing="0"><tr align="center"><td colspan="7" style="border: 0">Ziua de livrare 25.10.2026 </td></tr><tr></tr><tr>
+							<td colspan="12" style="border: 0">ROPEX_ID_Base (1-24) = 1.358,62 </td>
+						  </tr><tr>
+							<td colspan="12" style="border: 0">ROPEX_ID_Peak (9-20) = 1.289,31 </td>
+						 </tr></table><table border="0" width="49.8%" align="right" cellpadding="0" cellspacing="0"><tr align="center"><td colspan="7" style="border: 0">Ziua de livrare 26.10.2026 </td></tr><tr></tr><tr>
+							<td colspan="12" style="border: 0">ROPEX_ID_Base (1-24) = - </td>
+						  </tr><tr>
+							<td colspan="12" style="border: 0">ROPEX_ID_Peak (9-20) = - </td>
+						 </tr></table><table border="0" width="49.8%" align="left" cellpadding="0" cellspacing="0" class="border_table"><tr align="center">
+						<td class="color2" rowspan="3" style="width:8%;"><img align="center" src="https://www.opcom.ro/uploads/images/Compania/logo_opcom.jpg" border="0" width="35"></td>
+						<td class="color2" colspan=7 align="center">Tranzactii orare</td>
+					   <td class="color2" colspan="3" align="center">Tranzactii blocuri</td>					
+					  </tr>
+						<tr align="center">
+						<td class="color2">Minim</td>
+						<td class="color2">Maxim</td>
+						<td class="color2">Ultimul pret</td>
+						<td class="color2">ROPEX_ID_H</td><td class="color2">PMP<sub>1</sub></td>
+						<td class="color2">Vol Cump</td>
+						<td class="color2">Vol Vanz</td>
+						<td class="color2">PMP</td>
+						<td class="color2">Vol Cump</td>
+						<td class="color2">Vol Vanz</td>
+					  </tr>
+						<tr align="center">
+						<td class="color2">Lei/MWh</td>
+						<td class="color2">Lei/MWh</td>
+						<td class="color2">Lei/MWh</td>
+						<td class="color2">Lei/MWh</td>
+						<td class="color2">Lei/MWh</td>
+						<td class="color2">MWh</td>
+						<td class="color2">MWh</td>
+						<td class="color2">Lei/MWh</td>
+						<td class="color2">MWh</td>
+						<td class="color2">MWh</td>					
+					  </tr><tr class="alb">
+						  <td style="font-size:8.5px">00-01</td>
+						  <td>1.313,52</td>
+						  <td>1.551,36</td>
+						  <td>1.392,90</td>
+						  <td>1.448,97</td>
+						  <td>1.385,79</td>
+						  <td>40,6</td>
+						  <td>22,9</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="color">
+						  <td style="font-size:8.5px">01-02</td>
+						  <td>1.228,62</td>
+						  <td>1.471,11</td>
+						  <td>1.471,11</td>
+						  <td>1.330,96</td>
+						  <td>1.368,83</td>
+						  <td>48,4</td>
+						  <td>12,8</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="alb">
+						  <td style="font-size:8.5px">01-02*</td>
+						  <td>1.208,99</td>
+						  <td>1.372,57</td>
+						  <td>1.291,05</td>
+						  <td>1.315,60</td>
+						  <td>1.291,05</td>
+						  <td>36,9</td>
+						  <td>20,2</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="color">
+						  <td style="font-size:8.5px">02-03</td>
+						  <td>1.131,04</td>
+						  <td>1.328,07</td>
+						  <td>1.284,90</td>
+						  <td>1.267,40</td>
+						  <td>1.268,63</td>
+						  <td>44,3</td>
+						  <td>20,9</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="alb">
+						  <td style="font-size:8.5px">03-04</td>
+						  <td>1.166,03</td>
+						  <td>1.306,08</td>
+						  <td>1.287,41</td>
+						  <td>1.261,04</td>
+						  <td>-</td>
+						  <td>41,7</td>
+						  <td>16,7</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="color">
+						  <td style="font-size:8.5px">04-05</td>
+						  <td>1.123,40</td>
+						  <td>1.287,52</td>
+						  <td>1.123,40</td>
+						  <td>1.196,52</td>
+						  <td>1.200,59</td>
+						  <td>70,1</td>
+						  <td>14,2</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="alb">
+						  <td style="font-size:8.5px">05-06</td>
+						  <td>1.175,50</td>
+						  <td>1.423,50</td>
+						  <td>1.176,89</td>
+						  <td>1.240,87</td>
+						  <td>1.217,33</td>
+						  <td>52,1</td>
+						  <td>12,3</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="color">
+						  <td style="font-size:8.5px">06-07</td>
+						  <td>1.216,21</td>
+						  <td>1.390,87</td>
+						  <td>1.390,87</td>
+						  <td>1.272,65</td>
+						  <td>1.219,69</td>
+						  <td>51,6</td>
+						  <td>19,9</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="alb">
+						  <td style="font-size:8.5px">07-08</td>
+						  <td>1.016,83</td>
+						  <td>1.230,39</td>
+						  <td>1.132,70</td>
+						  <td>1.113,39</td>
+						  <td>1.126,28</td>
+						  <td>59,1</td>
+						  <td>36,4</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="color">
+						  <td style="font-size:8.5px">08-09</td>
+						  <td>741,49</td>
+						  <td>980,51</td>
+						  <td>941,08</td>
+						  <td>897,43</td>
+						  <td>915,62</td>
+						  <td>80,9</td>
+						  <td>66,7</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="alb">
+						  <td style="font-size:8.5px">09-10</td>
+						  <td>757,44</td>
+						  <td>1.016,41</td>
+						  <td>1.016,41</td>
+						  <td>865,50</td>
+						  <td>907,11</td>
+						  <td>115,9</td>
+						  <td>102,4</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="color">
+						  <td style="font-size:8.5px">10-11</td>
+						  <td>716,89</td>
+						  <td>1.011,00</td>
+						  <td>1.005,71</td>
+						  <td>944,83</td>
+						  <td>981,85</td>
+						  <td>97,6</td>
+						  <td>89,4</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="alb">
+						  <td style="font-size:8.5px">11-12</td>
+						  <td>740,37</td>
+						  <td>1.069,90</td>
+						  <td>1.059,04</td>
+						  <td>927,98</td>
+						  <td>983,72</td>
+						  <td>124,0</td>
+						  <td>86,2</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="color">
+						  <td style="font-size:8.5px">12-13</td>
+						  <td>786,32</td>
+						  <td>1.284,15</td>
+						  <td>1.123,45</td>
+						  <td>1.049,89</td>
+						  <td>1.049,25</td>
+						  <td>76,2</td>
+						  <td>81,1</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="alb">
+						  <td style="font-size:8.5px">13-14</td>
+						  <td>804,03</td>
+						  <td>1.315,98</td>
+						  <td>1.283,88</td>
+						  <td>1.106,33</td>
+						  <td>1.202,84</td>
+						  <td>86,2</td>
+						  <td>79,3</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="color">
+						  <td style="font-size:8.5px">14-15</td>
+						  <td>1.009,18</td>
+						  <td>1.604,85</td>
+						  <td>1.604,85</td>
+						  <td>1.243,12</td>
+						  <td>1.408,68</td>
+						  <td>61,1</td>
+						  <td>106,3</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="alb">
+						  <td style="font-size:8.5px">15-16</td>
+						  <td>1.286,07</td>
+						  <td>1.711,68</td>
+						  <td>1.711,68</td>
+						  <td>1.460,47</td>
+						  <td>1.587,30</td>
+						  <td>137,3</td>
+						  <td>55,7</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="color">
+						  <td style="font-size:8.5px">16-17</td>
+						  <td>1.412,27</td>
+						  <td>1.824,18</td>
+						  <td>1.706,49</td>
+						  <td>1.578,58</td>
+						  <td>1.810,16</td>
+						  <td>323,3</td>
+						  <td>28,1</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="alb">
+						  <td style="font-size:8.5px">17-18</td>
+						  <td>1.394,99</td>
+						  <td>1.872,33</td>
+						  <td>1.845,04</td>
+						  <td>1.745,22</td>
+						  <td>1.821,18</td>
+						  <td>78,3</td>
+						  <td>13,0</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="color">
+						  <td style="font-size:8.5px">18-19</td>
+						  <td>1.364,18</td>
+						  <td>2.300,29</td>
+						  <td>2.300,29</td>
+						  <td>1.914,48</td>
+						  <td>1.876,55</td>
+						  <td>171,0</td>
+						  <td>35,8</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="alb">
+						  <td style="font-size:8.5px">19-20</td>
+						  <td>1.372,52</td>
+						  <td>2.193,30</td>
+						  <td>2.193,30</td>
+						  <td>1.737,89</td>
+						  <td>2.081,22</td>
+						  <td>271,4</td>
+						  <td>57,4</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="color">
+						  <td style="font-size:8.5px">20-21</td>
+						  <td>1.316,40</td>
+						  <td>2.145,90</td>
+						  <td>1.899,07</td>
+						  <td>1.865,69</td>
+						  <td>2.074,80</td>
+						  <td>323,6</td>
+						  <td>33,9</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="alb">
+						  <td style="font-size:8.5px">21-22</td>
+						  <td>1.297,25</td>
+						  <td>2.126,16</td>
+						  <td>2.022,06</td>
+						  <td>1.854,40</td>
+						  <td>2.030,30</td>
+						  <td>307,7</td>
+						  <td>31,2</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="color">
+						  <td style="font-size:8.5px">22-23</td>
+						  <td>1.364,12</td>
+						  <td>2.113,05</td>
+						  <td>2.032,81</td>
+						  <td>1.803,05</td>
+						  <td>-</td>
+						  <td>386,0</td>
+						  <td>19,1</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr><tr class="alb">
+						  <td style="font-size:8.5px">23-24</td>
+						  <td>1.192,94</td>
+						  <td>1.667,01</td>
+						  <td>1.658,45</td>
+						  <td>1.523,27</td>
+						  <td>-</td>
+						  <td>116,0</td>
+						  <td>18,3</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+
+						 </tr></tr><tr><td colspan="12"></td></tr><tr>
+				  <td colspan=6>Volum Total [MWh]</td>
+				  <td>3.201,3</td> 
+				  <td>1.080,2</td>
+				  <td></td>
+				  			<td>-</td>
+				 			<td>-</td>
+
+
+
+			  </tr></table><table border="0" width="49.8%" align="right" cellpadding="0" cellspacing="0" class="border_table"><tr align="center">
+						<td class="color2" rowspan="3" style="width:8%;"><img align="center" src="https://www.opcom.ro/uploads/images/Compania/logo_opcom.jpg" border="0" width="35"></td>
+						<td class="color2" colspan=7 align="center">Tranzactii orare</td>
+					   <td class="color2" colspan="3" align="center">Tranzactii blocuri</td>					
+					  </tr>
+						<tr align="center">
+						<td class="color2">Minim</td>
+						<td class="color2">Maxim</td>
+						<td class="color2">Ultimul pret</td>
+						<td class="color2">ROPEX_ID_H</td><td class="color2">PMP<sub>1</sub></td>
+						<td class="color2">Vol Cump</td>
+						<td class="color2">Vol Vanz</td>
+						<td class="color2">PMP</td>
+						<td class="color2">Vol Cump</td>
+						<td class="color2">Vol Vanz</td>
+					  </tr>
+						<tr align="center">
+						<td class="color2">Lei/MWh</td>
+						<td class="color2">Lei/MWh</td>
+						<td class="color2">Lei/MWh</td>
+						<td class="color2">Lei/MWh</td>
+						<td class="color2">Lei/MWh</td>
+						<td class="color2">MWh</td>
+						<td class="color2">MWh</td>
+						<td class="color2">Lei/MWh</td>
+						<td class="color2">MWh</td>
+						<td class="color2">MWh</td>					
+					  </tr><tr class="alb">
+						  <td style="font-size:8.5px"> 00-01</td>
+						  <td>1.334,65</td>
+						  <td>1.459,72</td>
+						  <td>1.418,26</td>
+						  <td>1.378,94</td>
+						  <td>-</td>
+						  <td>30,0</td>
+						  <td>38,2</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="color">
+						  <td style="font-size:8.5px"> 01-02</td>
+						  <td>1.298,11</td>
+						  <td>1.359,79</td>
+						  <td>1.337,38</td>
+						  <td>1.333,47</td>
+						  <td>-</td>
+						  <td>23,6</td>
+						  <td>0,3</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="alb">
+						  <td style="font-size:8.5px"> 02-03</td>
+						  <td>1.300,09</td>
+						  <td>1.300,09</td>
+						  <td>1.300,09</td>
+						  <td>1.300,09</td>
+						  <td>-</td>
+						  <td>2,0</td>
+						  <td>0,0</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="color">
+						  <td style="font-size:8.5px"> 03-04</td>
+						  <td>1.364,28</td>
+						  <td>1.368,99</td>
+						  <td>1.364,44</td>
+						  <td>1.364,66</td>
+						  <td>-</td>
+						  <td>0,0</td>
+						  <td>1,5</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="alb">
+						  <td style="font-size:8.5px"> 04-05</td>
+						  <td>1.292,06</td>
+						  <td>1.351,82</td>
+						  <td>1.292,06</td>
+						  <td>1.316,35</td>
+						  <td>-</td>
+						  <td>3,5</td>
+						  <td>11,0</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="color">
+						  <td style="font-size:8.5px"> 05-06</td>
+						  <td>1.390,87</td>
+						  <td>1.515,35</td>
+						  <td>1.485,56</td>
+						  <td>1.455,28</td>
+						  <td>-</td>
+						  <td>3,0</td>
+						  <td>16,0</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="alb">
+						  <td style="font-size:8.5px"> 06-07</td>
+						  <td>1.487,16</td>
+						  <td>1.546,59</td>
+						  <td>1.524,23</td>
+						  <td>1.525,89</td>
+						  <td>-</td>
+						  <td>24,0</td>
+						  <td>2,0</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="color">
+						  <td style="font-size:8.5px"> 07-08</td>
+						  <td>1.485,02</td>
+						  <td>1.535,31</td>
+						  <td>1.535,31</td>
+						  <td>1.526,43</td>
+						  <td>-</td>
+						  <td>55,5</td>
+						  <td>0,0</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="alb">
+						  <td style="font-size:8.5px"> 08-09</td>
+						  <td>1.315,71</td>
+						  <td>1.315,71</td>
+						  <td>1.315,71</td>
+						  <td>1.315,71</td>
+						  <td>-</td>
+						  <td>15,4</td>
+						  <td>0,0</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="color">
+						  <td style="font-size:8.5px"> 09-10</td>
+						  <td>1.250,18</td>
+						  <td>1.280,14</td>
+						  <td>1.250,18</td>
+						  <td>1.273,77</td>
+						  <td>-</td>
+						  <td>12,7</td>
+						  <td>0,0</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="alb">
+						  <td style="font-size:8.5px"> 10-11</td>
+						  <td>1.289,23</td>
+						  <td>1.289,23</td>
+						  <td>1.289,23</td>
+						  <td>1.289,23</td>
+						  <td>-</td>
+						  <td>0,0</td>
+						  <td>24,6</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="color">
+						  <td style="font-size:8.5px"> 11-12</td>
+						  <td>1.255,74</td>
+						  <td>1.294,58</td>
+						  <td>1.294,58</td>
+						  <td>1.273,93</td>
+						  <td>-</td>
+						  <td>0,0</td>
+						  <td>3,2</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="alb">
+						  <td style="font-size:8.5px"> 12-13</td>
+						  <td>1.251,62</td>
+						  <td>1.314,16</td>
+						  <td>1.314,16</td>
+						  <td>1.265,96</td>
+						  <td>-</td>
+						  <td>0,3</td>
+						  <td>1,0</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="color">
+						  <td style="font-size:8.5px"> 13-14</td>
+						  <td>1.225,46</td>
+						  <td>1.294,58</td>
+						  <td>1.294,58</td>
+						  <td>1.288,32</td>
+						  <td>-</td>
+						  <td>0,0</td>
+						  <td>1,1</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="alb">
+						  <td style="font-size:8.5px"> 14-15</td>
+						  <td>1.422,97</td>
+						  <td>1.422,97</td>
+						  <td>1.422,97</td>
+						  <td>1.422,97</td>
+						  <td>-</td>
+						  <td>0,0</td>
+						  <td>1,5</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="color">
+						  <td style="font-size:8.5px"> 15-16</td>
+						  <td>1.770,68</td>
+						  <td>1.786,79</td>
+						  <td>1.770,68</td>
+						  <td>1.778,71</td>
+						  <td>-</td>
+						  <td>0,5</td>
+						  <td>7,6</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="alb">
+						  <td style="font-size:8.5px"> 16-17</td>
+						  <td>1.904,42</td>
+						  <td>1.966,85</td>
+						  <td>1.948,45</td>
+						  <td>1.925,18</td>
+						  <td>-</td>
+						  <td>7,7</td>
+						  <td>26,3</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="color">
+						  <td style="font-size:8.5px"> 17-18</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>0,0</td>
+						  <td>0,0</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="alb">
+						  <td style="font-size:8.5px"> 18-19</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>0,0</td>
+						  <td>0,0</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="color">
+						  <td style="font-size:8.5px"> 19-20</td>
+						  <td>1.727,89</td>
+						  <td>1.732,28</td>
+						  <td>1.732,28</td>
+						  <td>1.728,96</td>
+						  <td>-</td>
+						  <td>25,5</td>
+						  <td>0,0</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="alb">
+						  <td style="font-size:8.5px"> 20-21</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>0,0</td>
+						  <td>0,0</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="color">
+						  <td style="font-size:8.5px"> 21-22</td>
+						  <td>1.738,59</td>
+						  <td>1.738,59</td>
+						  <td>1.738,59</td>
+						  <td>1.738,59</td>
+						  <td>-</td>
+						  <td>0,0</td>
+						  <td>1,5</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="alb">
+						  <td style="font-size:8.5px"> 22-23</td>
+						  <td>1.493,74</td>
+						  <td>1.493,74</td>
+						  <td>1.493,74</td>
+						  <td>1.493,74</td>
+						  <td>-</td>
+						  <td>0,5</td>
+						  <td>0,0</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr><tr class="color">
+						  <td style="font-size:8.5px"> 23-24</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>-</td>
+						  <td>0,0</td>
+						  <td>0,0</td>
+						  <td>-</td>
+						 <td>-</td>
+						 <td>-</td>
+
+
+
+					  </tr></tr><tr><td colspan="12"></td></tr><tr>
+				  <td colspan=6>Volum Total [MWh]</td>
+				  <td>204,2</td>
+				  <td>135,8</td>
+				  <td></td>
+				  			<td>-</td>
+				 			<td>-</td>
+
+
+
+			  </tr></table><div id="graf_PI" >
+				  <div id="placeholder" style="width:100%;height:420px; margin-top:7px; float:right;"></div>
+				  <div id="legend"> </div>
+			  </div><p align="left" style="font-size:8.5px">Informatia din aceasta pagina se actualizeaza la 15 minute. </p><div style="margin-right:20px;margin-top:5px;clear:both; font-size:8.5px">															
+						<sup>*)</sup>detaliile privind modul de calcul al indicatorilor specifici (vers. 15) pot fi vizualizate 
+
+						<a class="inline" href="/opcom/uploads/doc/pg1/Definitii_indicatori_RO Versiunea 15.pdf" target=new><em>aici</em>
+						<img border=0 src="/opcom/uploads/img_opcom/document.gif"></a><br/>
+					</div><br/>
+					Maxim - Cel mai mare pret la care s-au incheiat tranzactii<br/>
+					Minim - Cel mai mic pret la care s-au incheiat tranzactii<br/>
+					Ultimul pret - Ultimul pret la care s-au incheiat tranzactii<br/>
+					ROPEX_ID_H – Pretul mediu ponderat al tranzactiilor incheiate<br/>PMP<sub>1</sub> – Pretul mediu ponderat al tranzactiilor incheiate in ultima ora de tranzactionare a unui contract inainte de expirarea acestuia<br/>Tranzactii orare - Vol Cump – Suma cantitatilor tranzactionate orar pe parte de cumparare<br/>
+							Tranzactii orare - Vol Vanz – Suma cantitatilor tranzactionate orar pe parte de vanzare<br/>
+							Tranzactii bloc - Vol Cump – Suma cantitatilor blocurilor tranzactionate pe parte de cumparare defalcate pe fiecare interval al blocului<br/>
+							Tranzactii bloc - Vol Vanz – Suma cantitatilor blocurilor tranzactionate pe parte de vanzare defalcate pe fiecare interval al blocului<br/>
+							Tranzactii bloc - PMP – Pret mediu ponderat calculat ca medie ponderata (cu volumul tranzactionat) a tuturor tranzactiilor bloc defalcate pe fiecare interval al blocului<br/><script type="text/javascript">
+//-----------functie formatare cifre--------------
+	function addSeparatorsNF(nStr, inD, outD, sep)
+		{
+			nStr += "";
+			var dpos = nStr.indexOf(inD);
+			var nStrEnd = "";
+			if (dpos != -1) {
+				nStrEnd = outD + nStr.substring(dpos + 1, nStr.length);
+
+				nStr = nStr.substring(0, dpos);
+			}
+			var rgx = /(\d+)(\d{3})/;
+			while (rgx.test(nStr)) {
+				nStr = nStr.replace(rgx, "\'"+$1+"\'" + sep + "\'"+$2+"\'");
+			}
+			return nStr + nStrEnd;
+	}				
+
+//------------------------------------------------
+	jQuery(function () {
+				var raza= "3";
+				var series1 = {data: [
+								[1,1313.52],[2,1228.62],[3,1208.99],[4,1131.04],[5,1166.03],[6,1123.40],[7,1175.50],[8,1216.21],[9,1016.83],[10,741.49],[11,757.44],[12,716.89],[13,740.37],[14,786.32],[15,804.03],[16,1009.18],[17,1286.07],[18,1412.27],[19,1394.99],[20,1364.18],[21,1372.52],[22,1316.40],[23,1297.25],[24,1364.12],[25,1192.94],[26,1334.65],[27,1298.11],[28,1300.09],[29,1364.28],[30,1292.06],[31,1390.87],[32,1487.16],[33,1485.02],[34,1315.71],[35,1250.18],[36,1289.23],[37,1255.74],[38,1251.62],[39,1225.46],[40,1422.97],[41,1770.68],[42,1904.42],[43,null],[44,null],[45,1727.89],[46,null],[47,1738.59],[48,1493.74],[49,null]								], 
+								xaxis: 1,
+								yaxis: 1,
+								color: "rgb(144,116,68)",
+								lines: { show: true },
+								points: { show: true, radius:1},
+								legend: {show: true},
+								label: "Cel mai mic pret [Lei/MWh]"
+							};
+		
+				var series2 = {
+								data: [
+								[1,1551.36],[2,1471.11],[3,1372.57],[4,1328.07],[5,1306.08],[6,1287.52],[7,1423.50],[8,1390.87],[9,1230.39],[10,980.51],[11,1016.41],[12,1011.00],[13,1069.90],[14,1284.15],[15,1315.98],[16,1604.85],[17,1711.68],[18,1824.18],[19,1872.33],[20,2300.29],[21,2193.30],[22,2145.90],[23,2126.16],[24,2113.05],[25,1667.01],[26,1459.72],[27,1359.79],[28,1300.09],[29,1368.99],[30,1351.82],[31,1515.35],[32,1546.59],[33,1535.31],[34,1315.71],[35,1280.14],[36,1289.23],[37,1294.58],[38,1314.16],[39,1294.58],[40,1422.97],[41,1786.79],[42,1966.85],[43,null],[44,null],[45,1732.28],[46,null],[47,1738.59],[48,1493.74],[49,null]								],  
+								xaxis: 1,
+								yaxis: 1,
+								color: "rgb(3,209,209)",
+								lines: { show: true },
+								points: { show: true, radius:1},
+								legend: {show: true},
+								label: "Cel mai mare pret [Lei/MWh]"
+							};
+			   var series3 = {
+				 
+								data: [[1,1392.90],[2,1471.11],[3,1291.05],[4,1284.90],[5,1287.41],[6,1123.40],[7,1176.89],[8,1390.87],[9,1132.70],[10,941.08],[11,1016.41],[12,1005.71],[13,1059.04],[14,1123.45],[15,1283.88],[16,1604.85],[17,1711.68],[18,1706.49],[19,1845.04],[20,2300.29],[21,2193.30],[22,1899.07],[23,2022.06],[24,2032.81],[25,1658.45],[26,1418.26],[27,1337.38],[28,1300.09],[29,1364.44],[30,1292.06],[31,1485.56],[32,1524.23],[33,1535.31],[34,1315.71],[35,1250.18],[36,1289.23],[37,1294.58],[38,1314.16],[39,1294.58],[40,1422.97],[41,1770.68],[42,1948.45],[43,null],[44,null],[45,1732.28],[46,null],[47,1738.59],[48,1493.74],[49,null]], 
+				  
+								xaxis: 1,
+								yaxis: 1,
+								color: "rgb(3,93,145)",
+								lines: { show: true },
+								points: { show: true, radius:1},
+								legend: {show: true},
+								label: "Ultimul pret [Lei/MWh]"
+							};
+			   var series4 = {
+				 
+								data: [[1,1448.97],[2,1330.96],[3,1315.60],[4,1267.40],[5,1261.04],[6,1196.52],[7,1240.87],[8,1272.65],[9,1113.39],[10,897.43],[11,865.50],[12,944.83],[13,927.98],[14,1049.89],[15,1106.33],[16,1243.12],[17,1460.47],[18,1578.58],[19,1745.22],[20,1914.48],[21,1737.89],[22,1865.69],[23,1854.40],[24,1803.05],[25,1523.27],[26,1378.94],[27,1333.47],[28,1300.09],[29,1364.66],[30,1316.35],[31,1455.28],[32,1525.89],[33,1526.43],[34,1315.71],[35,1273.77],[36,1289.23],[37,1273.93],[38,1265.96],[39,1288.32],[40,1422.97],[41,1778.71],[42,1925.18],[43,null],[44,null],[45,1728.96],[46,null],[47,1738.59],[48,1493.74],[49,null]], 
+				  
+								xaxis: 1,
+								yaxis: 1,
+								color: "rgb(78,125,133)",
+								lines: { show: true },
+								points: { show: true, radius:1},
+								legend: {show: true},
+								label: "ROPEX_ID_H [Lei/MWh]"
+							};
+
+			   var series5 = {
+				 
+								data: [], 
+				 
+								yaxis: 1,
+								color: "rgb(255,153,0)",
+								lines: { show: true },
+								points: { show: true , radius:1},
+								legend: {show: true},
+								label: "PMP [Lei/MWh]"
+							};
+				var data = [ series1, series2, series3, series4, series5 ];
+                //console.log(data);
+				//return;
+                 var options =  { 
+				 				  xaxes: [ { position: "bottom" , tickSize: 1, min: 0, autoscaleMargin: 0.01, max :49.9, ticks: [[1,"1"],[2,"2"],[3,"3"],[4,"4"],[5,"5"],[6,"6"],[7,"7"],[8,"8"],[9,"9"],[10,"10"],[11,"11"],[12,"12"],[13,"13"],[14,"14"],[15,"15"],[16,"16"],[17,"17"],[18,"18"],[19,"19"],[20,"20"],[21,"21"],[22,"22"],[23,"23"],[24,"24"],[25,"25"],[26,"1"],[27,"2"],[28,"3"],[29,"4"],[30,"5"],[31,"6"],[32,"7"],[33,"8"],[34,"9"],[35,"10"],[36,"11"],[37,"12"],[38,"13"],[39,"14"],[40,"15"],[41,"16"],[42,"17"],[43,"18"],[44,"19"],[45,"20"],[46,"21"],[47,"22"],[48,"23"],[49,"24"]]}],
+                   				  yaxes: [ { color: "rgb(221,221,221)", tickSize: 100, min:-25 }], 
+			                      grid: { hoverable: true, clickable: true, borderColor:"rgb(221,221,221)", borderWidth:0.5 },
+                                  legend: {show: true, container: jQuery("#legend"), noColumns: 5}								  
+                                };
+
+
+      plot=      jQuery.plot(jQuery("#placeholder"), data, options);
+     });
+               function showTooltip(x, y, contents) {
+                    jQuery('<div id="tooltip">' + contents + '</div>').css( {
+                        position: 'absolute',
+                        display: 'none',
+                        top: y + 5,
+                        left: x + 5,
+                        'text-align': 'center',
+                        border: '1px solid #001',
+                        padding: '1px',
+                        'background-color': '#bfd1d1',
+                        opacity: 0.80
+                    }).appendTo("body").fadeIn(200);
+                }
+    var previousPoint = null;
+   jQuery("#placeholder").bind("plothover", function (event, pos, item) {
+            jQuery("#y").text(pos.y.toFixed(2));
+            jQuery("#x").text(pos.x.toFixed(0));
+
+		var nr_int = ' 25';
+        if (item) {
+							
+		     jQuery("#tooltip").remove();
+			var x = item.series.xaxis.ticks[item.dataIndex]; 
+            var content = '' ;
+			
+			//console.log(item.dataIndex);
+			//return;
+            var someData = plot.getData();
+            for (var i = 0; i < someData.length; i++){
+//                 if (someData[i].label == item.series.label){
+//                     continue;   
+//                 }
+				 
+                for (var j=0; j < someData[i].data.length; j++){
+					 
+                    if (someData[i].data[j][0] == item.datapoint[0] &&
+                        someData[i].data[j][1] == item.datapoint[1]){
+							
+						if (someData[i].data[j][0]<= nr_int){ 
+							z = someData[i].data[j][0] ;
+						}else {
+							z = someData[i].data[j][0]- nr_int;							
+							}
+
+						if (someData[i].label == item.series.label){
+		                    continue;   
+		                }
+                        content += '' + someData[i].label+ ' - int. ' + z + '</br>'  + addSeparatorsNF(someData[i].data[j][1], '.', ',', '.') +  '  [Lei/MWh]</br>' ; 
+						// console.log(someData.length);
+                    }										   
+									   
+																			 
+																																						
+                }                
+					 			
+            }
+
+			content += item.series.label+ ' - int. ' + z + '</br>'  + addSeparatorsNF(item.datapoint[1], '.', ',', '.') + '   [Lei/MWh]</br>';	
+         showTooltip(item.pageX, item.pageY, content);
+			//var z = '';
+      }
+        		else {
+                            jQuery("#tooltip").css('display','none');  
+
+                            }
+
+
+
+ });
+
+      $(document).ready(function(){
+        $('#mySelect').change(function(){
+            myform.submit();
+        });
+    });
+
+
+</script>
+	</div> <!--cont-->
+<!---------------------------------------------------------------- END CONTENT --------------------------------------------------------------->
+
+<!---------------------------------------------------------------- FOOTER --------------------------------------------------------------->
+
+	 <div class="clear">&nbsp;</div>
+	 <div class="clear">&nbsp;</div>
+     <div id="menu_pp_oriz_jos">
+    	
+
+    		<ul id="nav_jos">
+		<li id="button1"><a  href="https://www.opcom.ro/disclaimer/133/ro">Disclaimer</a></li>
+		<li id="button2"><a href="https://www.opcom.ro/sitemap/ro/154">Sitemap</a></li>
+        <li id="button3"> <a  href="https://www.opcom.ro/links/ro/135">Links</a></li>
+		<li id="stirider"> <a href="#"><div id="derulari">
+			<marquee scrollAmount=2 scrollDelay=5>Noi participanti: POWER PEAK TRADING S.R.L. (PCV), AENRO ENERGY HOLDING S.R.L. (PCV), GENESIS BIOTECH S.R.L. (PCE-ESRE-CV) si ENERINTENS SOLAR S.R.L. (PZU, PI) s-au alaturat OPCOM in luna octombrie.</marquee></div></a></li>			
+             <li  id="button5"><a style = "width: 126px; " href="https://www.opcom.ro/rss/ro">RSS</a></li>
+             <li style = "border-right: 0px solid #fff"  id="button6"> <a style = "width: 126px;" href="https://www.opcom.ro/contact-us/ro/134">Contact us</a></li>	
+			</ul>
+	
+<!--/ men orizontal-->
+<div id="footer">&copy; OPCOM &nbsp;</div>
+
+
+
+
+   	 </div>
+		
+<style>
+#close_cookie{display:none;}
+	#close_cookie:checked + #cookie_consent_popup{display:none;}	
+	
+#cookie_consent_popup{
+	position:fixed;
+/* 	bottom:130px; */
+/* 	left: 672px; */
+/* 	width:1187px; */
+/* 	height:40px; */
+	opacity: 0.65; 
+	width: 1187px;
+	height: 40px; 
+	top: 90%;
+	left: 50%;
+	 transform: translate(-50%, -50%);
+	background-color:#4E8781;
+	padding:6px;
+	text-align: center;
+	 z-index:300;
+}
+
+/* 	#cookie_consent_popup h1{ */
+/* 		font-size:1.2em; */
+/* 	} */
+/* 		#cookie_consent_popup h1:before{ */
+/* 			content:""; */
+/* 			padding:0; */
+/* 		} */
+	#cookie_consent_popup p{
+		font-size:0.7em;
+	}
+	#cookie_consent_popup #close_cookie_box{
+		position:absolute;
+		top:6px;right:20px;
+		cursor:pointer;
+		font-size:1.3em;
+		color: #BFD1D1; 
+	}
+	#cookie_consent_popup #ok_cookie_box{
+		position:absolute;
+		bottom:20px;right:20px;
+		cursor:pointer;
+		font-size:1.6em;
+		padding:10px 20px;
+		font-weight:700;
+		color:white;
+	}
+#cookie_consent_popup button {
+  background-color: #BFD1D1;
+  border: none;
+  color: white;
+  padding: 3px 8px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+</style>
+
+
+
+			<input type="checkbox" id="close_cookie"></input>
+			
+			<div id="cookie_consent_popup">
+				
+				
+					<input type="hidden" name="_token" value="OSiTSdCsey8lfaeU6mAQDWAYp7SUb8EbQSuNyRF1" />
+					<input type="checkbox" id="close_cookie"></input>
+					<input type="hidden" name="consent_cookie" value="1" />
+					
+					
+					<label for="close_cookie" id="close_cookie_box">X</label>
+					
+					<p style="font-family: Arial, Verdana, Helvetica, sans-serif;font-size:14px;color: #FFFFFF;">
+											Folosim module cookie sau tehnologii similare <strong>strict necesare</strong> pentru buna functionarea a website-ului. 
+											<button type="button" class="button" value="Accept">Accept</button>
+					</p>
+										
+			</div>
+			<script>
+	                    
+	                    jQuery("#cookie_consent_popup .button").on("click", function(){
+							//console.log("subb");
+		                   // return;
+		                   jQuery.ajax({
+						         type:'POST',
+						         url:'https://www.opcom.ro/cookie',
+						         headers: {'X-CSRF-TOKEN': 'OSiTSdCsey8lfaeU6mAQDWAYp7SUb8EbQSuNyRF1'},
+						         data:{'consent_cookie':1},
+						         success:function(data){
+// 							         console.log("zzz");
+// 							         console.log(data);
+							         jQuery("#cookie_consent_popup").remove();
+						         }
+						      });
+		                   
+		                });
+	                    
+	                    </script>
+	</div><!--wrapper-->
+
+</body>
+</html>
+<!---------------------------------------------------------------- END FOOTER --------------------------------------------------------------->

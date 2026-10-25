@@ -1,0 +1,6 @@
+<form method="post" action="https://www.opcom.ro/rapoarte-ida-rezultate-licitatii/ro">
+				<input type="hidden" name="_token" value="OSiTSdCsey8lfaeU6mAQDWAYp7SUb8EbQSuNyRF1" />
+			   <input type="text" id="datepicker" name="ziua" value="26/10/2026">
+			   <input name="buton" type="submit" value="Refresh" style="font-size: 12px;" target="new"/>
+			   <input type="hidden" name="action" value="trading_for" />
+			   <input name="limba" type="hidden" value="ro" style="font-size: 12px;"/></form>
