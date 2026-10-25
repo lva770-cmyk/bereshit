@@ -4,7 +4,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: bereshit-update
+  group: bereshit-research-intraday
   cancel-in-progress: false
 jobs:
   fetch:
