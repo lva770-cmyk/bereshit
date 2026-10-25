@@ -164,6 +164,7 @@ tr.fut td{opacity:.5}
 .intro[hidden]{display:none!important}
 .intro-card{width:min(680px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:#1a1916;border:1px solid var(--line2);border-radius:12px;padding:22px 24px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
 @media (prefers-reduced-motion:no-preference){.intro-card{animation:rise .35s ease}}
+.intro-card bdi{white-space:nowrap}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .intro-top{display:flex;justify-content:space-between;align-items:center}
 .intro-mark{font-family:var(--f-disp);font-weight:800;font-size:30px;line-height:1}
@@ -291,9 +292,9 @@ main.wrap.dim{opacity:.35;pointer-events:none;transition:opacity .15s}
   <div class="intro-card">
     <div class="intro-top"><div class="intro-mark">בראשית</div><button type="button" class="x" id="introX" aria-label="סגירה">✕</button></div>
     <h2 id="introT">מה רואים כאן</h2>
-    <p class="lead">בראשית היא מנוע מסחר לסוללת רשת של <b class="zsize">40 MW / 160 MWh</b> בשוק החשמל <span class="zadj">ההונגרי</span>. היא מחליטה מתי לקנות חשמל כשהוא זול (טעינה), ומתי למכור כשהוא יקר (פריקה).</p>
+    <p class="lead">בראשית היא מנוע מסחר לסוללת רשת של <bdi dir="ltr"><b class="zsize">40 MW / 160 MWh</b></bdi> בשוק החשמל <span class="zadj">ההונגרי</span>. היא מחליטה מתי לקנות חשמל כשהוא זול (טעינה), ומתי למכור כשהוא יקר (פריקה).</p>
     <div class="truth">
-      <div><span class="tg real">אמיתי</span>המחירים, השעות וכל החישובים. הם נלקחים משוק ה-Day-Ahead של <span class="zex">HUPX</span>, והתוצאות מחושבות לפי הזמן עכשיו.</div>
+      <div><span class="tg real">אמיתי</span><span>המחירים, השעות וכל החישובים. הם נלקחים משוק ה-<bdi dir="ltr">Day-Ahead</bdi> של <span class="zex">HUPX</span>, והתוצאות מחושבות לפי הזמן עכשיו.</span></div>
       <div><span class="tg sim">מדומה</span>הקנייה והמכירה עצמן. שום פקודה לא נשלחת לבורסה, והכסף הוא חשבון על הנייר.</div>
     </div>
     <h3>איך המערכת עובדת כל יום</h3>
@@ -302,20 +303,31 @@ main.wrap.dim{opacity:.35;pointer-events:none;transition:opacity .15s}
       <li><b>אחר הצהריים · תוצאות.</b> הבורסה מפרסמת את המחירים שנקבעו למחר, והמערכת קולטת אותם בבדיקה הבאה. מכאן אפשר לדעת כמה הלוח ירוויח בפועל.</li>
       <li><b>כל היום · ביצוע.</b> בכל רבע שעה הסוללה קונה, מוכרת או ממתינה, והכסף מתעדכן כל שנייה.</li>
     </ol>
+    <h3>מה יש בכל לשונית</h3>
+    <ul class="keys">
+      <li><i style="background:var(--ink3)"></i><span><b>הונגריה ורומניה</b>: סוללה לדוגמה של <bdi dir="ltr">40 MW / 160 MWh</bdi> (4 שעות) שסוחרת כל יום על המחירים האמיתיים של הבורסה.</span></li>
+      <li><i style="background:var(--ink3)"></i><span><b>פרויקט 20</b>: סוללה של <bdi dir="ltr">20 MW / 80 MWh</bdi> ברומניה, עם השוואה לתרחישי ההכנסה של המוכר.</span></li>
+      <li><i style="background:var(--ink3)"></i><span><b>פרויקט 50</b>: סוללה של כ-<bdi dir="ltr">50 MW / 100 MWh</bdi> (שעתיים) ברומניה. כאן יש גם מחשבון תשואה לפי מחיר רכישה, <b>מכרזי איזון</b> ו<b>מבנה התחנה בתלת-ממד</b>.</span></li>
+    </ul>
+    <h3>מכרזי איזון · רק בפרויקט 50</h3>
+    <p class="fine" style="margin:0 0 6px;font-size:13px;color:var(--ink2)">חוץ מקנייה ומכירה, אפשר לקבל תשלום על זה שהסוללה עומדת מוכנה לעזור לרשת: המפעיל (Transelectrica) עורך כל יום מכרזים ל-aFRR ול-mFRR. בכל יום המערכת מחליטה מראש כמה מהסוללה להציע במכרזים וכמה להשאיר למסחר, כך שההכנסה של שניהם יחד תהיה הכי גבוהה, ובודקת שתמיד יש מספיק הספק ואנרגיה כדי לעמוד בהתחייבות. התשלום מחושב לפי תוצאות המכרזים האמיתיות שהמפעיל מפרסם.</p>
+    <h3>מבנה התחנה בתלת-ממד · פרויקט 50</h3>
+    <p class="fine" style="margin:0 0 6px;font-size:13px;color:var(--ink2)">20 מכולות סוללה, 5 יחידות ממירים, השנאי הראשי והחיבור לרשת. הצבעים, מדי הטעינה והזרימה בכבלים משתנים לפי המסחר המדומה ברגע זה. אפשר לסובב בגרירה ולהתקרב בגלגלת או בצביטה.</p>
     <h3>איך לקרוא את המסך</h3>
     <ul class="keys">
       <li><i style="background:var(--in)"></i><span><b>כחול</b> = טעינה. קונים חשמל, וכסף יוצא.</span></li>
       <li><i style="background:var(--out)"></i><span><b>ענבר</b> = פריקה. מוכרים חשמל, וכסף נכנס.</span></li>
       <li><i style="background:var(--live)"></i><span><b>אדום</b> = הרגע הנוכחי.</span></li>
+      <li><i style="background:#e8e2d4"></i><span><b>בהיר</b> = הספק ששמור למכרזי האיזון (בפרויקט 50).</span></li>
       <li><i style="background:var(--ink3)"></i><span>השרשרת בראש המסך מראה את הדרך מהמחיר, דרך התחזית וההחלטה, עד הכסף.</span></li>
     </ul>
-    <p class="fine">המערכת מתעדכנת לבד: כל כמה דקות היא פונה ישירות לשרתי המחירים (Energy-Charts, ובגיבוי ENTSO-E), בלי תיווך. אם הרשת נופלת, המסך ממשיך לרוץ על מחירי היום, שכבר ידועים מראש. כשהחיבור חוזר, הוא מסתנכרן מיד. מה לא נכלל: השפעה של הסוללה על מחיר השוק, מסחר תוך-יומי, שירותי איזון ועמלות.</p>
+    <p class="fine">המערכת מתעדכנת לבד: כל כמה דקות היא פונה ישירות לשרתי המחירים (Energy-Charts, ובגיבוי ENTSO-E), בלי תיווך. אם הרשת נופלת, המסך ממשיך לרוץ על מחירי היום, שכבר ידועים מראש. כשהחיבור חוזר, הוא מסתנכרן מיד. מה לא נכלל: השפעה של הסוללה על מחיר השוק, מסחר תוך-יומי ועמלות. שירותי איזון נכללים רק בפרויקט 50, ושם לא נכלל התשלום על אנרגיה שהופעלה בפועל.</p>
     <div class="intro-act"><button type="button" class="go" id="introGo">כניסה למערכת</button><button type="button" class="later" id="introClose">סגירה</button></div>
   </div>
 </div>
 <header class="mast" dir="rtl">
   <h1>בראשית<span>מנוע מסחר לסוללות · שוק ה-Day-Ahead <span class="zadj">ההונגרי</span></span></h1>
-  <div class="zones" id="zones" role="group" aria-label="בחירת מדינה"><button type="button" data-z="HU" aria-pressed="true">הונגריה<small>HUPX</small></button><button type="button" data-z="RO" aria-pressed="false">רומניה<small>OPCOM</small></button><button type="button" data-z="P20" aria-pressed="false">פרויקט 20<small>RTB · <bdi dir="ltr">20 MW</bdi></small></button><button type="button" data-z="P50" aria-pressed="false">פרויקט 50<small>2 שעות · <bdi dir="ltr">49.4 MW</bdi></small></button></div>
+  <div class="zones" id="zones" role="group" aria-label="בחירת מדינה"><button type="button" data-z="HU" aria-pressed="true">הונגריה<small>HUPX</small></button><button type="button" data-z="RO" aria-pressed="false">רומניה<small>OPCOM</small></button><button type="button" data-z="P20" aria-pressed="false">פרויקט 20<small>RTB · <bdi dir="ltr">20 MW</bdi></small></button><button type="button" data-z="P50" aria-pressed="false">פרויקט 50<small>2 שעות · <bdi dir="ltr">50 MW</bdi></small></button></div>
   <div class="meta"><span class="onair"><i></i>חי</span><span>מסחר מדומה על <b>מחירי <span class="zex">HUPX</span> אמיתיים</b></span><span>סוללה <b><bdi dir="ltr" class="zsize">40 MW / 160 MWh</bdi></b></span><span id="upd"></span><span class="net" id="net"><i></i><span>מתחבר…</span></span><button type="button" class="sync" id="syncBtn" aria-label="סנכרון עכשיו"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-14.3 4.9M4 12a8 8 0 0 1 14.3-4.9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M18.5 3.5v4h-4M5.5 20.5v-4h4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>סנכרון</span></button></div>
   <div class="clock">
     <div><span class="k">שעון ישראל</span><span class="v" id="clk">--:--:--</span></div>
