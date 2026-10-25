@@ -20,6 +20,6 @@ jobs:
         run: |
           git config user.name "bereshit-bot"
           git config user.email "bereshit-bot@users.noreply.github.com"
-          git add research/data/ro_ida.csv research/data/ro_idct.csv
+          git add research/data/ro_ida.csv research/data/ro_idct.csv research/data/eur_ron.csv
           git commit -m "research: RO intraday prices (OPCOM)" || exit 0
           for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done

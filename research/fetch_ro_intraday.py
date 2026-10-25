@@ -68,8 +68,17 @@ def done(path, col=0):
     if not os.path.exists(path): return set()
     return {r[col] for r in csv.reader(open(path))}
 
+def ecb():
+    """Daily ECB EUR/RON reference rate -> research/data/eur_ron.csv (to convert continuous-market RON prices)."""
+    try:
+        t = op.open("https://data-api.ecb.europa.eu/service/data/EXR/D.RON.EUR.SP00.A?format=csvdata&startPeriod=2025-08-01", timeout=60).read().decode()
+        rows = [(r["TIME_PERIOD"], r["OBS_VALUE"]) for r in csv.DictReader(t.splitlines()) if r.get("OBS_VALUE")]
+        with open(f"{D}/eur_ron.csv", "w", newline="") as f: w = csv.writer(f); w.writerow(["date", "eur_ron"]); w.writerows(rows)
+        print("ECB rates", len(rows))
+    except Exception as e: print("ECB failed", e)
+
 if __name__ == "__main__":
-    os.makedirs(D, exist_ok=True)
+    os.makedirs(D, exist_ok=True); ecb()
     end = dt.date.today() - dt.timedelta(days=1)
     TOK = {U_IDA: token(U_IDA), U_ID: token(U_ID)}
     have_ida, have_id = done(IDA), done(IDCT)
