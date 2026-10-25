@@ -28,12 +28,16 @@ jobs:
         run: for z in HU RO RO2; do [ -f yearly-$z.json ] || python yearly.py $z || true; done
         env:
           ENTSOE_TOKEN: ${{ secrets.ENTSOE_TOKEN }}
+      - name: balancing auctions + co-optimised plan (Project 50)
+        run: python balancing.py || true
+        env:
+          ENTSOE_TOKEN: ${{ secrets.ENTSOE_TOKEN }}
       - name: commit if changed
         run: |
-          if [ -n "$(git status --porcelain data*.json yearly-*.json)" ]; then
+          if [ -n "$(git status --porcelain data*.json yearly-*.json bal-*.json)" ]; then
             git config user.name "bereshit-bot"
             git config user.email "bereshit-bot@users.noreply.github.com"
-            git add data*.json yearly-*.json
+            git add data*.json yearly-*.json bal-*.json
             git commit -m "data: $(date -u +%Y-%m-%dT%H:%MZ)"
             for i in 1 2 3 4 5; do git pull --rebase -X theirs && git push && break; sleep 10; done
           fi
