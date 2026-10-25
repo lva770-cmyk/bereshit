@@ -228,13 +228,13 @@ tr.fut td{opacity:.5}
 .bal{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}.bal h3{margin:0 0 4px;font-size:17px}
 .bal .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.bal .tabs button{font:inherit;font-size:12.5px;background:var(--panel2);color:var(--ink2);border:1px solid var(--line);border-radius:99px;padding:4px 11px;cursor:pointer}
 .bal .tabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.bal .ch{background:#1d1d19;border:1px solid var(--line);border-radius:8px;padding:10px 8px 4px;margin:6px 0}.bal .ch svg{width:100%;height:auto;display:block;direction:ltr}
-.bal .ch text{fill:#8a8577;font-size:11px;font-family:var(--f-num)}
-.bal .lg{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin:4px 2px}.bal .lg i{display:inline-block;width:11px;height:8px;border-radius:2px;margin-inline-end:5px;vertical-align:middle}
+.bal .ch{background:transparent;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 0 2px;margin:4px 0 6px}.bal .ch svg{width:100%;height:auto;display:block;direction:ltr}
+.bal .ch text{fill:#77736a;font-size:10.5px;font-family:var(--f-num)}
+.bal .lg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--ink3);margin:2px 0 6px}.bal .lg i{display:inline-block;width:11px;height:8px;border-radius:2px;margin-inline-end:5px;vertical-align:middle}
 .bal table{width:100%;border-collapse:collapse;font-size:13px}.bal td,.bal th{padding:6px 6px;border-bottom:1px solid var(--line);text-align:start}.bal th{color:var(--ink3);font-weight:500;font-size:12px}.bal td.n{font-family:var(--f-num);white-space:nowrap}
 .bal .ok{color:var(--gain)}
-.bal .bh{margin:14px 0 2px;font-size:13px;font-weight:500;color:var(--ink2)}
-.bal .lg i.ln{width:14px;height:0;border-top:2px dashed;border-radius:0}.bal .lg i.hz{background:repeating-linear-gradient(45deg,rgba(239,233,220,.3) 0 1.5px,transparent 1.5px 5px);width:14px;height:10px}
+.bal .bh{margin:18px 0 4px;font-size:12px;font-weight:500;color:var(--ink3);letter-spacing:.02em}
+.bal .lg i.ln{width:14px;height:0;border-top:2px dashed;border-radius:0}.bal .lg i.hz{background:repeating-linear-gradient(45deg,rgba(239,233,220,.22) 0 1px,transparent 1px 5px);width:14px;height:10px}
 .bal i.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-inline-end:6px;vertical-align:-1px}
 .baltip{position:fixed;z-index:50;pointer-events:none;background:#24241f;border:1px solid #3a382f;border-radius:6px;padding:7px 9px;font-size:12px;color:var(--ink);box-shadow:0 6px 18px rgba(0,0,0,.35);min-width:150px;direction:rtl}
 .baltip .tt{color:var(--ink3);font-family:var(--f-num);margin-bottom:4px}.baltip .tr{display:flex;align-items:center;gap:7px;margin:2px 0}.baltip .tr i{width:10px;height:2px;border-radius:1px;flex:none}.baltip .tr b{font-family:var(--f-num);font-weight:600;direction:ltr;min-width:62px;text-align:end}.baltip .tr span{color:var(--ink2)}.bal .bad{color:var(--loss)}
@@ -650,7 +650,7 @@ function drawDeal50(){dealHead('p50');const mw=ZI().mw;
 
 /* ---------- Project 50: balancing-capacity auctions co-optimised with day-ahead trading (bal-RO2.json) ---------- */
 let BAL=null,BALDAY=null;const BK=['aFRR up','aFRR down','mFRR up','mFRR down'];
-const BCOL={DA:'#9085e9','aFRR up':'#c98500','mFRR up':'#d55181','aFRR down':'#3987e5','mFRR down':'#199e70'};
+const BCOL={DA:'#7a7f88','aFRR up':'#c99a45','mFRR up':'#ead7aa','aFRR down':'#4f83bd','mFRR down':'#a8c2df'};
 const BHE={'aFRR up':'aFRR למעלה','aFRR down':'aFRR למטה','mFRR up':'mFRR למעלה','mFRR down':'mFRR למטה'};
 function balHtml(){return `<div class="bal" id="bal"><h3>מכרזי איזון ומסחר · תוכנית משולבת</h3><p class="fine" style="margin:0 0 8px">כל יום המערכת מחליטה כמה מגה-וואט להציע במכרזי האיזון היומיים של Transelectrica (aFRR ו-mFRR, למעלה ולמטה) וכמה להשאיר למסחר יום-מראש, כדי למקסם את ההכנסה של שניהם יחד. ההחלטה נעשית ביום הקודם, לפי תחזית מהשבוע האחרון בלבד. התנאי הקשיח: הסוללה תמיד יכולה לספק את מה שהתחייבה, כלומר יש הספק פנוי וגם מספיק אנרגיה בסוללה לכל שעה של התחייבות. מדומה בלבד.</p><div id="balbody"><p class="fine">טוען…</p></div></div>`}
 async function loadBal(){try{const r=await fetch('bal-RO2.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;BAL=await r.json();drawBal()}catch(e){const b=$('balbody');if(b)b.innerHTML='<p class="fine">הנתונים של מכרזי האיזון עדיין נבנים. הם יופיעו כאן אוטומטית.</p>'}}
@@ -664,8 +664,8 @@ function drawBal(){const box=$('balbody');if(!box||!BAL)return;const R=(BAL.rows
   <div class="st"><span class="k">מסחר + מכרזי איזון</span><span class="v num up">${bd(fmtE(tot))}</span><span class="h">${bd((up>=0?'+':'')+(up*100).toFixed(0)+'%')} לעומת מסחר בלבד</span></div>
   <div class="st"><span class="k">מתוכה ממכרזי איזון</span><span class="v num">${bd(fmtE(cu+cd))}</span><span class="h">aFRR ${bd(fmtE(by[0][1]+by[1][1]))} · mFRR ${bd(fmtE(by[2][1]+by[3][1]))}</span></div>
   <div class="st"><span class="k">מתוכה ממסחר</span><span class="v num">${bd(fmtE(da1))}</span><span class="h">פחות ממסחר בלבד, כי חלק מהסוללה שמור לאיזון</span></div></div>
-  <h4 class="bh">הכנסה לפי חודש · מסחר + מכרזי איזון</h4><div class="ch" id="balm"></div><div class="lg"><span><i style="background:${BCOL.DA}"></i>מסחר</span>${['aFRR up','mFRR up','aFRR down','mFRR down'].map(k=>`<span><i style="background:${BCOL[k]}"></i>${BHE[k]}</span>`).join('')}<span><i class="ln" style="border-color:#efe9dc;border-top-style:solid"></i>מסחר בלבד, בלי מכרזים</span></div>
-  <div class="tabs" id="baltabs">${days.map(d=>`<button data-d="${d}">${d===today?'היום · ':d>today?'מחר · ':''}${bd(d.slice(8)+'.'+d.slice(5,7))}</button>`).join('')}</div>
+  <h4 class="bh">הכנסה לפי חודש · מסחר + מכרזי איזון</h4><div class="ch" id="balm"></div><div class="lg"><span><i style="background:${BCOL.DA}"></i>מסחר</span>${['aFRR up','mFRR up','aFRR down','mFRR down'].map(k=>`<span><i style="background:${BCOL[k]}"></i>${BHE[k]}</span>`).join('')}<span><i class="ln" style="border-color:#d8d2c4;border-top-style:solid;border-top-width:1.25px"></i>מסחר בלבד, בלי מכרזים</span></div>
+  <div class="tabs" id="baltabs">${days.map(d=>`<button data-d="${d}">${d===today?'היום · ':d===addDays(today,1)?'מחר · ':''}${bd(d.slice(8)+'.'+d.slice(5,7))}</button>`).join('')}</div>
   <div id="balday"></div>
   <p class="fine">איך זה עובד: לכל שעה המערכת חוזה את מחיר המכרז (ממוצע 7 הימים הקודמים באותה שעה) ואת מחיר יום-מראש, ופותרת בעיה אחת שמחלקת את הסוללה בין מסחר לבין התחייבויות איזון. כל מגה-וואט שמוצע למעלה צריך הספק פריקה פנוי ואנרגיה ל-${bd('30')} דקות (aFRR) או לשעה (mFRR) מעל לסוללה ריקה, וכל מגה-וואט למטה צריך הספק טעינה פנוי ומקום פנוי בסוללה. התשלום לפי מחיר הרכש הממוצע ש-Transelectrica פרסמה לאותה שעה (ENTSO-E), בהמרה מליי לאירו לפי שער ה-ECB. הנחות: עד ${bd('20%')} מהכמות שהמפעיל רכש באותה שעה, כי השוק קטן (כ-${bd('180 MW')} ב-aFRR); תשלום על אנרגיה שהופעלה בפועל לא נכלל; FCR לא נכלל.</p>`;
  document.querySelectorAll('#baltabs button').forEach(b=>{b.classList.toggle('on',b.dataset.d===BALDAY);b.onclick=()=>{BALDAY=b.dataset.d;drawBal()}});
@@ -677,20 +677,20 @@ function tipShow(e,rows,title){const t=balTip();t.innerHTML='';const h=document.
 function tipHide(){const t=document.getElementById('baltip');if(t)t.hidden=true}
 function rTop(x,y,w,h,r){if(h<=0)return'';r=Math.min(r,w/2,h);return`M${x},${y+h}V${y+r}Q${x},${y} ${x+r},${y}H${x+w-r}Q${x+w},${y} ${x+w},${y+r}V${y+h}Z`}
 function rBot(x,y,w,h,r){if(h<=0)return'';r=Math.min(r,w/2,h);return`M${x},${y}V${y+h-r}Q${x},${y+h} ${x+r},${y+h}H${x+w-r}Q${x+w},${y+h} ${x+w},${y+h-r}V${y}Z`}
-const BSURF='#1d1d19',BGRID='#2c2b25',BTXT='#8a8577';
+const BSURF='#161613',BGRID='#252420',BTXT='#77736a';
 function drawBalMonths(R){const m={};R.forEach(r=>{const k='20'+r[0].slice(0,5);(m[k]=m[k]||[0,0,0,0,0,0]);m[k][0]+=r[2];m[k][1]+=r[3];m[k][2]+=r[5];m[k][3]+=r[4];m[k][4]+=r[6];m[k][5]+=r[1]});
  const ks=Object.keys(m).sort();const box=$('balm');if(!box)return;box.innerHTML='';const W=720,H=230,pl=8,pr=54,pt=18,pb=26,ih=H-pt-pb;
  const tot=k=>m[k].slice(0,5).reduce((a,b)=>a+Math.max(0,b),0);const raw=Math.max(...ks.map(tot),...ks.map(k=>m[k][5]))||1;
  const step=[1e5,2e5,2.5e5,5e5,1e6].find(s=>raw/s<=4.2)||1e6;const mx=Math.ceil(raw/step)*step;
- const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'הכנסה חודשית לפי מקור'},box);const slot=(W-pl-pr)/ks.length,bw=Math.min(24,slot-8);const Y=v=>pt+ih*(1-v/mx);
+ const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'הכנסה חודשית לפי מקור'},box);const slot=(W-pl-pr)/ks.length,bw=Math.min(18,slot*0.45);const Y=v=>pt+ih*(1-v/mx);
  for(let v=0;v<=mx+1;v+=step){el('line',{x1:pl,x2:W-pr,y1:Y(v),y2:Y(v),stroke:BGRID,'stroke-width':1},svg);const t=el('text',{x:W-pr+6,y:Y(v)+4},svg);t.textContent=v?fmtE(v):'€0'}
  const cols=[BCOL.DA,BCOL['aFRR up'],BCOL['mFRR up'],BCOL['aFRR down'],BCOL['mFRR down']],names=['מסחר','aFRR למעלה','mFRR למעלה','aFRR למטה','mFRR למטה'];
  let best=ks[0];ks.forEach(k=>{if(tot(k)>tot(best))best=k});
  ks.forEach((k,i)=>{const x=pl+i*slot+(slot-bw)/2;let y=Y(0);const segs=m[k].slice(0,5).map((v,j)=>[v,j]).filter(([v])=>v>0);
-  segs.forEach(([v,j],n)=>{const h=Math.max(0,(ih*v/mx)-(n?2:0));const top=y-(n?2:0)-h;const last=n===segs.length-1;
-   if(last)el('path',{d:rTop(x,top,bw,h,4),fill:cols[j]},svg);else el('rect',{x,y:top,width:bw,height:h,fill:cols[j]},svg);y=top});
-  const ly=Y(m[k][5]);el('line',{x1:x-4,x2:x+bw+4,y1:ly,y2:ly,stroke:'#efe9dc','stroke-width':2,'stroke-linecap':'round'},svg);
-  if(k===best){const t=el('text',{x:x+bw/2,y:y-6,'text-anchor':'middle',style:'fill:#efe9dc;font-size:11px'},svg);t.textContent=fmtE(tot(k))}
+  segs.forEach(([v,j],n)=>{const h=Math.max(0,(ih*v/mx)-(n?1:0));const top=y-(n?1:0)-h;const last=n===segs.length-1;
+   if(last)el('path',{d:rTop(x,top,bw,h,2),fill:cols[j]},svg);else el('rect',{x,y:top,width:bw,height:h,fill:cols[j]},svg);y=top});
+  const ly=Y(m[k][5]);el('line',{x1:x-5,x2:x+bw+5,y1:ly,y2:ly,stroke:'#d8d2c4','stroke-width':1.25},svg);
+  if(k===best){const t=el('text',{x:x+bw/2,y:y-6,'text-anchor':'middle',style:'fill:#bdb6a6;font-size:10.5px'},svg);t.textContent=fmtE(tot(k))}
   const lab=el('text',{x:x+bw/2,y:H-8,'text-anchor':'middle'},svg);lab.textContent=k.slice(5)+'/'+k.slice(2,4);
   const hit=el('rect',{x:pl+i*slot,y:pt,width:slot,height:ih,fill:'transparent',tabindex:0},svg);
   const show=e=>tipShow(e,[...m[k].slice(0,5).map((v,j)=>[cols[j],names[j],fmtE(v)]).reverse(),['#efe9dc','סה״כ משולב',fmtE(tot(k))],['','מסחר בלבד',fmtE(m[k][5])]],k.slice(5)+'/'+k.slice(0,4));
@@ -700,7 +700,7 @@ function drawBalDay(){const d=BAL.days[BALDAY],box=$('balday');if(!d||!box)retur
  const expC=k=>(d.res[k]||[]).reduce((a,v,h)=>a+v*((cf[k]||[])[h]||0),0);
  const rows=BK.map(k=>{const st=d.settled?d.settled[k]:null;return `<tr><td><i class="sw" style="background:${BCOL[k]}"></i>${BHE[k]}</td><td class="n">${bd(mwh(k).toFixed(0)+' MW·h')}</td><td class="n">${bd(fmtE(expC(k)))}</td><td class="n">${st!=null?bd(fmtE(st)):'—'}</td></tr>`}).join('');
  const lgP=[['DA','מסחר: פריקה (+) / טעינה (−)'],['aFRR up','aFRR למעלה'],['mFRR up','mFRR למעלה'],['aFRR down','aFRR למטה'],['mFRR down','mFRR למטה']];
- box.innerHTML=`<h4 class="bh">הספק בכל רבע שעה · ${bd('MW')}</h4><div class="ch" id="balp"></div><div class="lg">${lgP.map(([k,l])=>`<span><i style="background:${BCOL[k]}"></i>${l}</span>`).join('')}<span><i class="ln" style="border-color:#5c5a50"></i>גבול ההספק ${bd('±'+P+' MW')}</span></div>
+ box.innerHTML=`<h4 class="bh">הספק בכל רבע שעה · ${bd('MW')}</h4><div class="ch" id="balp"></div><div class="lg">${lgP.map(([k,l])=>`<span><i style="background:${BCOL[k]}"></i>${l}</span>`).join('')}<span><i class="ln" style="border-color:#3d3b34"></i>גבול ההספק ${bd('±'+P+' MW')}</span></div>
  <h4 class="bh">אנרגיה בסוללה · ${bd('MWh')}</h4><div class="ch" id="bale"></div><div class="lg"><span><i class="ln" style="border-color:#efe9dc;border-top-style:solid"></i>אנרגיה בסוללה</span><span><i class="hz"></i>שמור להתחייבויות האיזון: הסוללה לא נכנסת לשם</span></div>
  <div style="overflow-x:auto"><table><thead><tr><th>מוצר</th><th>הוצע</th><th>צפי לפי התחזית</th><th>בפועל</th></tr></thead><tbody>${rows}
  <tr><td><i class="sw" style="background:${BCOL.DA}"></i>מסחר יום-מראש</td><td class="n">${bd(((d.net||[]).reduce((a,v)=>a+Math.max(0,v),0)*.25).toFixed(0)+' MWh')} נמכרו</td><td class="n">—</td><td class="n">${d.settled?bd(fmtE(d.settled.da)):'—'}</td></tr></tbody></table></div>
@@ -710,17 +710,17 @@ function drawBalDay(){const d=BAL.days[BALDAY],box=$('balday');if(!d||!box)retur
  // ---- power chart
  {const b=$('balp');const W=720,H=230,pl=8,pr=58,pt=10,pb=24,ih=H-pt-pb,mid=pt+ih/2;const bw=(W-pl-pr)/96,X=i=>pl+bw*i,Ym=v=>mid-v/P*(ih/2);
   const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'הספק: מסחר והתחייבויות איזון'},b);
-  [P,P/2,0,-P/2,-P].forEach(v=>{el('line',{x1:pl,x2:W-pr,y1:Ym(v),y2:Ym(v),stroke:Math.abs(v)===P?'#5c5a50':BGRID,'stroke-width':1,'stroke-dasharray':Math.abs(v)===P?'4 3':''},svg);const t=el('text',{x:W-pr+6,y:Ym(v)+4},svg);t.textContent=(v>0?'+':v<0?'−':'')+Math.abs(v)+' MW'});
+  [P,P/2,0,-P/2,-P].forEach(v=>{el('line',{x1:pl,x2:W-pr,y1:Ym(v),y2:Ym(v),stroke:Math.abs(v)===P?'#3d3b34':BGRID,'stroke-width':1,'stroke-dasharray':Math.abs(v)===P?'3 3':''},svg);const t=el('text',{x:W-pr+6,y:Ym(v)+4},svg);t.textContent=(v>0?'+':v<0?'−':'')+Math.abs(v)+' MW'});
   for(let h=0;h<=24;h+=6){const t=el('text',{x:X(h*4),y:H-6,'text-anchor':h===0?'start':h===24?'end':'middle'},svg);t.textContent=String(h).padStart(2,'0')+':00'}
-  const g=1,w=Math.max(1,bw-g);
+  const g=Math.min(2,bw*0.3),w=Math.max(1,bw-g);
   for(let i=0;i<96;i++){const n=d.net[i],x=X(i)+g/2;
    // up side: DA discharge (if any), then aFRR up, then mFRR up, each separated by a 2px gap
    let y=mid;const upSegs=[[Math.max(0,n),BCOL.DA],[R('aFRR up')(i),BCOL['aFRR up']],[R('mFRR up')(i),BCOL['mFRR up']]].filter(s=>s[0]>.3);
-   upSegs.forEach(([v,c],k)=>{const gap=k?2:0,h=Math.max(.5,(Ym(0)-Ym(v))-gap),top=y-gap-h;el(k===upSegs.length-1?'path':'rect',k===upSegs.length-1?{d:rTop(x,top,w,h,2),fill:c}:{x,y:top,width:w,height:h,fill:c},svg);y=top});
+   upSegs.forEach(([v,c],k)=>{const gap=k?1:0,h=Math.max(.5,(Ym(0)-Ym(v))-gap),top=y-gap-h;el(k===upSegs.length-1?'path':'rect',k===upSegs.length-1?{d:rTop(x,top,w,h,1),fill:c}:{x,y:top,width:w,height:h,fill:c},svg);y=top});
    y=mid;const dnSegs=[[Math.max(0,-n),BCOL.DA],[R('aFRR down')(i),BCOL['aFRR down']],[R('mFRR down')(i),BCOL['mFRR down']]].filter(s=>s[0]>.3);
-   dnSegs.forEach(([v,c],k)=>{const gap=k?2:0,h=Math.max(.5,(Ym(-v)-Ym(0))-gap),top=y+gap;el(k===dnSegs.length-1?'path':'rect',k===dnSegs.length-1?{d:rBot(x,top,w,h,2),fill:c}:{x,y:top,width:w,height:h,fill:c},svg);y=top+h})}
-  el('line',{x1:pl,x2:W-pr,y1:mid,y2:mid,stroke:'#5c5a50','stroke-width':1},svg);
-  if(nowS>=0){el('line',{x1:X(nowS),x2:X(nowS),y1:pt,y2:pt+ih,stroke:'#ff5a36','stroke-width':1.5},svg)}
+   dnSegs.forEach(([v,c],k)=>{const gap=k?1:0,h=Math.max(.5,(Ym(-v)-Ym(0))-gap),top=y+gap;el(k===dnSegs.length-1?'path':'rect',k===dnSegs.length-1?{d:rBot(x,top,w,h,1),fill:c}:{x,y:top,width:w,height:h,fill:c},svg);y=top+h})}
+  el('line',{x1:pl,x2:W-pr,y1:mid,y2:mid,stroke:'#4a483f','stroke-width':1},svg);
+  if(nowS>=0){el('line',{x1:X(nowS),x2:X(nowS),y1:pt,y2:pt+ih,stroke:'#ff5a36','stroke-width':1,opacity:.8},svg)}
   const cross=el('line',{y1:pt,y2:pt+ih,stroke:'#efe9dc','stroke-width':1,opacity:0},svg);
   const hit=el('rect',{x:pl,y:pt,width:W-pl-pr,height:ih,fill:'transparent'},svg);
   hit.addEventListener('pointermove',e=>{const r=svg.getBoundingClientRect();const i=Math.max(0,Math.min(95,Math.floor(((e.clientX-r.left)*W/r.width-pl)/bw)));cross.setAttribute('x1',X(i)+bw/2);cross.setAttribute('x2',X(i)+bw/2);cross.setAttribute('opacity',.6);
@@ -729,13 +729,13 @@ function drawBalDay(){const d=BAL.days[BALDAY],box=$('balday');if(!d||!box)retur
  // ---- energy chart
  {const b=$('bale');const W=720,H=180,pl=8,pr=58,pt=10,pb=24,ih=H-pt-pb;const bw=(W-pl-pr)/96,X=i=>pl+bw*i,Y=v=>pt+ih*(1-v/E);
   const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'אנרגיה בסוללה ואזורי שמירה'},b);
-  const defs=el('defs',{},svg);const pat=el('pattern',{id:'balhz',width:6,height:6,patternUnits:'userSpaceOnUse',patternTransform:'rotate(45)'},defs);el('rect',{width:6,height:6,fill:'rgba(239,233,220,.05)'},pat);el('line',{x1:0,y1:0,x2:0,y2:6,stroke:'rgba(239,233,220,.28)','stroke-width':1.5},pat);
+  const defs=el('defs',{},svg);const pat=el('pattern',{id:'balhz',width:6,height:6,patternUnits:'userSpaceOnUse',patternTransform:'rotate(45)'},defs);el('rect',{width:6,height:6,fill:'rgba(239,233,220,.03)'},pat);el('line',{x1:0,y1:0,x2:0,y2:6,stroke:'rgba(239,233,220,.16)','stroke-width':1},pat);
   [0,E/2,E].forEach(v=>{el('line',{x1:pl,x2:W-pr,y1:Y(v),y2:Y(v),stroke:BGRID,'stroke-width':1},svg);const t=el('text',{x:W-pr+6,y:Y(v)+4},svg);t.textContent=Math.round(v)+' MWh'});
   for(let h=0;h<=24;h+=6){const t=el('text',{x:X(h*4),y:H-6,'text-anchor':h===0?'start':h===24?'end':'middle'},svg);t.textContent=String(h).padStart(2,'0')+':00'}
   const stepPath=(arr,base)=>{let p=`M${X(0)},${Y(base)}`;arr.forEach((v,i)=>{p+=`L${X(i)},${Y(v)}L${X(i+1)},${Y(v)}`});return p+`L${X(96)},${Y(base)}Z`};
   el('path',{d:stepPath(d.floor,0),fill:'url(#balhz)'},svg);el('path',{d:stepPath(d.ceil,E),fill:'url(#balhz)'},svg);
-  const soc=[E/2,...d.soc];el('path',{d:soc.map((v,i)=>`${i?'L':'M'}${X(i)},${Y(v)}`).join(''),fill:'none',stroke:'#efe9dc','stroke-width':2,'stroke-linejoin':'round','stroke-linecap':'round'},svg);
-  if(nowS>=0){el('line',{x1:X(nowS),x2:X(nowS),y1:pt,y2:pt+ih,stroke:'#ff5a36','stroke-width':1.5},svg)}
+  const soc=[E/2,...d.soc];el('path',{d:soc.map((v,i)=>`${i?'L':'M'}${X(i)},${Y(v)}`).join(''),fill:'none',stroke:'#e2dccf','stroke-width':1.6,'stroke-linejoin':'round','stroke-linecap':'round'},svg);
+  if(nowS>=0){el('line',{x1:X(nowS),x2:X(nowS),y1:pt,y2:pt+ih,stroke:'#ff5a36','stroke-width':1,opacity:.8},svg)}
   const cross=el('line',{y1:pt,y2:pt+ih,stroke:'#efe9dc','stroke-width':1,opacity:0},svg);const dot=el('circle',{r:4,fill:'#efe9dc',stroke:BSURF,'stroke-width':2,opacity:0},svg);
   const hit=el('rect',{x:pl,y:pt,width:W-pl-pr,height:ih,fill:'transparent'},svg);
   hit.addEventListener('pointermove',e=>{const r=svg.getBoundingClientRect();const i=Math.max(0,Math.min(95,Math.floor(((e.clientX-r.left)*W/r.width-pl)/bw)));const x=X(i+1);cross.setAttribute('x1',x);cross.setAttribute('x2',x);cross.setAttribute('opacity',.6);dot.setAttribute('cx',x);dot.setAttribute('cy',Y(d.soc[i]));dot.setAttribute('opacity',1);
