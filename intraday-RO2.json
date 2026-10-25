@@ -1,0 +1,52 @@
+{
+ "zone": "RO2",
+ "battery": {
+  "power_mw": 50.0,
+  "energy_mwh": 89.5,
+  "max_cycles_day": 2.0,
+  "wear_eur_mwh": 0.0
+ },
+ "generated_at": "2026-10-25T20:42:47+00:00",
+ "scenarios": {
+  "base": {
+   "xcap_mw": 25.0,
+   "share_of_volume": 0.2,
+   "trade_only": {
+    "days": 373,
+    "da": 4677167,
+    "bal": 0,
+    "ida1": 774923,
+    "idc": 626831
+   },
+   "with_balancing": {
+    "days": 373,
+    "da": 4043382,
+    "bal": 2445264,
+    "ida1": 265587,
+    "idc": 216458
+   }
+  },
+  "conservative": {
+   "xcap_mw": 10.0,
+   "share_of_volume": 0.1,
+   "trade_only": {
+    "days": 373,
+    "da": 4677167,
+    "bal": 0,
+    "ida1": 325022,
+    "idc": 306521
+   },
+   "with_balancing": {
+    "days": 373,
+    "da": 4043382,
+    "bal": 2445264,
+    "ida1": 129110,
+    "idc": 118582
+   }
+  }
+ },
+ "period": [
+  "2025-10-02",
+  "2026-10-24"
+ ]
+}
