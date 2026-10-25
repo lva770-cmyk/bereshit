@@ -79,6 +79,7 @@ def retrade(price, net_prev, plan, xcap, sell_cap=None, buy_cap=None):
     x = res.x[X:]; x[np.abs(x) < 1e-6] = 0
     return x, float((pr * x * dt_).sum())
 
+DAYS = []
 def run(use_bal=True, xcap=25.0, steps=("IDA1", "ID"), shift=0, share=0.2):
     Pd, caps, series, cont = load()
     rate = B.RON_FALLBACK; tot = collections.Counter(); nd = 0
@@ -89,7 +90,7 @@ def run(use_bal=True, xcap=25.0, steps=("IDA1", "ID"), shift=0, share=0.2):
         if a and all(h is not None for h in hist) and (p1 or pc):
             f = B.blend(hist); capf = B.cap_forecast(caps, day, rate); ca = B.day_caps(caps, day, rate)
             plan = B.coplan(f, capf, use_bal=use_bal); da, c = B.settle(plan, a, ca)
-            tot["da"] += da; tot["bal"] += sum(c.values()); net = plan["net"].copy(); nd += 1
+            tot["da"] += da; tot["bal"] += sum(c.values()); net = plan["net"].copy(); nd += 1; DAYS.append(day)
             for s in steps:
                 sc = bc = None
                 if s == "IDA1": pr = p1
@@ -102,11 +103,17 @@ def run(use_bal=True, xcap=25.0, steps=("IDA1", "ID"), shift=0, share=0.2):
     return nd, tot
 
 if __name__ == "__main__":
+    import json
     B.CYC, B.WEAR = 2.0, 0.0
-    for ub in (False, True):
-        for xc in (10.0, 25.0, 50.0):
-            nd, t = run(ub, xc)
-            k = 365 / max(nd, 1)
-            print(f"{'DA+bal' if ub else 'DA only':7} xcap {xc:>4} days {nd}: DA €{t['da']*k/1e6:.2f}M  bal €{t['bal']*k/1e6:.2f}M  "
-                  f"IDA1 +€{t['IDA1']*k/1e6:.2f}M  ID +€{t['ID']*k/1e6:.2f}M  total €{(t['da']+t['bal']+t['IDA1']+t['ID'])*k/1e6:.2f}M /yr  "
-                  f"(ID volume {t['IDA1_mwh']/nd:.0f}+{t['ID_mwh']/nd:.0f} MWh/day)")
+    Pd = load()[0]; out = {"zone": "RO2", "battery": {"power_mw": B.P, "energy_mwh": B.E, "max_cycles_day": B.CYC, "wear_eur_mwh": B.WEAR},
+                           "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"), "scenarios": {}}
+    for name, xcap, share in (("base", 25.0, 0.2), ("conservative", 10.0, 0.1)):
+        sc = {"xcap_mw": xcap, "share_of_volume": share}
+        for ub in (False, True):
+            nd, t = run(ub, xcap, share=share); k = 365 / max(nd, 1)
+            sc["with_balancing" if ub else "trade_only"] = {"days": nd, "da": round(t["da"] * k), "bal": round(t["bal"] * k),
+                "ida1": round(t["IDA1"] * k), "idc": round(t["ID"] * k)}
+            print(name, ub, sc["with_balancing" if ub else "trade_only"])
+        out["scenarios"][name] = sc
+    out["period"] = [min(DAYS), max(DAYS)]
+    json.dump(out, open("intraday-RO2.json", "w"), indent=1)
