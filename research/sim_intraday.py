@@ -80,7 +80,7 @@ def retrade(price, net_prev, plan, xcap, sell_cap=None, buy_cap=None):
     return x, float((pr * x * dt_).sum())
 
 DAYS = []
-def run(use_bal=True, xcap=25.0, steps=("IDA1", "ID"), shift=0, share=0.2):
+def run(use_bal=True, xcap=25.0, steps=("IDA1", "ID"), shift=0, share=0.2, bal_scale=1.0):
     Pd, caps, series, cont = load()
     rate = B.RON_FALLBACK; tot = collections.Counter(); nd = 0
     d = dt.date(2025, 10, 2); end = max(Pd)
@@ -89,6 +89,8 @@ def run(use_bal=True, xcap=25.0, steps=("IDA1", "ID"), shift=0, share=0.2):
         p1 = series(day, "IDA1"); pc = cont(day)
         if a and all(h is not None for h in hist) and (p1 or pc):
             f = B.blend(hist); capf = B.cap_forecast(caps, day, rate); ca = B.day_caps(caps, day, rate)
+            if bal_scale != 1.0:
+                capf = {k: (v[0] * bal_scale, v[1]) for k, v in capf.items()}; ca = {k: (v[0] * bal_scale, v[1]) for k, v in ca.items()}
             plan = B.coplan(f, capf, use_bal=use_bal); da, c = B.settle(plan, a, ca)
             tot["da"] += da; tot["bal"] += sum(c.values()); net = plan["net"].copy(); nd += 1; DAYS.append(day)
             for s in steps:
@@ -115,5 +117,7 @@ if __name__ == "__main__":
                 "ida1": round(t["IDA1"] * k), "idc": round(t["ID"] * k)}
             print(name, ub, sc["with_balancing" if ub else "trade_only"])
         out["scenarios"][name] = sc
+    nd, t = run(True, steps=(), bal_scale=0.5); k = 365 / max(nd, 1)
+    out["balancing_half_price"] = {"days": nd, "da": round(t["da"] * k), "bal": round(t["bal"] * k)}; print("half", out["balancing_half_price"])
     out["period"] = [min(DAYS), max(DAYS)]
     json.dump(out, open("intraday-RO2.json", "w"), indent=1)

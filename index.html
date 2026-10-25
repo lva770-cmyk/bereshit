@@ -637,9 +637,25 @@ const DHEAD={p20:['פרויקט 20 · האם זה תואם להצעת המוכר
 function dealHead(k){const s=$('deal');s.querySelector('h2').textContent=DHEAD[k][0];s.querySelector('.sub').innerHTML=DHEAD[k][1];s.setAttribute('aria-label',DHEAD[k][0])}
 const P50={opex:0.45e6,wext:0,soh:Array.from({length:17},(_,t)=>95*Math.pow(0.9725,t))};P50.years=P50.soh.length;let P50PX='';
 function econAt(capex,rev){const cfs=[-capex];P50.soh.forEach((h,t)=>cfs.push(rev*h/P50.soh[0]-P50.opex-(t>=5&&t<=9?P50.wext:0)));let cum=0,pb=null;cfs.forEach((c,t)=>{cum+=c;if(pb===null&&t>0&&cum>=0)pb=t});return {irr:irrOf(cfs),pb}}
+let P50YR=0,IDJ=null;
+/* Revenue stacks for the return calculation. The day-ahead figure is the measured one above; balancing and intraday are
+   added as UPLIFTS measured inside one consistent model (co-plan vs trade-only), so model differences do not leak in. */
+function p50stacks(yr){const st=[{k:'da',l:'יום-מראש בלבד',v:yr}];
+ let balUp=null,idUp=null,half=null;
+ if(BAL&&BAL.rows&&BAL.rows.length>=60){const R=BAL.rows.slice(-365),k=365/R.length;balUp=R.reduce((a,r)=>a+r[2]+r[3]+r[4]+r[5]+r[6]-r[1],0)*k}
+ if(IDJ&&IDJ.scenarios){const c=IDJ.scenarios.conservative.with_balancing,b=IDJ.scenarios.base,to=b.trade_only,wb=b.with_balancing,h=IDJ.balancing_half_price;
+  idUp=c.ida1+c.idc;if(h){const full=wb.da+wb.bal-to.da;half=full>0?(h.da+h.bal-to.da)/full:null}}
+ if(balUp!=null)st.push({k:'bal',l:'+ מכרזי איזון',v:yr+balUp});
+ if(balUp!=null&&idUp!=null){const all=yr+balUp+idUp;st.push({k:'all',l:'+ איזון + תוך-יומי',v:all,main:1});
+  if(half!=null)st.push({k:'h',l:'ואם מחירי האיזון בחצי',v:yr+balUp*half+idUp,risk:1});
+  st.push({k:'m20',l:'ואם כל ההכנסות '+bd('−20%'),v:all*.8,risk:1})}
+ else st.push({k:'m20',l:'אם ההכנסות '+bd('−20%'),v:yr*.8,risk:1});
+ return {st,balUp,idUp}}
 function p50calc(yr){const out=$('p50out');if(!out)return;const v=parseFloat(P50PX);if(!(v>0)){out.innerHTML='<p class="fine" style="margin:0">הכניסו מחיר במיליוני אירו כדי לראות את התשואה.</p>';return}
- const capex=v*1e6,rows=[[1,'לפי המדידה'],[.8,'נמוכה ב-20%'],[.6,'נמוכה ב-40%']].map(([f,l])=>{const e=econAt(capex,yr*f);return `<tr><td>${l}</td><td class="n">${bd(fmtE(yr*f))}</td><td class="n"><b>${bd((e.irr*100).toFixed(1)+'%')}</b></td><td class="n">${bd(e.pb?e.pb+' שנים':'מעל '+P50.years)}</td></tr>`}).join('');
- out.innerHTML=`<div class="tw"><table><thead><tr><th>הכנסה</th><th>בשנה</th><th>IRR</th><th>החזר</th></tr></thead><tbody>${rows}</tbody></table></div><p class="fine" style="margin:6px 0 0">מחיר ${bd(fmtE(capex))} = ${bd(fmtE(capex/ZI().mw))} למגה-וואט.</p>`}
+ const capex=v*1e6,{st,balUp,idUp}=p50stacks(yr);
+ const rows=st.map(r=>{const e=econAt(capex,r.v);return `<tr${r.main?' class="ok"':''}${r.risk?' style="color:var(--ink3)"':''}><td>${r.main?'<b>'+r.l+'</b>':r.l}</td><td class="n">${bd(fmtE(r.v))}</td><td class="n"><b>${bd((e.irr*100).toFixed(1)+'%')}</b></td><td class="n">${(e.pb?bd(String(e.pb))+' שנים':'מעל '+bd(String(P50.years)))}</td></tr>`}).join('');
+ out.innerHTML=`<div class="tw"><table><thead><tr><th>הכנסה מ…</th><th>בשנה</th><th>IRR</th><th>החזר</th></tr></thead><tbody>${rows}</tbody></table></div>
+ <p class="fine" style="margin:6px 0 0">מחיר ${bd(fmtE(capex))} = ${bd(fmtE(capex/ZI().mw))} למגה-וואט.${balUp!=null?` מכרזי האיזון מוסיפים ${bd(fmtE(balUp))} בשנה`:''}${idUp!=null?` והמסחר התוך-יומי ${bd(fmtE(idUp))} (בתרחיש השמרני). שתי השורות האפורות הן תרחישי סיכון לשורה המודגשת`:''}${balUp!=null?'. כל תוספת נמדדת כהפרש בתוך אותו מודל, כדי שההבדלים בין המודלים לא ינפחו אותה.':''} לא נכללו עמלות של חברת מסחר או מפעיל, ולא שחיקה מהירה יותר בגלל ההפעלות של האיזון.</p>`}
 function drawDeal50(){dealHead('p50');const mw=ZI().mw;
  const G={},N={},live={};(D||[]).forEach(r=>{if(r.g!=null){G[r.d]=r.g;N[r.d]=r.bl}});
  Object.keys(S.days||{}).forEach(k=>{const d=S.days[k];if(d.actual&&d.net&&d.realized!=null){const c=calc(d);G[k]=d.realized+c.wear.reduce((a,b)=>a+b,0);N[k]=d.realized;live[k]=d.source==='live'}});
@@ -649,7 +665,7 @@ function drawDeal50(){dealHead('p50');const mw=ZI().mw;
  const nLive=ks.filter(k=>live[k]).length,first=ks[0],last=ks[ks.length-1];
  const trend=m30>=yr*1.05?'גבוה מהממוצע השנתי':m30<=yr*.95?'נמוך מהממוצע השנתי':'דומה לממוצע השנתי';
  $('dealbody').innerHTML=`<div class="verdict ok"><span class="big">${bd(fmtE(yr))} בשנה</span>
-  <p>זה מה שהסוללה הייתה מכניסה ב-365 הימים האחרונים ממסחר יום-מראש בלבד (ברוטו, לפני בלאי). כלומר ${bd(fmtE(yr/mw))} למגה-וואט בשנה. מכרזי האיזון הם תוספת, והם מוצגים בהמשך העמוד. מסחר תוך-יומי עדיין לא נכלל.</p></div>
+  <p>זה מה שהסוללה הייתה מכניסה ב-365 הימים האחרונים ממסחר יום-מראש בלבד (ברוטו, לפני בלאי). כלומר ${bd(fmtE(yr/mw))} למגה-וואט בשנה. מכרזי האיזון והמסחר התוך-יומי הם תוספת: הם מוצגים בהמשך העמוד ונכללים במחשבון התשואה.</p></div>
  <div class="dgrid">
   <div class="st"><span class="k">הכנסה בפועל · 365 יום · ברוטו</span><span class="v num up">${bd(fmtE(yr))}</span><span class="h">${bd(fmtE(yr/mw))} למגה-וואט${Math.abs(yr-yrN)>1?' · אחרי בלאי '+bd(fmtE(yrN)):''}</span></div>
   <div class="st"><span class="k">30 הימים האחרונים · בקצב שנתי</span><span class="v num">${bd(fmtE(m30))}</span><span class="h">${trend} · חודש אחד בלבד</span></div>
@@ -658,10 +674,10 @@ function drawDeal50(){dealHead('p50');const mw=ZI().mw;
  </div>
  <div class="calc50"><label for="p50px">מחיר רכישה (מיליוני אירו)</label><input id="p50px" type="number" inputmode="decimal" min="0" step="0.5" placeholder="למשל 25" dir="ltr" value="${P50PX}"></div>
  <div id="p50out"></div>
- <p class="fine">הסוללה במודל: כ-${bd('50 MW')}, כ-${bd('84 MWh')} לרשת בפריקה מלאה בשנה הראשונה (מתוך ${bd('100 MWh')} נומינליים), נצילות הלוך-חזור של ${bd('88%')}, ועד ${bd('2')} פריקות מלאות ביום, בלי חיוב בלאי לכל MWh (ההתבלות נספרת כירידת קיבולת בחישוב התשואה).<br>איך מחושבת התשואה: ${bd(String(P50.years))} שנות הפעלה עם ירידת קיבולת של כ-${bd('2.75%')} בשנה, ותפעול של ${bd(fmtE(P50.opex))} בשנה (הנחה). לפני מסים ומימון. ההכנסה היא רק ממסחר יום-מראש.<br>
+ <p class="fine">הסוללה במודל: כ-${bd('50 MW')}, כ-${bd('84 MWh')} לרשת בפריקה מלאה בשנה הראשונה (מתוך ${bd('100 MWh')} נומינליים), נצילות הלוך-חזור של ${bd('88%')}, ועד ${bd('2')} פריקות מלאות ביום, בלי חיוב בלאי לכל MWh (ההתבלות נספרת כירידת קיבולת בחישוב התשואה).<br>איך מחושבת התשואה: ${bd(String(P50.years))} שנות הפעלה עם ירידת קיבולת של כ-${bd('2.75%')} בשנה, ותפעול של ${bd(fmtE(P50.opex))} בשנה (הנחה). לפני מסים ומימון. ההכנסה: מסחר יום-מראש כפי שנמדד, ועליו התוספות של מכרזי האיזון והמסחר התוך-יומי (בטבלה).<br>
  איך נמדד: אותו מנוע של בראשית ואותה נעילת לוח לפני סגירת השער, על התחנה הזו ומחירי OPCOM האמיתיים, ${bd(dlabel(first)+'.'+first.slice(2,4)+'–'+dlabel(last)+'.'+last.slice(2,4))}: ${bd(String(nLive))} ימים נסחרו חי, השאר מהבדיקה לאחור. מסחר מדומה בלבד, שום פקודה לא נשלחת לבורסה.</p>`;
  $('dealbody').insertAdjacentHTML('beforeend',balHtml()+idHtml()+plant50Html());loadBal();loadId();mount3d();
- const inp=$('p50px');inp.oninput=()=>{P50PX=inp.value;p50calc(yr)};p50calc(yr);if(LIVE)drawKpis()}
+ const inp=$('p50px');inp.oninput=()=>{P50PX=inp.value;p50calc(yr)};P50YR=yr;p50calc(yr);if(!IDJ)fetch('intraday-RO2.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j){IDJ=j;p50calc(P50YR)}}).catch(()=>{});if(LIVE)drawKpis()}
 
 /* ---------- Project 50: balancing-capacity auctions co-optimised with day-ahead trading (bal-RO2.json) ---------- */
 let BAL=null,BALDAY=null;const BK=['aFRR up','aFRR down','mFRR up','mFRR down'];
@@ -670,7 +686,7 @@ const BHE={'aFRR up':'aFRR למעלה','aFRR down':'aFRR למטה','mFRR up':'mF
 function balHtml(){return `<div class="bal" id="bal"><h3>מכרזי איזון ומסחר · תוכנית משולבת</h3><p class="fine" style="margin:0 0 8px">כל יום המערכת מחליטה כמה מגה-וואט להציע במכרזי האיזון היומיים של Transelectrica (aFRR ו-mFRR, למעלה ולמטה) וכמה להשאיר למסחר יום-מראש, כדי למקסם את ההכנסה של שניהם יחד. ההחלטה נעשית ביום הקודם, לפי תחזית מהשבוע האחרון בלבד. התנאי הקשיח: הסוללה תמיד יכולה לספק את מה שהתחייבה, כלומר יש הספק פנוי וגם מספיק אנרגיה בסוללה לכל שעה של התחייבות. מדומה בלבד.</p><div id="balbody"><p class="fine">טוען…</p></div></div>`}
 /* Intraday research block (Project 50): DA (+ balancing) then re-trading the position in IDA1 and the continuous market. */
 function idHtml(){return `<div class="bal" id="idsec"><h3>מסחר תוך-יומי · כמה הוא מוסיף</h3><p class="fine" style="margin:0 0 8px">אחרי שהבורסה סוגרת את יום-מראש, אפשר לסחור שוב באותו יום: שלושה מכרזים תוך-יומיים (IDA) ומסחר רציף. למשל, אם מגיע שיא מחיר לפני שעת הפריקה שהתחייבנו עליה, פורקים בשיא וקונים בחזרה בזול כדי לספק את ההתחייבות בזמן. ההתחייבויות במכרזי האיזון נשמרות תמיד.</p><div id="idbody"><p class="fine">טוען…</p></div></div>`}
-async function loadId(){try{const r=await fetch('intraday-RO2.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;drawId(await r.json())}catch(e){const b=$('idbody');if(b)b.innerHTML='<p class="fine">הבדיקה התוך-יומית עדיין לא זמינה.</p>'}}
+async function loadId(){try{const r=await fetch('intraday-RO2.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;IDJ=await r.json();drawId(IDJ);if(P50YR)p50calc(P50YR)}catch(e){const b=$('idbody');if(b)b.innerHTML='<p class="fine">הבדיקה התוך-יומית עדיין לא זמינה.</p>'}}
 function drawId(J){const box=$('idbody');if(!box)return;const B_=J.scenarios.base,C_=J.scenarios.conservative;
  const tot=(o,id)=>o.da+o.bal+(id?o.ida1+o.idc:0);
  const rows=[['רק מסחר יום-מראש',B_.trade_only,0],['רק מסחר + תוך-יומי',B_.trade_only,1],['מסחר + מכרזי איזון',B_.with_balancing,0],['מסחר + מכרזי איזון + תוך-יומי',B_.with_balancing,1]];
@@ -683,7 +699,7 @@ function drawId(J){const box=$('idbody');if(!box)return;const B_=J.scenarios.bas
  ${rows.map((r,i)=>`<tr${i===best?' class="ok"':''}><td>${r[0]}</td><td class="n"><b>${bd(fmtE(vals[i]))}</b></td><td>${bar(vals[i],i===best?BC.dis:(r[1]===B_.with_balancing?BC.bal:BC.trade))}</td><td class="n">${bd(fmtE(tot(crow[i],r[2])))}</td></tr>`).join('')}
  </tbody></table></div>
  <p class="fine" style="margin-top:8px">איך זה נבדק: אותה תוכנית יום-מראש (ואיזון) כמו למעלה, ואז ביום הקודם בשעה 15:00 מכרז IDA1, ולאחר מכן המסחר הרציף. בכל שלב המערכת מתקנת את התוכנית לפי המחירים שנקבעו בפועל. בסיס: עד ${bd('25 MW')} לרבע שעה, ובמסחר הרציף עד ${bd('20%')} מהכמות שנסחרה באותה שעה. שמרני: עד ${bd('10 MW')} ו-${bd('10%')}. ההנחה היא שאנחנו מקבלים את מחיר המכרז ואת המחיר הממוצע של המסחר הרציף, בלי להזיז אותם, ולכן זו הערכה אופטימית. עד ${bd('2')} פריקות ביום, בלי בלאי. מקור: OPCOM, ${bd(String(d))} ימים${p.length?' ('+bd(dlabel(p[0])+'.'+p[0].slice(2,4)+'–'+dlabel(p[1])+'.'+p[1].slice(2,4))+')':''}, בהיקף שנתי. בדיקת מחקר: מתעדכנת ידנית.</p>`}
-async function loadBal(){try{const r=await fetch('bal-RO2.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;BAL=await r.json();drawBal()}catch(e){const b=$('balbody');if(b)b.innerHTML='<p class="fine">הנתונים של מכרזי האיזון עדיין נבנים. הם יופיעו כאן אוטומטית.</p>'}}
+async function loadBal(){try{const r=await fetch('bal-RO2.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;BAL=await r.json();drawBal();if(P50YR)p50calc(P50YR)}catch(e){const b=$('balbody');if(b)b.innerHTML='<p class="fine">הנתונים של מכרזי האיזון עדיין נבנים. הם יופיעו כאן אוטומטית.</p>'}}
 const BC={dis:'#d9a441',chg:'#5b8cc2',bal:'#e8e2d4',trade:'#5b8cc2',free:'#26251f'};
 /* Unit note: capacity is paid per MW for EVERY HOUR it is held available — not per MW per day. */
 function balPriceNote(days){const acc={};days.forEach(d=>{const c=(BAL.days[d]||{}).capf||{};for(const k in c)c[k].forEach(v=>{if(v>0)(acc[k]=acc[k]||[]).push(v)})});
