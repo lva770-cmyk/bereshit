@@ -669,6 +669,13 @@ const BHE={'aFRR up':'aFRR למעלה','aFRR down':'aFRR למטה','mFRR up':'mF
 function balHtml(){return `<div class="bal" id="bal"><h3>מכרזי איזון ומסחר · תוכנית משולבת</h3><p class="fine" style="margin:0 0 8px">כל יום המערכת מחליטה כמה מגה-וואט להציע במכרזי האיזון היומיים של Transelectrica (aFRR ו-mFRR, למעלה ולמטה) וכמה להשאיר למסחר יום-מראש, כדי למקסם את ההכנסה של שניהם יחד. ההחלטה נעשית ביום הקודם, לפי תחזית מהשבוע האחרון בלבד. התנאי הקשיח: הסוללה תמיד יכולה לספק את מה שהתחייבה, כלומר יש הספק פנוי וגם מספיק אנרגיה בסוללה לכל שעה של התחייבות. מדומה בלבד.</p><div id="balbody"><p class="fine">טוען…</p></div></div>`}
 async function loadBal(){try{const r=await fetch('bal-RO2.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;BAL=await r.json();drawBal()}catch(e){const b=$('balbody');if(b)b.innerHTML='<p class="fine">הנתונים של מכרזי האיזון עדיין נבנים. הם יופיעו כאן אוטומטית.</p>'}}
 const BC={dis:'#d9a441',chg:'#5b8cc2',bal:'#e8e2d4',trade:'#5b8cc2',free:'#26251f'};
+/* Unit note: capacity is paid per MW for EVERY HOUR it is held available — not per MW per day. */
+function balPriceNote(days){const acc={};days.forEach(d=>{const c=(BAL.days[d]||{}).capf||{};for(const k in c)c[k].forEach(v=>{if(v>0)(acc[k]=acc[k]||[]).push(v)})});
+ const av=k=>acc[k]&&acc[k].length?acc[k].reduce((a,b)=>a+b,0)/acc[k].length:0;
+ const nm={'aFRR up':'aFRR למעלה','mFRR up':'mFRR למעלה','aFRR down':'aFRR למטה','mFRR down':'mFRR למטה'};
+ const ks=Object.keys(nm).filter(k=>av(k)>0);if(!ks.length)return '';
+ const ex=Math.round(Math.max(av('aFRR up'),av('mFRR up'))),mw=20,perDay=mw*ex*24;
+ return `<div class="sum" style="margin-top:14px"><b>כמה משלמים במכרזים?</b> המחיר הוא <b>לכל מגה-וואט, לכל שעה</b> שהסוללה שמורה, ולא ליום.<br>מחיר ממוצע בימים האחרונים, למגה-וואט לשעה: ${ks.map(k=>`<span style="white-space:nowrap">${nm[k]}: ${bd('€'+av(k).toFixed(1))}</span>`).join(' · ')}<br>דוגמה: ${bd(mw+' MW')} שמורים לאורך כל היממה: <b><bdi dir="ltr" style="white-space:nowrap">${mw} MW × €${ex} × 24 h = €${perDay.toLocaleString('en-US')}</bdi> ליום</b>, כ-${bd('€'+(perDay*365/1e6).toFixed(1)+'M')} בשנה (ולא ${bd('€'+(mw*ex))} ליום).</div>`}
 function drawBal(){const box=$('balbody');if(!box||!BAL)return;const R=(BAL.rows||[]).slice(-365);
  const sum=i=>R.reduce((a,r)=>a+r[i],0);const da0=sum(1),da1=sum(2),bal=sum(3)+sum(4)+sum(5)+sum(6),tot=da1+bal,up=tot/da0-1;
  const days=Object.keys(BAL.days||{}).sort();const today=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Budapest'});
@@ -678,6 +685,7 @@ function drawBal(){const box=$('balbody');if(!box||!BAL)return;const R=(BAL.rows
   <div class="st"><span class="k">מסחר + מכרזי איזון · שנה אחרונה</span><span class="v num up">${bd(fmtE(tot))}</span><span class="h">${bd((up>=0?'+':'')+(up*100).toFixed(0)+'%')} יותר מרק מסחר</span></div>
   <div class="st"><span class="k">מתוך זה: תשלום על התחייבות לאיזון</span><span class="v num">${bd(fmtE(bal))}</span><span class="h">משלמים לנו על זה שהסוללה עומדת מוכנה</span></div>
   <div class="st"><span class="k">מתוך זה: מסחר</span><span class="v num">${bd(fmtE(da1))}</span><span class="h">קצת פחות, כי חלק מהסוללה שמור לאיזון</span></div></div>
+  ${balPriceNote(days)}
   <h4 class="bh">1 · כמה הרווחנו בכל חודש</h4><p class="ex">כל עמודה היא חודש. החלק הכחול הוא הרווח מהמסחר, החלק הבהיר הוא התשלום על מכרזי האיזון. הקו הכתום מראה כמה היינו מרוויחים אילו רק סחרנו. ככל שהעמודה גבוהה יותר מהקו, המכרזים הוסיפו יותר.</p>
   <div class="ch" id="balm"></div><div class="lg"><span><i style="background:${BC.trade}"></i>מסחר</span><span><i style="background:${BC.bal}"></i>מכרזי איזון</span><span><i class="ln" style="border-color:${BC.dis};border-top-style:solid"></i>אילו רק סחרנו</span></div>
   <h4 class="bh" style="margin-top:22px">יום אחד מקרוב</h4>
