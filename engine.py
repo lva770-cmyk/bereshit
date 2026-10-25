@@ -22,14 +22,15 @@ ZONES = {"HU": ("data.json", "HUPX day-ahead (SDAC), 15-min"),
          "RO2": ("data-RO2.json", "OPCOM day-ahead (SDAC), 15-min · 2-hour battery")}
 # Germany (data-DE.json) is kept in the repo but no longer updated; add it back here to resume.
 BZN = {"DE": "DE-LU", "RO2": "RO"}   # Energy-Charts bidding-zone code where it differs from ours
-# Battery per zone: (MW at the grid point, usable MWh stored, max full cycles/day). Default 40 MW / 160 MWh (4 h), 2 cycles.
+# Battery per zone: (MW at the grid point, usable MWh stored, max full cycles/day, wear EUR/MWh discharged).
+# Default 40 MW / 160 MWh (4 h), 2 cycles, EUR 3/MWh wear.
 # RO2 = a generic 2-hour battery in Romania: ~50 MW, ~84 MWh delivered per full discharge (89.5 MWh stored x sqrt(0.88)),
-# capped at ~1.5 full cycles/day.
-BATTERY = {"RO2": (50.0, 89.5, 1.4)}
+# up to 2 full discharges/day and no per-MWh wear charge (ageing is counted as capacity fade in the return calculation).
+BATTERY = {"RO2": (50.0, 89.5, 2.0, 0.0)}
 ZONE = "HU"
 def use_zone(z):
-    global STATE, ZONE, P_MW, E_MWH, CYC
-    ZONE = z; STATE = ZONES[z][0]; P_MW, E_MWH, CYC = BATTERY.get(z, (40.0, 160.0, 2.0))
+    global STATE, ZONE, P_MW, E_MWH, CYC, WEAR
+    ZONE = z; STATE = ZONES[z][0]; P_MW, E_MWH, CYC, WEAR = BATTERY.get(z, (40.0, 160.0, 2.0, 3.0))
     import os
     if not os.path.exists(STATE):
         json.dump({"zone": z, "market": ZONES[z][1], "battery": {"power_mw": P_MW, "energy_mwh": E_MWH, "rte": 0.88},

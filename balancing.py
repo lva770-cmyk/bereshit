@@ -22,7 +22,8 @@ from scipy.sparse import lil_matrix, csr_matrix
 
 TZ = ZoneInfo("Europe/Budapest"); RO = "10YRO-TEL------P"
 OUT = "bal-RO2.json"; DA_STATE = "data-RO2.json"
-P, E, RTE, CYC, WEAR = 50.0, 89.5, 0.88, 1.4, 3.0      # same generic battery as the live RO2 screen
+P, E, RTE, CYC, WEAR = 50.0, 89.5, 0.88, 2.0, 0.0      # same generic battery as the live RO2 screen: up to 2 discharges/day, no wear charge
+PARAMS = f"{P}/{E}/{CYC}/{WEAR}"
 PROD = [("aFRR", "up", 0.5), ("aFRR", "down", 0.5), ("mFRR", "up", 1.0), ("mFRR", "down", 1.0)]   # (product, dir, hours of full delivery reserved)
 SHARE = 0.20            # at most 20% of the MW the TSO procured in that hour
 RON_FALLBACK = 5.08
@@ -214,7 +215,7 @@ def pack(plan, capf=None):
 def update(full=False):
     s = json.load(open(OUT)) if os.path.exists(OUT) else {"days": {}}
     now = dt.datetime.now(dt.timezone.utc)
-    need_year = full or not s.get("rows") or s.get("rows_at", "")[:10] < (dt.date.today() - dt.timedelta(days=7)).isoformat()
+    need_year = full or not s.get("rows") or s.get("params") != PARAMS or s.get("rows_at", "")[:10] < (dt.date.today() - dt.timedelta(days=7)).isoformat()
     da = json.load(open(DA_STATE))["days"]
     pending = [d for d in sorted(da)[-6:] if (da[d].get("forecast") and d not in s["days"]) or
                (da[d].get("actual") and "settled" not in s["days"].get(d, {"settled": 1}))]
@@ -229,7 +230,7 @@ def update(full=False):
             key = tuple(k.split(" ")); caps.setdefault(key, {}); [caps[key].setdefault(h, tuple(v)) for h, v in m.items()]
     rates = eur_ron()
     if need_year:
-        s["rows"] = year(caps, rates); s["rows_at"] = now.isoformat(timespec="seconds")
+        s["rows"] = year(caps, rates); s["rows_at"] = now.isoformat(timespec="seconds"); s["params"] = PARAMS
     # live: plan every DA-planned day of the live RO2 screen that has no co-plan yet; settle when actuals exist
     for day in sorted(da)[-6:]:
         v = da[day]; rate = _rate(rates, day); rec = s["days"].get(day)
@@ -246,7 +247,7 @@ def update(full=False):
     s["days"] = {k: s["days"][k] for k in sorted(s["days"])[-14:]}
     keep_from = (now - dt.timedelta(days=12)).strftime("%Y-%m-%dT%H")
     s["caps_cache"] = {f"{k[0]} {k[1]}": {h: list(v) for h, v in m.items() if h >= keep_from} for k, m in caps.items()}
-    s.update({"zone": "RO2", "battery": {"power_mw": P, "energy_mwh": E, "rte": RTE},
+    s.update({"zone": "RO2", "battery": {"power_mw": P, "energy_mwh": E, "rte": RTE, "max_cycles_day": CYC, "wear_eur_mwh": WEAR},
               "assumptions": {"share": SHARE, "hours_reserved": {f"{p} {d}": tau for p, d, tau in PROD}, "ron_fallback": RON_FALLBACK},
               "updated_at": now.isoformat(timespec="seconds")})
     json.dump(s, open(OUT, "w"), separators=(",", ":")); print("balancing updated", len(s.get("rows", [])), "year rows;", sorted(s["days"]))
