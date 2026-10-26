@@ -103,9 +103,12 @@ def ingest(day, prices, prices2=None, fetched_at=None, method="2 direct API read
         d["realized"] = round(settle(d["net"], a)); d["perfect"] = round(settle(schedule(a), a))
     save(s); print(f"ingested {day}: avg {np.mean(a):.2f} €/MWh, realized {d.get('realized')}, perfect {d.get('perfect')}")
 
-def plan(day):
-    s = load(); target = dt.date.fromisoformat(day)
-    if s["days"].get(day, {}).get("net"): raise SystemExit(f"{day} already planned at {s['days'][day]['planned_at']} – plans are write-once")
+def plan(day, refresh=False):
+    """Plan a delivery day from prices known now. A plan can be refreshed (re-made with the latest data/settings) any
+    number of times until the gate closes at 12:00 CET on the day before; after the gate it is final (write-once)."""
+    s = load(); target = dt.date.fromisoformat(day); old = s["days"].get(day, {})
+    if old.get("net") and not refresh: raise SystemExit(f"{day} already planned at {old['planned_at']} – use refresh before the gate")
+    if old.get("actual"): raise SystemExit(f"{day}: prices already published – plan is final")
     now_cet = dt.datetime.now(ZoneInfo("Europe/Budapest"))
     if now_cet.date() >= target or (now_cet.date() == target - dt.timedelta(days=1) and now_cet.hour >= 12):
         raise SystemExit(f"too late: gate closure for {day} was 12:00 CET on the day before (now {now_cet:%Y-%m-%d %H:%M} CET)")
@@ -115,9 +118,15 @@ def plan(day):
         if not a: raise SystemExit(f"missing actual prices for {dd} – ingest it first")
         hist.append(a)
     f = blend(hist); net = schedule(f)
-    s["days"][day] = {"date": day, "source": "live", "planned_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
-                      "forecast": [round(x, 2) for x in f], "net": [round(x, 1) for x in net]}
-    save(s); print(f"planned {day}: buy {np.clip(-net,0,None).sum()*.25:.0f} MWh, sell {np.clip(net,0,None).sum()*.25:.0f} MWh")
+    rec = {"date": day, "source": "live", "planned_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
+           "forecast": [round(x, 2) for x in f], "net": [round(x, 1) for x in net]}
+    if old.get("net"):
+        if old["net"] == rec["net"] and old.get("forecast") == rec["forecast"]:
+            print(f"{day}: plan unchanged"); return False
+        rec["first_planned_at"] = old.get("first_planned_at", old.get("planned_at")); rec["revisions"] = old.get("revisions", 0) + 1
+    s["days"][day] = rec
+    save(s); print(f"{'re' if old.get('net') else ''}planned {day}: buy {np.clip(-net,0,None).sum()*.25:.0f} MWh, sell {np.clip(net,0,None).sum()*.25:.0f} MWh")
+    return True
 
 API = "https://api.energy-charts.info/price?bzn={z}&start={d}&end={d}"
 
@@ -270,12 +279,13 @@ def update_zone():
         except Exception as err:                # price server down: keep going, planning only needs stored data
             print(f"{day}: fetch failed ({err!r}) – will retry next run"); break
         ingest(day, a, b, method=f"2 direct API reads (GitHub Actions) · {SOURCE}"); changed = True; s = load()
-    # Lock the next plan as early as the data allows: D+1 until today's gate, and D+2 as soon as D+1 prices are
-    # published (still before D+2's gate). This survives long gaps between scheduled runs.
+    # Plan as early as the data allows (D+2 as soon as D+1 prices are published) so a plan always exists even if
+    # scheduled runs are skipped - and refresh it on every run until its gate (12:00 CET the day before), so the
+    # plan that counts is the one made with the latest data and settings. After the gate the plan is final.
     for k in (1, 2):
         day = (today + dt.timedelta(days=k)).isoformat()
-        if load()["days"].get(day, {}).get("net"): continue
-        try: plan(day); changed = True
+        try:
+            if plan(day, refresh=True) is not False: changed = True
         except SystemExit as err: print(f"plan {day} skipped:", err)
     print("changed" if changed else "no change")
 
