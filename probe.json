@@ -1,64 +1,41 @@
 {
- "at": "2026-10-05T15:50:12.029382Z",
+ "at": "2026-10-26T14:42:21.737721Z",
  "energy-charts HU": {
   "http": 200,
-  "bytes": 1869,
-  "head": "{\"license_info\":\"CC BY 4.0 (creativecommons.org/licenses/by/4.0) from Bundesnetzagentur | SMARD.de\",\"unix_seconds\":[1791151200,1791152100,1791153000,1791153900,",
-  "s": 0.6
+  "bytes": 1882,
+  "head": "{\"license_info\":\"CC BY 4.0 (creativecommons.org/licenses/by/4.0) from Bundesnetzagentur | SMARD.de\",\"unix_seconds\":[1792969200,1792970100,1792971000,1792971900,",
+  "s": 0.5
  },
  "energy-charts DE-LU": {
-  "http": 200,
-  "bytes": 1857,
-  "head": "{\"license_info\":\"CC BY 4.0 (creativecommons.org/licenses/by/4.0) from Bundesnetzagentur | SMARD.de\",\"unix_seconds\":[1791151200,1791152100,1791153000,1791153900,",
-  "s": 0.6
- },
- "energy-charts RO": {
   "http": 429,
   "body": "Too Many Requests",
-  "s": 0.6
+  "s": 0.5
+ },
+ "energy-charts RO": {
+  "http": 200,
+  "bytes": 2148,
+  "head": "{\"license_info\":\"The data provided herein is for private and internal use only. The utilization of any data, whether in its raw or derived form, for external or",
+  "s": 0.8
  },
  "energy-charts root": {
   "http": 200,
   "bytes": 1280,
   "head": "\n    <!DOCTYPE html>\n    <html>\n    <head>\n    <link type=\"text/css\" rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css\">\n    ",
-  "s": 0.9
+  "s": 0.5
  },
  "smard DE-LU index": {
   "http": 200,
-  "bytes": 5882,
+  "bytes": 5924,
   "head": "{\"timestamps\":[1538344800000,1538949600000,1539554400000,1540159200000,1540767600000,1541372400000,1541977200000,1542582000000,1543186800000,1543791600000,15443",
   "s": 0.9
  },
  "entsoe web": {
   "http": 401,
-  "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Acknowledgement_MarketDocument\n\txmlns=\"urn:iec62325.351:tc57wg16:451-1:acknowledgementdocument:7:0\">\n\t<mRID>6235e08b-de5",
-  "s": 2.8
+  "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Acknowledgement_MarketDocument\n\txmlns=\"urn:iec62325.351:tc57wg16:451-1:acknowledgementdocument:7:0\">\n\t<mRID>d02c6d24-164",
+  "s": 1.7
  },
  "entsoe_backup": {
   "token_present": true,
-  "HU": {
-   "points": 288,
-   "sample": [
-    204.51,
-    200.14,
-    190.08
-   ]
-  },
-  "RO": {
-   "points": 288,
-   "sample": [
-    204.51,
-    200.15,
-    190.09
-   ]
-  },
-  "DE": {
-   "points": 288,
-   "sample": [
-    195.78,
-    191.64,
-    188.01
-   ]
-  }
+  "error": "KeyError('DE')"
  }
 }
