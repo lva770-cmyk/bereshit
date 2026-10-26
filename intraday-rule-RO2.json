@@ -1,0 +1,64 @@
+{
+ "rule": {
+  "sell_at": 310,
+  "buy_at": 150,
+  "share": 0.2
+ },
+ "base": {
+  "days": 371,
+  "period": [
+   "2025-10-02",
+   "2026-10-24"
+  ],
+  "da_two_discharges": 5007344,
+  "da_one_discharge": 4331535,
+  "intraday_rule": -104928,
+  "sold_mwh_year": 2702,
+  "deadline_buy_mwh_year": 2322,
+  "days_with_sale_share": 0.245,
+  "open_mwh_total": 0.0
+ },
+ "alt_250_150": {
+  "days": 371,
+  "period": [
+   "2025-10-02",
+   "2026-10-24"
+  ],
+  "da_two_discharges": 5007344,
+  "da_one_discharge": 4331535,
+  "intraday_rule": -290194,
+  "sold_mwh_year": 5982,
+  "deadline_buy_mwh_year": 4858,
+  "days_with_sale_share": 0.469,
+  "open_mwh_total": 0.0
+ },
+ "alt_310_120": {
+  "days": 371,
+  "period": [
+   "2025-10-02",
+   "2026-10-24"
+  ],
+  "da_two_discharges": 5007344,
+  "da_one_discharge": 4331535,
+  "intraday_rule": -117468,
+  "sold_mwh_year": 2685,
+  "deadline_buy_mwh_year": 2611,
+  "days_with_sale_share": 0.245,
+  "open_mwh_total": 0.0
+ },
+ "alt_360_150": {
+  "days": 371,
+  "period": [
+   "2025-10-02",
+   "2026-10-24"
+  ],
+  "da_two_discharges": 5007344,
+  "da_one_discharge": 4331535,
+  "intraday_rule": -38319,
+  "sold_mwh_year": 1584,
+  "deadline_buy_mwh_year": 1335,
+  "days_with_sale_share": 0.151,
+  "open_mwh_total": 0.0
+ },
+ "generated_at": "2026-10-26T15:33:15+00:00"
+}
