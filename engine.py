@@ -202,6 +202,44 @@ def _src_smard(s0, e0):
             if v is not None: out[int(ms // 1000)] = float(v)
     return out
 
+_ECB = {}
+def _eur_ron(day):
+    """ECB EUR/RON reference rate of the last publication before `day` (cached per run)."""
+    import csv, io
+    if not _ECB:
+        t = _get("https://data-api.ecb.europa.eu/service/data/EXR/D.RON.EUR.SP00.A?format=csvdata&startPeriod=2025-08-01", kind="raw")
+        for r in csv.DictReader(io.StringIO(t.decode() if isinstance(t, bytes) else t)):
+            if r.get("OBS_VALUE"): _ECB[r["TIME_PERIOD"]] = float(r["OBS_VALUE"])
+    ks = [k for k in _ECB if k < day]
+    if not ks: raise RuntimeError("no ECB EUR/RON rate")
+    return _ECB[max(ks)]
+
+def _src_opcom(s0, e0):
+    """OPCOM (Romanian exchange) day-ahead results, official CSV export, 15-min, RON -> EUR at the ECB rate.
+    Romania only. Used per day when the other sources have not (yet) published a day."""
+    if ZONE not in ("RO", "RO2"): raise RuntimeError("OPCOM covers Romania only")
+    import urllib.request, http.cookiejar, csv, io
+    cj = http.cookiejar.CookieJar(); op = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+    op.addheaders = [("User-Agent", "Mozilla/5.0 (bereshit)")]
+    op.open("https://www.opcom.ro/grafice-ip-raportPIP-si-volumTranzactionat/ro", timeout=60).read()
+    tz = ZoneInfo("Europe/Budapest"); out = {}; d = dt.date.fromisoformat(s0)
+    while d <= dt.date.fromisoformat(e0):
+        try:
+            b = op.open(f"https://www.opcom.ro/rapoarte-pzu-raportPIP-export-csv/{d:%d/%m/%Y}/ro?resolution=15", timeout=60).read().decode("utf8", "replace")
+        except Exception: b = ""
+        if f"ziua de livrare: {d:%d/%m/%Y}" in b:
+            pts = {}
+            for r in csv.reader(io.StringIO(b)):
+                if len(r) >= 3 and r[0] == "Romania" and r[1].isdigit():
+                    try: pts[int(r[1])] = float(r[2])
+                    except ValueError: pass
+            if pts and len(pts) == _dst_len(d.isoformat()):
+                rate = _eur_ron(d.isoformat()); base = dt.datetime(d.year, d.month, d.day, tzinfo=tz).astimezone(dt.timezone.utc)
+                for i, v in pts.items():
+                    out[int((base + dt.timedelta(minutes=15 * (i - 1))).timestamp())] = round(v / rate, 2)
+        d += dt.timedelta(days=1)
+    return out
+
 def fetch_range(start, end):
     """Real prices split into CET/CEST delivery days (the SDAC day for every zone). Sources in order:
     Energy-Charts, then ENTSO-E (if a token is configured), then SMARD (Germany). The request is padded by a
@@ -215,16 +253,29 @@ def fetch_range(start, end):
             m = fn(s0, e0); SOURCE = name; break
         except Exception as err:
             errs.append(f"{name}: {err!r}"[:160])
-    if m is None: raise RuntimeError("all price sources failed – " + " | ".join(errs))
-    tz = ZoneInfo("Europe/Budapest"); by = {}
-    for t, p in m.items():
-        by.setdefault(dt.datetime.fromtimestamp(t, tz).date().isoformat(), {})[t] = p
-    out = {}
-    for day, mm in by.items():
-        if not (start <= day <= end): continue
-        vals = [mm[t] for t in sorted(mm)]
-        if len(vals) == _dst_len(day) or len(vals) * 4 == _dst_len(day):   # 15-min, or hourly
-            out[day] = vals
+    tz = ZoneInfo("Europe/Budapest")
+    def split(mm_):
+        by = {}
+        for t, p in (mm_ or {}).items():
+            by.setdefault(dt.datetime.fromtimestamp(t, tz).date().isoformat(), {})[t] = p
+        res = {}
+        for day, mm in by.items():
+            if not (start <= day <= end): continue
+            vals = [mm[t] for t in sorted(mm)]
+            if len(vals) == _dst_len(day) or len(vals) * 4 == _dst_len(day):   # 15-min, or hourly
+                res[day] = vals
+        return res
+    out = split(m) if m is not None else {}
+    want = []; d = dt.date.fromisoformat(start)
+    while d <= dt.date.fromisoformat(end): want.append(d.isoformat()); d += dt.timedelta(days=1)
+    if ZONE in ("RO", "RO2") and any(w not in out for w in want):    # Romania: the exchange itself, for missing days
+        try:
+            o = split(_src_opcom(start, end))
+            for w in want:
+                if w not in out and w in o: out[w] = o[w]; SOURCE = "OPCOM"
+        except Exception as err:
+            errs.append(f"OPCOM: {err!r}"[:160])
+    if m is None and not out: raise RuntimeError("all price sources failed – " + " | ".join(errs))
     return out
 
 def fetch_day(day):
