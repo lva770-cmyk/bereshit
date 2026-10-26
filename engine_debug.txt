@@ -1,19 +1,47 @@
 == HU
 2026-10-27: not published yet
-plan 2026-10-27 skipped: too late: gate closure for 2026-10-27 was 12:00 CET on the day before (now 2026-10-26 16:42 CET)
+plan 2026-10-27 skipped: too late: gate closure for 2026-10-27 was 12:00 CET on the day before (now 2026-10-26 16:45 CET)
 plan 2026-10-28 skipped: missing actual prices for 2026-10-27 – ingest it first
 no change
 == RO
 2026-10-27: not published yet
-plan 2026-10-27 skipped: too late: gate closure for 2026-10-27 was 12:00 CET on the day before (now 2026-10-26 16:42 CET)
+plan 2026-10-27 skipped: too late: gate closure for 2026-10-27 was 12:00 CET on the day before (now 2026-10-26 16:45 CET)
 plan 2026-10-28 skipped: missing actual prices for 2026-10-27 – ingest it first
 no change
 == RO2
 2026-10-27: not published yet
-plan 2026-10-27 skipped: too late: gate closure for 2026-10-27 was 12:00 CET on the day before (now 2026-10-26 16:42 CET)
+plan 2026-10-27 skipped: too late: gate closure for 2026-10-27 was 12:00 CET on the day before (now 2026-10-26 16:45 CET)
 plan 2026-10-28 skipped: missing actual prices for 2026-10-27 – ingest it first
 no change
-HU energy-charts points per CET day: {'2026-10-26': 96}
-HU ENTSO-E points per CET day: {'2026-10-26': 96}
-RO energy-charts points per CET day: {'2026-10-25': 4, '2026-10-26': 96}
-RO ENTSO-E points per CET day: {'2026-10-26': 96}
+OPCOM CSV 26/10/2026 105 lines
+"PIP si volum tranzactionat pentru ziua de livrare: 26/10/2026"
+
+"","Pret mediu [lei/MWh]","Volum [MWh]","Rezolutie"
+"ROPEX_DAM_Base (1-24)","1454.62","43790.2","PT15M"
+"ROPEX_DAM_Peak (33-80)","1513.33","23439.5","PT15M"
+"ROPEX_DAM_Off_Peak (1-32) & (81-96)","1395.91","20350.7","PT15M"
+"ROPEX_DAM_Storage Lei/MWh","First 2h/Last2h","First 2h/Last2h","920.52","769.56","PT15M"
+
+"Zona de tranzactionare","Interval","Pret de Inchidere a Pietei [lei/MWh]","Volum Tranzactionat [MW]","Volum Tranzactionat pe cumparare [MW]","Volum Tranzactionat pe vanzare [MW]","Rezolutie"
+"Romania","1","1298.77","1791.6","1791.6","1287.6","PT15M"
+"Romania","2","1219.65","1788.6","1788.6","1295.3","PT15M"
+"Romania","3","1322.09","1789.2","1789.2","1295.4","PT15M"
+"Romania","4","1356.29","1789.1","1789.1","1296.8","PT15M"
+"Romania","5","1302.17","1704.5","1704.5","1219.6","PT15M"
+... ['"Romania","94","1250.76","1649.0","1649.0","1213.9","PT15M"', '"Romania","95","1159.38","1608.6","1608.6","1246.0","PT15M"', '"Romania","96","1028.85","1566.6","1566.6","1278.8","PT15M"']
+OPCOM CSV 27/10/2026 105 lines
+"PIP si volum tranzactionat pentru ziua de livrare: 27/10/2026"
+
+"","Pret mediu [lei/MWh]","Volum [MWh]","Rezolutie"
+"ROPEX_DAM_Base (1-24)","1366.73","44626.9","PT15M"
+"ROPEX_DAM_Peak (33-80)","1429.83","23709.1","PT15M"
+"ROPEX_DAM_Off_Peak (1-32) & (81-96)","1303.63","20917.8","PT15M"
+"ROPEX_DAM_Storage Lei/MWh","First 2h/Last2h","First 2h/Last2h","567.03","495.21","PT15M"
+
+"Zona de tranzactionare","Interval","Pret de Inchidere a Pietei [lei/MWh]","Volum Tranzactionat [MW]","Volum Tranzactionat pe cumparare [MW]","Volum Tranzactionat pe vanzare [MW]","Rezolutie"
+"Romania","1","1198.04","1892.9","1892.9","842.3","PT15M"
+"Romania","2","1070.33","1869.3","1869.3","849.6","PT15M"
+"Romania","3","1231.15","1853.0","1853.0","855.0","PT15M"
+"Romania","4","1202.78","1835.8","1835.8","862.7","PT15M"
+"Romania","5","1216.45","1830.0","1830.0","860.1","PT15M"
+... ['"Romania","94","1256.76","1667.5","1667.5","1500.4","PT15M"', '"Romania","95","1136.64","1637.1","1637.1","1483.2","PT15M"', '"Romania","96","1144.68","1611.1","1611.1","1463.0","PT15M"']
