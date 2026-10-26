@@ -22,20 +22,15 @@ jobs:
         run: |
           python engine.py update > engine_debug.txt 2>&1 || echo "EXIT $?" >> engine_debug.txt
           python - >> engine_debug.txt 2>&1 <<'PY'
-          import engine, datetime as dt, collections, json, urllib.request
-          from zoneinfo import ZoneInfo
-          for z in ("HU", "RO"):
-              engine.use_zone(z)
-              m = engine._src_energy_charts("2026-10-26", "2026-10-28")
-              by = collections.Counter(dt.datetime.fromtimestamp(t, ZoneInfo("Europe/Budapest")).date().isoformat() for t in m)
-              print(z, "energy-charts points per CET day:", dict(sorted(by.items())))
-              ts = sorted(t for t in m if dt.datetime.fromtimestamp(t, ZoneInfo("Europe/Budapest")).date().isoformat() == "2026-10-27")
-              if ts: print("  27.10 first/last", dt.datetime.fromtimestamp(ts[0], ZoneInfo("Europe/Budapest")), dt.datetime.fromtimestamp(ts[-1], ZoneInfo("Europe/Budapest")), "steps", sorted(set(b - a for a, b in zip(ts, ts[1:]))))
+          import urllib.request, http.cookiejar
+          cj = http.cookiejar.CookieJar(); op = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+          op.addheaders = [("User-Agent", "Mozilla/5.0 (bereshit)")]
+          op.open("https://www.opcom.ro/grafice-ip-raportPIP-si-volumTranzactionat/ro", timeout=60).read()
+          for d in ("26/10/2026", "27/10/2026"):
               try:
-                  m2 = engine._src_entsoe("2026-10-26", "2026-10-28")
-                  by2 = collections.Counter(dt.datetime.fromtimestamp(t, ZoneInfo("Europe/Budapest")).date().isoformat() for t in m2)
-                  print(z, "ENTSO-E points per CET day:", dict(sorted(by2.items())))
-              except Exception as e: print(z, "ENTSO-E error", repr(e)[:150])
+                  b = op.open(f"https://www.opcom.ro/rapoarte-pzu-raportPIP-export-csv/{d}/ro?resolution=15", timeout=60).read().decode("utf8", "replace")
+                  lines = b.splitlines(); print("OPCOM CSV", d, len(lines), "lines"); print("\n".join(lines[:14])); print("...", lines[-3:])
+              except Exception as e: print("OPCOM CSV", d, "error", repr(e)[:200])
           PY
           sed -i "s/${ENTSOE_TOKEN:-NO_TOKEN_SET}/[redacted]/g" engine_debug.txt
       - name: commit
