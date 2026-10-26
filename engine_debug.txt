@@ -1,18 +1,18 @@
 == HU
 2026-10-27: not published yet
-plan 2026-10-27 skipped: too late: gate closure for 2026-10-27 was 12:00 CET on the day before (now 2026-10-26 16:45 CET)
+plan 2026-10-27 skipped: too late: gate closure for 2026-10-27 was 12:00 CET on the day before (now 2026-10-26 16:48 CET)
 plan 2026-10-28 skipped: missing actual prices for 2026-10-27 – ingest it first
 no change
 == RO
-2026-10-27: not published yet
-plan 2026-10-27 skipped: too late: gate closure for 2026-10-27 was 12:00 CET on the day before (now 2026-10-26 16:45 CET)
-plan 2026-10-28 skipped: missing actual prices for 2026-10-27 – ingest it first
-no change
+ingested 2026-10-27: avg 255.59 €/MWh, realized 1975, perfect 10737
+plan 2026-10-27 skipped: 2026-10-27: prices already published – plan is final
+planned 2026-10-28: buy 261 MWh, sell 230 MWh
+changed
 == RO2
-2026-10-27: not published yet
-plan 2026-10-27 skipped: too late: gate closure for 2026-10-27 was 12:00 CET on the day before (now 2026-10-26 16:45 CET)
-plan 2026-10-28 skipped: missing actual prices for 2026-10-27 – ingest it first
-no change
+ingested 2026-10-27: avg 255.59 €/MWh, realized 1481, perfect 9856
+plan 2026-10-27 skipped: 2026-10-27: prices already published – plan is final
+planned 2026-10-28: buy 203 MWh, sell 179 MWh
+changed
 OPCOM CSV 26/10/2026 105 lines
 "PIP si volum tranzactionat pentru ziua de livrare: 26/10/2026"
 
