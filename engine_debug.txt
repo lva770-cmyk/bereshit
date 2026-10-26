@@ -10,3 +10,7 @@ no change
 2026-10-27: not published yet
 plan 2026-10-28 skipped: missing actual prices for 2026-10-27 – ingest it first
 no change
+HU energy-charts points per CET day: {'2026-10-26': 96}
+HU ENTSO-E points per CET day: {'2026-10-26': 96}
+RO energy-charts points per CET day: {'2026-10-25': 4, '2026-10-26': 96}
+RO ENTSO-E points per CET day: {'2026-10-26': 96}
