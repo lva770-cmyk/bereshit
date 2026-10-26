@@ -1,13 +1,16 @@
 == HU
 2026-10-27: not published yet
+plan 2026-10-27 skipped: too late: gate closure for 2026-10-27 was 12:00 CET on the day before (now 2026-10-26 16:42 CET)
 plan 2026-10-28 skipped: missing actual prices for 2026-10-27 – ingest it first
 no change
 == RO
 2026-10-27: not published yet
+plan 2026-10-27 skipped: too late: gate closure for 2026-10-27 was 12:00 CET on the day before (now 2026-10-26 16:42 CET)
 plan 2026-10-28 skipped: missing actual prices for 2026-10-27 – ingest it first
 no change
 == RO2
 2026-10-27: not published yet
+plan 2026-10-27 skipped: too late: gate closure for 2026-10-27 was 12:00 CET on the day before (now 2026-10-26 16:42 CET)
 plan 2026-10-28 skipped: missing actual prices for 2026-10-27 – ingest it first
 no change
 HU energy-charts points per CET day: {'2026-10-26': 96}
