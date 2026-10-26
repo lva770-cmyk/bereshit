@@ -28,6 +28,8 @@ jobs:
         run: for z in HU RO RO2; do [ -f yearly-$z.json ] || python yearly.py $z || true; done
         env:
           ENTSOE_TOKEN: ${{ secrets.ENTSOE_TOKEN }}
+      - name: intraday auctions IDA1-3 re-trading (Project 50, paper)
+        run: python intraday_live.py || true
       - name: balancing auctions + co-optimised plan (Project 50)
         run: python balancing.py || true
         env:
