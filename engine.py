@@ -26,7 +26,20 @@ BZN = {"DE": "DE-LU", "RO2": "RO"}   # Energy-Charts bidding-zone code where it 
 # Default 40 MW / 160 MWh (4 h), 2 cycles, EUR 3/MWh wear.
 # RO2 = a generic 2-hour battery in Romania: ~50 MW, ~84 MWh delivered per full discharge (89.5 MWh stored x sqrt(0.88)),
 # up to 2 full discharges/day and no per-MWh wear charge (ageing is counted as capacity fade in the return calculation).
-BATTERY = {"RO2": (50.0, 89.5, 2.0, 0.0)}
+BATTERY = {"RO2": (49.4, 76.0, 2.0, 0.0)}
+# RO2 is modelled as the real plant: 49.4 MW AC, a 10%-90% state-of-charge window in the early years (~71 MWh delivered
+# per full discharge), and the plant's own consumption is charged at the market price every quarter-hour:
+# auxiliaries (HVAC, BMS, fire safety) 0.55 MW while operating and 60% of that while idle, plus 0.082 MW of transformer
+# no-load and inverter standby losses, all the time.
+PLANT = {"RO2": {"aux_active_mw": 0.55, "aux_idle_frac": 0.6, "noload_mw": 0.082}}
+
+def plant_cost(net, a, zone=None):
+    """EUR the plant spends on its own consumption over a day (net: 96 MW schedule, a: 96 EUR/MWh)."""
+    c = PLANT.get(zone or ZONE)
+    if not c: return 0.0
+    net, a = np.asarray(net, float), np.asarray(a, float)
+    aux = np.where(np.abs(net) > 0.01, c["aux_active_mw"], c["aux_active_mw"] * c["aux_idle_frac"]) + c["noload_mw"]
+    return float((a * aux * .25).sum())
 ZONE = "HU"
 def use_zone(z):
     global STATE, ZONE, P_MW, E_MWH, CYC, WEAR

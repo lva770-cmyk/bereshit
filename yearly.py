@@ -34,7 +34,8 @@ def run(zone):
             bl = engine.settle(nb, a) / engine.P_MW
             gr = bl + engine.WEAR * float(np.clip(nb, 0, None).sum()) * .25 / engine.P_MW   # gross = before the €3/MWh wear charge
             nv = engine.settle(engine.schedule(hist[-1]), a) / engine.P_MW
-            rows.append(f"{d:%y-%m-%d},{pf:.0f},{bl:.0f},{nv:.0f},{gr:.0f}")
+            pc = engine.plant_cost(nb, a) / engine.P_MW          # plant's own consumption (zones modelled as a real plant)
+            rows.append(f"{d:%y-%m-%d},{pf:.0f},{bl:.0f},{nv:.0f},{gr:.0f}" + (f",{pc:.0f}" if engine.ZONE in engine.PLANT else ""))
         d += dt.timedelta(days=1)
     json.dump({"zone": zone, "per": "MW", "rows": ";".join(rows),
                "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")},

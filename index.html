@@ -232,7 +232,7 @@ tr.fut td{opacity:.5}
 .bal .ch{background:transparent;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 0 2px;margin:4px 0 6px}.bal .ch svg{width:100%;height:auto;display:block;direction:ltr}
 .bal .ch text{fill:#77736a;font-size:10.5px;font-family:var(--f-num)}
 .bal .lg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--ink3);margin:2px 0 6px}.bal .lg i{display:inline-block;width:11px;height:8px;border-radius:2px;margin-inline-end:5px;vertical-align:middle}
-.bal table{width:100%;border-collapse:collapse;font-size:13px}.bal td,.bal th{padding:6px 6px;border-bottom:1px solid var(--line);text-align:start}.bal th{color:var(--ink3);font-weight:500;font-size:12px}.bal td.n{font-family:var(--f-num);white-space:nowrap}
+.tind-m{}@media(max-width:600px){#tind .hm{display:none}#tind td,#tind th{padding:6px 2px;font-size:12px}#tind .dgrid .v{font-size:20px}}.bal table{width:100%;border-collapse:collapse;font-size:13px}.bal td,.bal th{padding:6px 6px;border-bottom:1px solid var(--line);text-align:start}.bal th{color:var(--ink3);font-weight:500;font-size:12px}.bal td.n{font-family:var(--f-num);white-space:nowrap}
 .bal .ok{color:var(--gain)}
 .bal .bh{margin:20px 0 2px;font-size:14px;font-weight:600;color:var(--ink)}
 .bal .ex{margin:0 0 6px;font-size:12.5px;color:var(--ink2);line-height:1.55;max-width:760px}
@@ -479,7 +479,7 @@ function runs(c){const R=[];let cur=null;c.n.forEach((v,t)=>{const side=Math.abs
 /* ---------- zones: one engine, one state file per bidding zone ---------- */
 const ZINFO={HU:{name:'הונגריה',adj:'ההונגרי',inn:'בהונגריה',ex:'HUPX',file:'data.json',src:'HU',mw:40},RO:{name:'רומניה',adj:'הרומני',inn:'ברומניה',ex:'OPCOM',file:'data-RO.json',src:'RO',mw:40},
  P20:{name:'פרויקט 20',adj:'הרומני',inn:'ברומניה',ex:'OPCOM',file:'data-RO.json',src:'RO',mw:20,project:true},
- P50:{name:'פרויקט 50',adj:'הרומני',inn:'ברומניה',ex:'OPCOM',file:'data-RO2.json',src:'RO2',mw:50,h:2,emax:89.5,lab:'50 MW / 100 MWh',cyc:2,wear:0,project:true,deal:'p50'}};
+ P50:{name:'פרויקט 50',adj:'הרומני',inn:'ברומניה',ex:'OPCOM',file:'data-RO2.json',src:'RO2',mw:49.4,h:2,emax:76,lab:'50 MW / 100 MWh',cyc:2,wear:0,project:true,deal:'p50'}};
 let ZONE=(()=>{const h=(location.hash||'').slice(1).toUpperCase();if(ZINFO[h])return h;try{const v=localStorage.getItem('bereshit.zone');if(ZINFO[v])return v}catch(e){}return 'HU'})();
 const ZI=()=>ZINFO[ZONE];const CACHE={HU:normState(SNAP,40)};setSize(ZI().mw,ZI().h,ZI().emax,ZI().lab);
 function playable(st){return st&&st.days&&Object.keys(st.days).some(k=>st.days[k].net&&st.days[k].actual)}
@@ -634,7 +634,7 @@ const DHEAD={p20:['פרויקט 20 · האם זה תואם להצעת המוכר
 function dealHead(k){const s=$('deal');s.querySelector('h2').textContent=DHEAD[k][0];s.querySelector('.sub').innerHTML=DHEAD[k][1];s.setAttribute('aria-label',DHEAD[k][0])}
 const P50={opex:0.45e6,wext:0,soh:Array.from({length:17},(_,t)=>95*Math.pow(0.9725,t))};P50.years=P50.soh.length;let P50PX='';
 function econAt(capex,rev){const cfs=[-capex];P50.soh.forEach((h,t)=>cfs.push(rev*h/P50.soh[0]-P50.opex-(t>=5&&t<=9?P50.wext:0)));let cum=0,pb=null;cfs.forEach((c,t)=>{cum+=c;if(pb===null&&t>0&&cum>=0)pb=t});return {irr:irrOf(cfs),pb}}
-let P50YR=0,IDJ=null;
+let P50YR=0,IDJ=null,P50ND=null;
 /* Revenue stacks for the return calculation. The day-ahead figure is the measured one above; balancing and intraday are
    added as UPLIFTS measured inside one consistent model (co-plan vs trade-only), so model differences do not leak in. */
 function p50stacks(yr){const st=[{k:'da',l:'יום-מראש בלבד',v:yr}];let idUp=null,idCons=null;
@@ -649,28 +649,59 @@ function p50calc(yr){const out=$('p50out');if(!out)return;const v=parseFloat(P50
  const rows=st.map(r=>{const e=econAt(capex,r.v);return `<tr${r.main?' class="ok"':''}${r.risk?' style="color:var(--ink3)"':''}><td>${r.main?'<b>'+r.l+'</b>':r.l}</td><td class="n">${bd(fmtE(r.v))}</td><td class="n"><b>${bd((e.irr*100).toFixed(1)+'%')}</b></td><td class="n">${(e.pb?bd(String(e.pb))+' שנים':'מעל '+bd(String(P50.years)))}</td></tr>`}).join('');
  out.innerHTML=`<div class="tw"><table><thead><tr><th>הכנסה מ…</th><th>בשנה</th><th>IRR</th><th>החזר</th></tr></thead><tbody>${rows}</tbody></table></div>
  <p class="fine" style="margin:6px 0 0">מחיר ${bd(fmtE(capex))} = ${bd(fmtE(capex/ZI().mw))} למגה-וואט.${idUp!=null?` המכרזים התוך-יומיים מוסיפים ${bd(fmtE(idUp))} בשנה, כמו שהמערכת סוחרת בהם עכשיו. השורות האפורות הן תרחישי סיכון.`:''} לא נכללו עמלות של חברת מסחר.</p>`}
+/* Project 50 is modelled as the real plant: its own consumption (auxiliaries + transformer/inverter standby) is
+   paid at the market price every quarter-hour; same constants as engine.PLANT["RO2"]. K = realised / forecast-implied
+   day-ahead result, fitted on the last year's walk-forward backtest (0.85). */
+const PL50={aux:0.55,idle:0.6,nl:0.082,k:0.85};
+function plantCost(net,a){let c=0;for(let t=0;t<96;t++){const aux=(Math.abs(net[t])>0.01?PL50.aux:PL50.aux*PL50.idle)+PL50.nl;c+=a[t]*aux*.25}return c}
+function cashDA(net,a,upto=96){let c=0;for(let t=0;t<upto;t++)c+=a[t]*net[t]*.25;return c}
+function plantCostUpto(net,a,upto){let c=0;for(let t=0;t<upto;t++){const aux=(Math.abs(net[t])>0.01?PL50.aux:PL50.aux*PL50.idle)+PL50.nl;c+=a[t]*aux*.25}return c}
+function tradeInd(ND){const today=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Budapest'});const tm=addDays(today,1);
+ const idAvg=IDJ&&IDJ.base?IDJ.base.intraday/365:null;
+ const nowB=new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/Budapest'}));const q=Math.min(96,Math.floor((nowB.getHours()*60+nowB.getMinutes())/15));
+ let SOFAR='';const row=(day,lbl)=>{const d=(S.days||{})[day];if(!d||!d.net)return `<tr><td>${lbl} · ${bd(dlabel(day))}</td><td colspan="5" style="color:var(--ink3);white-space:normal">התוכנית ליום הזה עוד לא נבנתה</td></tr>`;
+  const known=!!d.actual,a=d.actual||d.forecast;
+  const da=known?(d.realized!=null?d.realized:cashDA(d.net,a)):PL50.k*cashDA(d.net,d.forecast);
+  const idv=d.intraday_pnl!=null?d.intraday_pnl:null,idShow=idv!=null?idv:idAvg;
+  const pc=plantCost(d.net,a),net=da+(idShow||0)-pc;
+  const st=known?(idv!=null?'יום-מראש נעול · תוך-יומי בפועל':'יום-מראש נעול · תוך-יומי צפוי'):'הכול צפי לפי התחזית';
+  let sofar='';if(day===today&&known&&q<96){const s=cashDA(d.net,d.actual,q)-plantCostUpto(d.net,d.actual,q);SOFAR=`היום עד עכשיו, בפועל: ${bd(fmtE(s))} מיום-מראש אחרי צריכה עצמית${s<0?' (הטעינה כבר נקנתה, המכירה בהמשך היום)':''}.`}
+  return `<tr><td>${lbl}<span class="hm"> · ${bd(dlabel(day))}</span></td><td class="n">${bd((known?'':'~')+fmtE(da))}</td><td class="n">${idShow!=null?bd((idv!=null?'':'~')+fmtE(idShow)):'—'}</td><td class="n">${bd('−'+fmtE(pc))}</td><td class="n"><b>${bd((known&&idv!=null?'':'~')+fmtE(net))}</b></td><td class="hm" style="color:var(--ink3);font-size:12px">${st}</td></tr>`};
+ const vals=ND.slice().sort((x,y)=>x-y),pct=p=>vals.length?vals[Math.min(vals.length-1,Math.floor(p*vals.length))]:0,mean=vals.reduce((a,b)=>a+b,0)/Math.max(1,vals.length);
+ const yrDA=mean*365,yrID=idAvg!=null?idAvg*365:0,yrAll=yrDA+yrID;
+ return `<div class="bal" id="tind" style="border-top:0;margin-top:0;padding-top:0"><h3>אינדיקציה למסחר · מה התחנה אמורה להרוויח</h3>
+ <p class="fine" style="margin:0 0 8px">הרווח נטו לתחנה: מסחר יום-מראש ועוד המכרזים התוך-יומיים, פחות החשמל שהתחנה צורכת בעצמה (מיזוג, בקרה ושנאים). לפני עלויות תפעול קבועות.</p>
+ <div class="tw"><table><thead><tr><th>יום</th><th>יום-מראש</th><th>תוך-יומי</th><th>צריכה עצמית</th><th>נטו</th><th class="hm">מצב</th></tr></thead><tbody>${(()=>{const r1=row(today,'היום'),r2=row(tm,'מחר');return r1+r2})()}</tbody></table></div>${SOFAR?`<p class="fine" style="margin:6px 0 0">${SOFAR}</p>`:''}
+ <div class="dgrid" style="margin-top:12px">
+  <div class="st"><span class="k">צפי לשנה הקרובה · נטו</span><span class="v num up">${bd(fmtE(yrAll))}</span><span class="h">${bd(fmtE(yrDA))} יום-מראש · ${bd(fmtE(yrID))} תוך-יומי</span></div>
+  <div class="st"><span class="k">יום ממוצע</span><span class="v num">${bd(fmtE(yrAll/365))}</span><span class="h">לפי 365 הימים האחרונים</span></div>
+  <div class="st"><span class="k">יום חלש · יום חזק</span><span class="v num" style="font-size:18px;line-height:1.5">חלש ${bd(fmtE(pct(.1)+(idAvg||0)))}<br>חזק ${bd(fmtE(pct(.9)+(idAvg||0)))}</span><span class="h">${bd('10%')} מהימים חלשים יותר, ${bd('10%')} חזקים יותר</span></div>
+  <div class="st"><span class="k">אחרי עלויות תפעול</span><span class="v num">${bd(fmtE(yrAll-P50.opex))}</span><span class="h">אחרי ${bd(fmtE(P50.opex))} תפעול בשנה (הנחה)</span></div>
+ </div>
+ <p class="fine" style="margin-top:6px">איך מחושב הצפי: לפני שמחירי יום-מראש ידועים, הצפי הוא ${bd('85%')} ממה שהתוכנית מרוויחה לפי התחזית. זה היחס שנמדד בשנה האחרונה בין מה שהתחזית הבטיחה למה שהתקבל בפועל. אחרי שהמחירים מתפרסמים (בערך 13:00 ביום הקודם), סכום יום-מראש ידוע ונעול. התוך-יומי הוא הממוצע היומי בשנה האחרונה, עד שתוצאות המכרזים מתפרסמות. הצפי השנתי מניח שהמחירים בשנה הקרובה יתנהגו כמו בשנה האחרונה. ${bd('~')} = צפי.</p></div>`}
 function drawDeal50(){dealHead('p50');const mw=ZI().mw;
- const G={},N={},live={};(D||[]).forEach(r=>{if(r.g!=null){G[r.d]=r.g;N[r.d]=r.bl}});
- Object.keys(S.days||{}).forEach(k=>{const d=S.days[k];if(d.actual&&d.net&&d.realized!=null){const c=calc(d);G[k]=d.realized+c.wear.reduce((a,b)=>a+b,0);N[k]=d.realized;live[k]=d.source==='live'}});
+ const G={},C={},live={};(D||[]).forEach(r=>{if(r.g!=null){G[r.d]=r.g;C[r.d]=r.c!=null?r.c:0}});
+ Object.keys(S.days||{}).forEach(k=>{const d=S.days[k];if(d.actual&&d.net&&d.realized!=null){const c=calc(d);G[k]=d.realized+c.wear.reduce((a,b)=>a+b,0);C[k]=plantCost(d.net,d.actual);live[k]=d.source==='live'}});
  const ks=Object.keys(G).sort().slice(-365);
  if(ks.length<60){$('dealbody').innerHTML='<p class="fine">טוען את הבדיקה השנתית… (בפעם הראשונה היא נבנית אוטומטית ותופיע כאן תוך זמן קצר)</p>';return}
- const sum=(m,a)=>a.reduce((x,k)=>x+(m[k]||0),0),ann=365/ks.length;const yr=sum(G,ks)*ann,yrN=sum(N,ks)*ann,k30=ks.slice(-30),m30=sum(G,k30)*365/30;
+ const ND=ks.map(k=>G[k]-(C[k]||0));
+ const sum=a=>a.reduce((x,v)=>x+v,0),ann=365/ks.length;const yr=sum(ND)*ann,yrG=sum(ks.map(k=>G[k]))*ann,k30=ND.slice(-30),m30=sum(k30)*365/30;
  const nLive=ks.filter(k=>live[k]).length,first=ks[0],last=ks[ks.length-1];
  const trend=m30>=yr*1.05?'גבוה מהממוצע השנתי':m30<=yr*.95?'נמוך מהממוצע השנתי':'דומה לממוצע השנתי';
- $('dealbody').innerHTML=`<div class="verdict ok"><span class="big">${bd(fmtE(yr))} בשנה</span>
-  <p>זה מה שהסוללה הייתה מכניסה ב-365 הימים האחרונים ממסחר יום-מראש בלבד (ברוטו, לפני בלאי). כלומר ${bd(fmtE(yr/mw))} למגה-וואט בשנה. המכרזים התוך-יומיים הם תוספת: הם מוצגים בהמשך העמוד ונכללים במחשבון התשואה.</p></div>
+ $('dealbody').innerHTML=tradeInd(ND)+`<div class="verdict ok" style="margin-top:18px"><span class="big">${bd(fmtE(yr))} בשנה</span>
+  <p>זה מה שהתחנה הייתה מכניסה ב-365 הימים האחרונים ממסחר יום-מראש, אחרי החשמל שהיא צורכת בעצמה (${bd(fmtE(yrG-yr))} בשנה). כלומר ${bd(fmtE(yr/mw))} למגה-וואט בשנה. המכרזים התוך-יומיים הם תוספת: הם מוצגים בהמשך העמוד ונכללים במחשבון התשואה.</p></div>
  <div class="dgrid">
-  <div class="st"><span class="k">הכנסה בפועל · 365 יום · ברוטו</span><span class="v num up">${bd(fmtE(yr))}</span><span class="h">${bd(fmtE(yr/mw))} למגה-וואט${Math.abs(yr-yrN)>1?' · אחרי בלאי '+bd(fmtE(yrN)):''}</span></div>
+  <div class="st"><span class="k">יום-מראש · 365 יום · נטו</span><span class="v num up">${bd(fmtE(yr))}</span><span class="h">לפני הצריכה העצמית: ${bd(fmtE(yrG))}</span></div>
   <div class="st"><span class="k">30 הימים האחרונים · בקצב שנתי</span><span class="v num">${bd(fmtE(m30))}</span><span class="h">${trend} · חודש אחד בלבד</span></div>
-  <div class="st"><span class="k">גודל התחנה</span><span class="v num">${bd(ZI().lab)}</span><span class="h">${bd('~84 MWh')} לרשת בפריקה מלאה · עד ${bd('2')} פריקות ביום</span></div>
+  <div class="st"><span class="k">גודל התחנה</span><span class="v num">${bd(ZI().lab)}</span><span class="h">${bd('~71 MWh')} לרשת בפריקה מלאה · עד ${bd('2')} פריקות ביום</span></div>
   <div class="st"><span class="k">ימים שנמדדו</span><span class="v num">${bd(String(ks.length))}</span><span class="h">${bd(String(nLive))} מהם במסחר חי</span></div>
  </div>
- <div class="calc50"><label for="p50px">מחיר רכישה (מיליוני אירו)</label><input id="p50px" type="number" inputmode="decimal" min="0" step="0.5" placeholder="למשל 25" dir="ltr" value="${P50PX}"></div>
+ <div class="calc50"><label for="p50px">מחיר רכישה (מיליוני אירו)</label><input id="p50px" type="number" inputmode="decimal" min="0" step="0.5" placeholder="למשל 20" dir="ltr" value="${P50PX}"></div>
  <div id="p50out"></div>
- <p class="fine">הסוללה במודל: כ-${bd('50 MW')}, כ-${bd('84 MWh')} לרשת בפריקה מלאה בשנה הראשונה (מתוך ${bd('100 MWh')} נומינליים), נצילות הלוך-חזור של ${bd('88%')}, ועד ${bd('2')} פריקות מלאות ביום, בלי חיוב בלאי לכל MWh (ההתבלות נספרת כירידת קיבולת בחישוב התשואה).<br>איך מחושבת התשואה: ${bd(String(P50.years))} שנות הפעלה עם ירידת קיבולת של כ-${bd('2.75%')} בשנה, ותפעול של ${bd(fmtE(P50.opex))} בשנה (הנחה). לפני מסים ומימון. ההכנסה: מסחר יום-מראש כפי שנמדד, ועליו התוספות של מכרזי האיזון והמסחר התוך-יומי (בטבלה).<br>
- איך נמדד: אותו מנוע של בראשית ואותה נעילת לוח לפני סגירת השער, על התחנה הזו ומחירי OPCOM האמיתיים, ${bd(dlabel(first)+'.'+first.slice(2,4)+'–'+dlabel(last)+'.'+last.slice(2,4))}: ${bd(String(nLive))} ימים נסחרו חי, השאר מהבדיקה לאחור. מסחר מדומה בלבד, שום פקודה לא נשלחת לבורסה.</p>`;
+ <p class="fine">התחנה במודל: ${bd('49.4 MW')} בממירים, חלון טעינה של ${bd('10%')} עד ${bd('90%')} בשנים הראשונות, כלומר כ-${bd('71 MWh')} לרשת בפריקה מלאה (מתוך ${bd('100 MWh')} נומינליים), נצילות הלוך-חזור של ${bd('88%')}, עד ${bd('2')} פריקות מלאות ביום, בלי חיוב בלאי לכל MWh. הצריכה העצמית נקנית במחיר השוק בכל רבע שעה: ${bd('0.55 MW')} בזמן פעולה, ${bd('60%')} מזה בזמן המתנה, ועוד ${bd('0.08 MW')} הפסדי שנאים וממירים כל הזמן.<br>איך מחושבת התשואה: ${bd(String(P50.years))} שנות הפעלה עם ירידת קיבולת של כ-${bd('2.75%')} בשנה, ותפעול של ${bd(fmtE(P50.opex))} בשנה (הנחה). לפני מסים ומימון.<br>
+ איך נמדד: אותו מנוע של בראשית ואותה נעילת לוח לפני סגירת השער, על התחנה הזו ומחירי OPCOM האמיתיים, ${bd(dlabel(first)+'.'+first.slice(2,4)+'–'+dlabel(last)+'.'+last.slice(2,4))}: ${bd(String(nLive))} ימים נסחרו חי, השאר מהבדיקה לאחור. ימים שתוכננו לפני ${bd('30.10.26')} נבנו עם ההגדרות הקודמות של התחנה. מסחר מדומה בלבד, שום פקודה לא נשלחת לבורסה.</p>`;
  $('dealbody').insertAdjacentHTML('beforeend',idHtml()+plant50Html());loadId();mount3d();
- const inp=$('p50px');inp.oninput=()=>{P50PX=inp.value;p50calc(yr)};P50YR=yr;p50calc(yr);if(!IDJ)fetch('intraday-RO2.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j){IDJ=j;p50calc(P50YR)}}).catch(()=>{});if(LIVE)drawKpis()}
+ const inp=$('p50px');inp.oninput=()=>{P50PX=inp.value;p50calc(yr)};P50YR=yr;p50calc(yr);P50ND=ND;if(LIVE)drawKpis()}
 
 /* ---------- Project 50: balancing-capacity auctions co-optimised with day-ahead trading (bal-RO2.json) ---------- */
 let BAL=null,BALDAY=null;const BK=['aFRR up','aFRR down','mFRR up','mFRR down'];
@@ -679,7 +710,7 @@ const BHE={'aFRR up':'aFRR למעלה','aFRR down':'aFRR למטה','mFRR up':'mF
 function balHtml(){return `<div class="bal" id="bal"><h3>מכרזי איזון ומסחר · תוכנית משולבת</h3><p class="fine" style="margin:0 0 8px">כל יום המערכת מחליטה כמה מגה-וואט להציע במכרזי האיזון היומיים של Transelectrica (aFRR ו-mFRR, למעלה ולמטה) וכמה להשאיר למסחר יום-מראש, כדי למקסם את ההכנסה של שניהם יחד. ההחלטה נעשית ביום הקודם, לפי תחזית מהשבוע האחרון בלבד. התנאי הקשיח: הסוללה תמיד יכולה לספק את מה שהתחייבה, כלומר יש הספק פנוי וגם מספיק אנרגיה בסוללה לכל שעה של התחייבות. מדומה בלבד.</p><div id="balbody"><p class="fine">טוען…</p></div></div>`}
 /* Intraday research block (Project 50): DA (+ balancing) then re-trading the position in IDA1 and the continuous market. */
 function idHtml(){return `<div class="bal" id="idsec"><h3>מכרזים תוך-יומיים · מסחר חי</h3><p class="fine" style="margin:0 0 8px">אחרי שמחירי יום-מראש מתפרסמים, הבורסה עורכת שלושה מכרזים תוך-יומיים לאותו יום: IDA1 (ביום הקודם, 15:00), IDA2 (ביום הקודם, 22:00) ו-IDA3 (באותו יום, 10:00, לחצי השני של היום). בכל מכרז המערכת מתקנת את התוכנית: מוכרת עוד היכן שהמחיר גבוה וקונה בחזרה היכן שהוא נמוך, בגבולות הסוללה (עד ${bd('2')} פריקות ביום). ההחלטה לכל מכרז מתקבלת רק ממה שידוע לפניו: מחירי יום-מראש, ואחר כך מחירי המכרז הקודם.</p><div id="idtoday"></div><div id="idbody"><p class="fine">טוען…</p></div></div>`}
-async function loadId(){drawIdToday();try{const r=await fetch('intraday-RO2.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;IDJ=await r.json();drawId(IDJ);if(P50YR)p50calc(P50YR)}catch(e){const b=$('idbody');if(b)b.innerHTML='<p class="fine">הבדיקה השנתית עדיין לא זמינה.</p>'}}
+async function loadId(){drawIdToday();try{const r=await fetch('intraday-RO2.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;IDJ=await r.json();drawId(IDJ);if(P50YR)p50calc(P50YR);const t=$('tind');if(t&&P50ND)t.outerHTML=tradeInd(P50ND)}catch(e){const b=$('idbody');if(b)b.innerHTML='<p class="fine">הבדיקה השנתית עדיין לא זמינה.</p>'}}
 function drawIdToday(){const box=$('idtoday');if(!box||!S||!S.days)return;const today=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Budapest'});
  const days=[today,addDays(today,1)].filter(d=>S.days[d]);if(!days.length){box.innerHTML='';return}
  const row=(d)=>{const r=S.days[d],id=r.intraday||{},lbl=d===today?'היום':'מחר';
@@ -688,7 +719,7 @@ function drawIdToday(){const box=$('idtoday');if(!box||!S||!S.days)return;const 
   return `<tr><td>${lbl} · ${bd(d.slice(8)+'.'+d.slice(5,7))}</td><td class="n">${da!=null?bd(fmtE(da)):'—'}</td>${aucs}<td class="n"><b>${da!=null?bd(fmtE(tot)):(r.intraday_pnl!=null?bd('+'+fmtE(r.intraday_pnl)):'—')}</b></td></tr>`};
  box.innerHTML=`<div class="tw"><table><thead><tr><th>יום</th><th>יום-מראש</th><th>IDA1</th><th>IDA2</th><th>IDA3</th><th>סה״כ</th></tr></thead><tbody>${days.map(row).join('')}</tbody></table></div><p class="fine" style="margin:4px 0 12px">הסכום של כל מכרז הוא הכסף מהעסקאות בו, מעבר לתוכנית יום-מראש. מסחר מדומה: לא נשלחות פקודות לבורסה.</p>`}
 function drawId(J){const box=$('idbody');if(!box)return;const B_=J.base,C_=J.conservative;
- const rows=[['יום-מראש בלבד',o=>o.da],['יום-מראש + מכרזים תוך-יומיים',o=>o.da+o.intraday]];
+ const rows=[['יום-מראש בלבד · לפני צריכה עצמית',o=>o.da],['יום-מראש + מכרזים תוך-יומיים',o=>o.da+o.intraday]];
  const vb=rows.map(r=>r[1](B_)),mx=Math.max(...vb,B_.perfect_da);const bar=(v,c)=>`<div style="height:8px;border-radius:2px;background:${c};width:${(v/mx*100).toFixed(1)}%"></div>`;
  const p=B_.period||[];
  box.innerHTML=`<h4 class="bh" style="margin-top:6px">בדיקה על השנה האחרונה</h4><div class="sum" style="margin-top:6px">בשנה האחרונה, אותה שיטה בדיוק הייתה מוסיפה <b>${bd(fmtE(B_.intraday))}</b> ליום-מראש: ${bd('IDA1 '+fmtE(B_.by_auction.IDA1)+' · IDA2 '+fmtE(B_.by_auction.IDA2)+' · IDA3 '+fmtE(B_.by_auction.IDA3))}. אילו התחזית הייתה מושלמת, יום-מראש לבדו היה מכניס ${bd(fmtE(B_.perfect_da))}.</div>
@@ -842,7 +873,7 @@ function updPlant(v,socNow){if(ZI().deal!=='p50')return;P3DLAST=[v,socNow/EMAX];
  const pct=Math.max(0,Math.min(100,socNow/EMAX*100));document.querySelectorAll('.plsvg [data-fill]').forEach(r=>{const h=50*pct/100;r.setAttribute('y',452-h);r.setAttribute('height',h);r.classList.toggle('fin',dir==='in');r.classList.toggle('fout',dir==='out')});
  $('pl_soc').innerHTML=`סוללות: ${bd(pct.toFixed(0)+'%')} · ${bd(socNow.toFixed(1))} מתוך ${bd(EMAX+' MWh')} שמישים · ${dir==='in'?'נטענות':dir==='out'?'נפרקות':'במנוחה'}`}
 /* ---------- yearly backtest ---------- */
-const parseY=raw=>raw.split(';').filter(Boolean).map(r=>{const [d,pf,bl,nv,g]=r.split(',');return {d:'20'+d,pf:+pf*MWY,bl:+bl*MWY,nv:+nv*MWY,g:g!=null?+g*MWY:null}});
+const parseY=raw=>raw.split(';').filter(Boolean).map(r=>{const [d,pf,bl,nv,g,c]=r.split(',');return {d:'20'+d,pf:+pf*MWY,bl:+bl*MWY,nv:+nv*MWY,g:g!=null?+g*MWY:null,c:c!=null?+c*MWY:null}});
 const YCACHE={};let D=parseY(RAW_DAILY);let RANGE=0;
 async function loadYear(z){if(YCACHE[z])return YCACHE[z];const src=ZINFO[z].src;try{const r=await fetch(`yearly-${src}.json?t=`+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const j=await r.json();if(j.zone!==src||!j.rows)throw 0;if(z!==ZONE)return null;YCACHE[z]=parseY(j.rows)}catch(e){if(z==='HU')YCACHE[z]=parseY(RAW_DAILY)}return YCACHE[z]}
 async function showYear(){const z=ZONE;const y=await loadYear(z);if(z!==ZONE)return;if(y&&y.length){D=y;$('eqn').textContent=D.length;drawEq();drawDeal()}else{$('eq').innerHTML='<p class="hint2" style="padding:24px 4px">הבדיקה השנתית למדינה הזו עדיין נבנית. היא תופיע כאן אוטומטית.</p>';$('stats').innerHTML=''}}
